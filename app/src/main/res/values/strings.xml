@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Quantum Tic-Tac-Toe</string>
+
+    <string name="activity_options_title">Game Options</string>
+    <string name="activity_single_title">Single Player</string>
+    <string name="activity_multi_title">Multiplayer</string>
+
+    <string name="textView_single">Play against the computer in a single player game! Select the level of difficulty that suits your skills: from naive random moves to shrewd, optimal gameplay.</string>
+    <string name="textView_multi">Play against your friends in a multiplayer game! Settle once and for all who\'s the best at Tic-Tac-Toe!</string>
+    <string name="button_play">Play!</string>
+
+    <string name="textView_player">Human Player</string>
+    <string name="radioButton_x">X</string>
+    <string name="radioButton_o">O</string>
+    <string name="textView_difficulty">Game Difficulty</string>
+    <string name="radioButton_random">Random Moves</string>
+    <string name="radioButton_easy">Easy</string>
+    <string name="radioButton_medium">Medium</string>
+    <string name="radioButton_hard">Hard</string>
+    <string name="radioButton_optimal">Optimal</string>
+    <string name="button_start">Start</string>
+
+    <string name="action_undo">Undo Move</string>
+    <string name="action_reset">Reset Board</string>
+
+    <string name="result_in_progress">Game In Progress!</string>
+    <string name="result_draw">Game Over! It\'s a draw!</string>
+    <string name="result_winner">Game Over! Winner: %1$s!</string>
+</resources>

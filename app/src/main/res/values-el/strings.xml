@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Κβαντική Τρίλιζα</string>
+    <string name="action_reset">Επαναφορά Ταμπλό</string>
+    <string name="action_undo">Αναίρεση Κίνησης</string>
+    <string name="activity_options_title">Επιλογές Παρτίδας</string>
+    <string name="button_play">Παίξε!</string>
+    <string name="button_start">Εκκίνηση</string>
+    <string name="radioButton_easy">Εύκολη</string>
+    <string name="radioButton_hard">Δύσκολη</string>
+    <string name="radioButton_medium">Μέτρια</string>
+    <string name="radioButton_o">Ο</string>
+    <string name="radioButton_x">Χ</string>
+    <string name="radioButton_random">Τυχαίες Κινήσεις</string>
+    <string name="radioButton_optimal">Βέλτιστη</string>
+    <string name="result_draw">Η παρτίδα έληξε! Είναι ισοπαλία!</string>
+    <string name="result_in_progress">Η παρτίδα βρίσκεται σε εξέλιξη!</string>
+    <string name="result_winner">Η παρτίδα έληξε! Νικητής: %1$s!</string>
+    <string name="textView_difficulty">Δυσκολία Παρτίδας</string>
+    <string name="textView_player">Ανθρώπινος Παίχτης</string>
+    <string name="textView_multi">Παίξε εναντίον των φίλων σου σε μια παρτίδα δύο παιχτών! Διευθετήστε μια για πάντα ποιος είναι ο καλύτερος στην Τρίλιζα!</string>
+    <string name="textView_single">Παίξε εναντίον του υπολογιστή σε μια παρτίδα ενός παίχτη! Διάλεξε το επίπεδο δυσκολίας που ταιριάζει στις ικανότητές σου: από αφελείς τυχαίες κινήσεις μέχρι πανούργο, βέλτιστο τρόπο παιχνιδιού.</string>
+    <string name="activity_multi_title">Δύο Παίχτες</string>
+    <string name="activity_single_title">Ένας Παίχτης</string>
+</resources>

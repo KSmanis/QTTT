@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="grid">#FF000000</color>
+    <color name="x">#FF0000FF</color>
+    <color name="o">#FFFF0000</color>
+    <color name="collapsed">#FF000000</color>
+    <color name="inactive">#77777777</color>
+</resources>
