@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdk 34
     defaultConfig {
         applicationId "com.gmail.smanis.konstantinos.qttt"
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 34
         versionCode 2
         versionName "1.0.2"
     }
