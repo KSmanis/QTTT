@@ -1,0 +1,17 @@
+[general]
+contrib=contrib-title-conventional-commits
+ignore=body-is-missing,body-min-length
+regex-style-search=true
+
+[body-max-line-length]
+line-length=72
+
+[ignore-by-title]
+regex=\(#\d+\)$
+ignore=title-max-length,body-is-missing,body-min-length,body-max-line-length
+
+[ignore-body-lines]
+regex=^(\[.+\]:? )?https?://
+
+[ignore-by-author-name]
+regex=\b[Bb]ot\b

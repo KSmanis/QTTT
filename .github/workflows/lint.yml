@@ -1,0 +1,30 @@
+name: lint
+on: [pull_request, push]
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install pre-commit
+        run: pipx install pre-commit
+      - name: Identify Python version
+        run: echo "PYTHON_VERSION=$(python -V | cut -d' ' -f2)" >> "$GITHUB_ENV"
+      - name: Cache pre-commit hooks
+        id: cache-pre-commit
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ env.PYTHON_VERSION }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-${{ env.PYTHON_VERSION }}-
+            pre-commit-
+      - name: Prune pre-commit hooks
+        if: steps.cache-pre-commit.outputs.cache-hit != 'true'
+        run: pre-commit gc
+      - name: Run gitlint
+        run: pre-commit run --color=always --hook-stage manual gitlint-ci
+      - name: Run pre-commit
+        run: pre-commit run --all-files --color=always --show-diff-on-failure
