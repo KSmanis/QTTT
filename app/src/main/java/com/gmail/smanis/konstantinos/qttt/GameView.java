@@ -164,6 +164,9 @@ public class GameView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (mGridLines == null || mGridCells == null) {
+            return;
+        }
 
         List<CellState> classicBoard;
         List<EnumSet<CellState>> quantumBoard;
@@ -277,7 +280,10 @@ public class GameView extends View {
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        int size = Math.min(width, height);
+        setMeasuredDimension(size, size);
     }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
