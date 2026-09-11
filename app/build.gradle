@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     defaultConfig {
         applicationId "com.gmail.smanis.konstantinos.qttt"
-        compileSdkVersion 36
+        compileSdkVersion 37
         minSdkVersion 21
         targetSdkVersion 36
         versionCode 4
