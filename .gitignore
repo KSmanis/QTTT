@@ -2,6 +2,7 @@
 # Gradle files
 .gradle/
 build/
+.kotlin/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -13,8 +14,9 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+*.aab
 *.apk
-output.json
+output-metadata.json
 
 # IntelliJ
 *.iml
