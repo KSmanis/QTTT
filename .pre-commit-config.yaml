@@ -6,52 +6,83 @@ repos:
   - repo: meta
     hooks:
       - id: check-hooks-apply
+        priority: &read-only 1000
       - id: check-useless-excludes
-  # Generic
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+        priority: *read-only
+  # Builtin
+  - repo: builtin
     hooks:
       - id: check-executables-have-shebangs
+        priority: *read-only
       - id: check-shebang-scripts-are-executable
+        priority: *read-only
       - id: end-of-file-fixer
+        priority: &write-serial null
       - id: trailing-whitespace
+        priority: *write-serial
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 44.65.5
+    hooks:
+      - id: renovate-config-validator
+        args: ["--strict"]
+        priority: *read-only
   # Git
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
       - id: gitleaks
+        priority: *read-only
   - repo: https://github.com/jorisroovers/gitlint
     rev: v0.19.1
     hooks:
       - id: gitlint
+        priority: *read-only
       - id: gitlint-ci
   # GitHub Actions
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.38.0
     hooks:
       - id: check-github-workflows
+        priority: *read-only
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
       - id: actionlint
+        priority: *read-only
+  # JSON
+  - repo: builtin
+    hooks:
+      - id: pretty-format-json
+        args: ["--autofix", "--no-ensure-ascii"]
+        priority: &write-parallel 999
+      - id: check-json
+        priority: *read-only
   # Markdown
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 1.0.0
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.2.69
     hooks:
-      - id: mdformat
-        additional_dependencies:
-          - mdformat-gfm
-        args: ["--number", "--wrap=80"]
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.49.1
+      - id: rumdl
+        args: ["--fix"]
+        priority: *write-parallel
+  # TOML
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.24.4
     hooks:
-      - id: markdownlint
+      - id: toml-sort-fix
+        args: ["--all", "--in-place", "--trailing-comma-inline-array"]
+        priority: *write-parallel
+  - repo: builtin
+    hooks:
+      - id: check-toml
+        priority: *read-only
   # YAML
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0
     hooks:
       - id: yamlfmt
+        priority: *write-parallel
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
       - id: yamllint
+        priority: *read-only
