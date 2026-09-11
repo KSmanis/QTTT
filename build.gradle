@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.4.0'
+        classpath 'app.cash.paparazzi:paparazzi-gradle-plugin:2.0.0-alpha05'
     }
 }
 
