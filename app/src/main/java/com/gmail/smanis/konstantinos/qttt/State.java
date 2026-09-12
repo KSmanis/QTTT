@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -462,15 +463,14 @@ public class State {
 	}
 	public List<Move> lookupNextMove(InputStream is) {
 		List<Move> ret = new ArrayList<>();
-		BufferedReader br = null;
-		try {
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(is, StandardCharsets.UTF_8))) {
             Utility moveUtility = null;
 			boolean found = false;
 			String line, moveHistory = moveHistory();
-			br = new BufferedReader(new InputStreamReader(is));
 			while ((line = br.readLine()) != null) {
 				if (found) {
-					if (line.length() == 0) {
+					if (line.isEmpty()) {
 						break;
 					}
 
@@ -490,14 +490,6 @@ public class State {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return ret;
 	}
