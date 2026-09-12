@@ -25,7 +25,7 @@
         android:id="@+id/radioGroup_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_player"
+        android:layout_below="@id/textView_player"
         android:layout_alignParentStart="true">
 
         <RadioButton
@@ -47,14 +47,14 @@
         android:text="@string/textView_difficulty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/radioGroup_player"
+        android:layout_below="@id/radioGroup_player"
         android:layout_alignParentStart="true"/>
 
     <RadioGroup
         android:id="@+id/radioGroup_difficulty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_difficulty"
+        android:layout_below="@id/textView_difficulty"
         android:layout_alignParentStart="true">
 
         <RadioButton
@@ -94,7 +94,7 @@
         android:text="@string/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/radioGroup_difficulty"
+        android:layout_below="@id/radioGroup_difficulty"
         android:layout_alignParentStart="true"/>
 
 </RelativeLayout>
