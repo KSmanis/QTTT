@@ -57,6 +57,8 @@ public class GameView extends View {
     private List<Integer> mWinningCells;
     //View State
     private Paint mLinePaint, mMarkPaint;
+    private final Rect mTextRect = new Rect();
+    private final Rect mSubscriptRect = new Rect();
     private float[] mGridLines;
     private RectF[] mGridCells;
     private boolean mDirty, mHistoryShown, mHasInput, mPaused;
@@ -191,13 +193,11 @@ public class GameView extends View {
                 RectF cellRect = mGridCells[iGridIndex];
                 if (cCell != null && !mHistoryShown) {
                     mMarkPaint.setTextSize(3 * cTextSize);
-                    Rect textRect = new Rect();
-                    mMarkPaint.getTextBounds(cCell.name(), 0, 1, textRect);
+                    mMarkPaint.getTextBounds(cCell.name(), 0, 1, mTextRect);
                     mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    Rect subscriptRect = new Rect();
-                    mMarkPaint.getTextBounds(cCell.name(), 1, 2, subscriptRect);
-                    float x = cellRect.left + (cellRect.width() - textRect.width() - 3 * cSubscriptPadding - subscriptRect.width()) / 2f;
-                    float y = cellRect.top + (cellRect.height() - textRect.height()) / 2f;
+                    mMarkPaint.getTextBounds(cCell.name(), 1, 2, mSubscriptRect);
+                    float x = cellRect.left + (cellRect.width() - mTextRect.width() - 3 * cSubscriptPadding - mSubscriptRect.width()) / 2f;
+                    float y = cellRect.top + (cellRect.height() - mTextRect.height()) / 2f;
 
                     if (mGameOver && mWinningCells.contains(iGridIndex)) {
                         mMarkPaint.setColor((cCell.ordinal() & 1) == 0 ? cXColor : cOColor);
@@ -206,9 +206,9 @@ public class GameView extends View {
                         mMarkPaint.setColor(cCollapsedColor);
                     }
                     mMarkPaint.setTextSize(3 * cTextSize);
-                    canvas.drawText(cCell.name().substring(0, 1), x, y + textRect.height(), mMarkPaint);
+                    canvas.drawText(cCell.name().substring(0, 1), x, y + mTextRect.height(), mMarkPaint);
                     mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    canvas.drawText(cCell.name().substring(1, 2), x + textRect.width() + 3 * cSubscriptPadding, y + textRect.height(), mMarkPaint);
+                    canvas.drawText(cCell.name().substring(1, 2), x + mTextRect.width() + 3 * cSubscriptPadding, y + mTextRect.height(), mMarkPaint);
                     mMarkPaint.clearShadowLayer();
                     continue;
                 }
