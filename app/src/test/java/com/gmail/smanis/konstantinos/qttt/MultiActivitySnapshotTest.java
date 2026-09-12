@@ -3,12 +3,17 @@ package com.gmail.smanis.konstantinos.qttt;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.core.view.accessibility.AccessibilityNodeProviderCompat;
 
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class MultiActivitySnapshotTest {
@@ -83,10 +88,42 @@ public class MultiActivitySnapshotTest {
         long now = SystemClock.uptimeMillis();
         MotionEvent tap = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, 150, 150, 0);
         gameView.onTouchEvent(tap);
+        tap.setAction(MotionEvent.ACTION_UP);
+        gameView.onTouchEvent(tap);
         tap.recycle();
 
         assertEquals(CellState.O2, gameView.state().classicBoard().get(0));
         paparazzi.snapshot(view);
+    }
+
+    @Test
+    public void boardCellsAcceptAccessibilityClicks() {
+        GameView gameView = boardView().findViewById(R.id.gameView);
+        gameView.layout(0, 0, 900, 900);
+
+        AccessibilityDelegateCompat delegate = ViewCompat.getAccessibilityDelegate(gameView);
+        assertNotNull(delegate);
+        AccessibilityNodeProviderCompat provider =
+                delegate.getAccessibilityNodeProvider(gameView);
+        assertNotNull(provider);
+        AccessibilityNodeInfoCompat firstCell = provider.createAccessibilityNodeInfo(0);
+        assertNotNull(firstCell);
+        assertEquals(
+                gameView.getResources().getString(
+                        R.string.game_cell_description,
+                        1,
+                        1,
+                        gameView.getResources().getString(R.string.game_cell_empty)),
+                firstCell.getContentDescription());
+        assertTrue(provider.performAction(
+                0,
+                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                null));
+        assertTrue(provider.performAction(
+                1,
+                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                null));
+        assertEquals(1, gameView.state().currentTurn());
     }
 
     private View boardView() {

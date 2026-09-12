@@ -22,4 +22,6 @@
     <string name="textView_single">Παίξε εναντίον του υπολογιστή σε μια παρτίδα ενός παίχτη! Διάλεξε το επίπεδο δυσκολίας που ταιριάζει στις ικανότητές σου: από αφελείς τυχαίες κινήσεις μέχρι πανούργο, βέλτιστο τρόπο παιχνιδιού.</string>
     <string name="activity_multi_title">Δύο Παίχτες</string>
     <string name="activity_single_title">Ένας Παίχτης</string>
+    <string name="game_cell_description">Γραμμή %1$d, στήλη %2$d: %3$s</string>
+    <string name="game_cell_empty">κενό</string>
 </resources>

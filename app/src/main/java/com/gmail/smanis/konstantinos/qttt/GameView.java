@@ -7,10 +7,16 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.customview.widget.ExploreByTouchHelper;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -59,8 +65,10 @@ public class GameView extends View {
     private Paint mLinePaint, mMarkPaint;
     private final Rect mTextRect = new Rect();
     private final Rect mSubscriptRect = new Rect();
+    private final ExploreByTouchHelper mAccessibilityHelper;
     private float[] mGridLines;
     private RectF[] mGridCells;
+    private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
     private boolean mDirty, mHistoryShown, mHasInput, mPaused;
 
     public GameView(Context context, AttributeSet attrs) {
@@ -93,6 +101,99 @@ public class GameView extends View {
         mMarkPaint.getTextBounds("O", 0, 1, oRect);
         cTextWidth = Math.max(xRect.width(), oRect.width());
         cTextHeight = Math.max(xRect.height(), oRect.height());
+
+        mAccessibilityHelper = new GameAccessibilityHelper();
+        ViewCompat.setAccessibilityDelegate(this, mAccessibilityHelper);
+    }
+
+    private class GameAccessibilityHelper extends ExploreByTouchHelper {
+        GameAccessibilityHelper() {
+            super(GameView.this);
+        }
+
+        @Override
+        protected int getVirtualViewAt(float x, float y) {
+            return cellAt(x, y);
+        }
+
+        @Override
+        protected void getVisibleVirtualViews(List<Integer> virtualViewIds) {
+            if (mGridCells != null) {
+                for (int i = 0; i < mGridCells.length; ++i) {
+                    virtualViewIds.add(i);
+                }
+            }
+        }
+
+        @Override
+        protected void onPopulateNodeForVirtualView(
+                int virtualViewId, AccessibilityNodeInfoCompat node) {
+            RectF bounds = mGridCells[virtualViewId];
+            setBoundsInScreenFromBoundsInParent(node, new Rect(
+                    Math.round(bounds.left), Math.round(bounds.top),
+                    Math.round(bounds.right), Math.round(bounds.bottom)));
+            node.setContentDescription(cellDescription(virtualViewId));
+            boolean enabled = mState.classicBoard().get(virtualViewId) != null ||
+                    (!mPaused && !mState.gameOver());
+            node.setEnabled(enabled);
+            node.setClickable(enabled);
+            if (enabled) {
+                node.addAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+            }
+        }
+
+        @Override
+        protected boolean onPerformActionForVirtualView(
+                int virtualViewId, int action, Bundle arguments) {
+            if (action != AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId() ||
+                    !activateCell(virtualViewId)) {
+                return false;
+            }
+            sendEventForVirtualView(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED);
+            return true;
+        }
+    }
+
+    private int cellAt(float x, float y) {
+        if (mGridCells != null) {
+            for (int i = 0; i < mGridCells.length; ++i) {
+                if (mGridCells[i].contains(x, y)) {
+                    return i;
+                }
+            }
+        }
+        return ExploreByTouchHelper.INVALID_ID;
+    }
+
+    private CharSequence cellDescription(int cellIndex) {
+        CellState classicCell = mState.classicBoard().get(cellIndex);
+        String state;
+        if (classicCell != null) {
+            state = classicCell.name();
+        } else if (mState.quantumBoard().get(cellIndex).isEmpty()) {
+            state = getResources().getString(R.string.game_cell_empty);
+        } else {
+            state = mState.quantumBoard().get(cellIndex).toString();
+        }
+        return getResources().getString(
+                R.string.game_cell_description,
+                cellIndex / 3 + 1,
+                cellIndex % 3 + 1,
+                state);
+    }
+
+    private boolean activateCell(int cellIndex) {
+        if (mState.classicBoard().get(cellIndex) != null) {
+            mHistoryShown = !mHistoryShown;
+            repaint();
+            mAccessibilityHelper.invalidateRoot();
+        } else if (!mPaused && mState.applyInput(cellIndex)) {
+            mHasInput = true;
+            refresh();
+        } else {
+            return false;
+        }
+        return true;
     }
 
     private void checkEntanglement() {
@@ -142,6 +243,7 @@ public class GameView extends View {
     public void refresh() {
         checkEntanglement();
         checkGameOver();
+        mAccessibilityHelper.invalidateRoot();
         repaint();
     }
     public void resume() {
@@ -311,24 +413,53 @@ public class GameView extends View {
                 mGridCells[iGridIndex].bottom = (iGridRow + 1) * w / 3f - (iGridRow == 2 ? 0 : 1) * cGridLinePadding;
             }
         }
+        mAccessibilityHelper.invalidateRoot();
+    }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return mAccessibilityHelper.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
+    }
+    @Override
+    public boolean dispatchHoverEvent(MotionEvent event) {
+        return mAccessibilityHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
+    }
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        mAccessibilityHelper.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+    }
+    @Override
+    public boolean performClick() {
+        boolean handled = super.performClick();
+        if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
+            handled |= activateCell(mPendingCell);
+        }
+        return handled;
     }
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        switch (e.getAction()) {
+        switch (e.getActionMasked()) {
         case MotionEvent.ACTION_DOWN:
-            for (int i = 0; i < 9; ++i) {
-                if (mGridCells[i].contains(e.getX(), e.getY())) {
-                    if (mState.classicBoard().get(i) != null) {
-                        mHistoryShown = !mHistoryShown;
-                        repaint();
-                    } else if (!mPaused && mState.applyInput(i)) {
-                        mHasInput = true;
-                        refresh();
-                    }
-                    break;
-                }
+            mPendingCell = cellAt(e.getX(), e.getY());
+            if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
+                setPressed(true);
+                return true;
             }
             break;
+        case MotionEvent.ACTION_UP:
+            if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
+                if (mPendingCell == cellAt(e.getX(), e.getY())) {
+                    performClick();
+                }
+                mPendingCell = ExploreByTouchHelper.INVALID_ID;
+                setPressed(false);
+                return true;
+            }
+            break;
+        case MotionEvent.ACTION_CANCEL:
+            mPendingCell = ExploreByTouchHelper.INVALID_ID;
+            setPressed(false);
+            return true;
         }
         return super.onTouchEvent(e);
     }
