@@ -2,8 +2,9 @@ package com.gmail.smanis.konstantinos.qttt;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
 
@@ -32,22 +34,40 @@ public class SingleActivity extends AppCompatActivity {
     private Player mHumanPlayer;
     private Difficulty mGameDifficulty;
     private Random mRng;
+    private Thread mMinimaxThread;
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
-    class MinimaxTask extends AsyncTask<Void, Integer, List<Move>> implements State.OnProgressListener {
-        @Override
-        protected void onPreExecute() {
-            gameView.pause();
-            invalidateOptionsMenu();
-            progressBar.setVisibility(View.VISIBLE);
+    private static class MinimaxTask implements Runnable {
+        private final WeakReference<SingleActivity> mActivity;
+        private final State mState;
+        private final AssetManager mAssets;
+
+        MinimaxTask(SingleActivity activity) {
+            mActivity = new WeakReference<>(activity);
+            mState = activity.state;
+            mAssets = activity.getApplicationContext().getAssets();
         }
+
         @Override
-        protected List<Move> doInBackground(Void... params) {
-            int turn = state.currentTurn();
+        public void run() {
+            List<Move> moves = findMoves();
+            if (Thread.currentThread().isInterrupted()) {
+                return;
+            }
+            MAIN_HANDLER.post(() -> {
+                SingleActivity activity = mActivity.get();
+                if (activity != null && !activity.isFinishing() && !activity.isDestroyed()) {
+                    activity.finishBotMove(moves);
+                }
+            });
+        }
+
+        private List<Move> findMoves() {
+            int turn = mState.currentTurn();
             if (turn < 5) {
-                AssetManager am = getResources().getAssets();
-                String path = (turn < 4 ? String.valueOf(turn) : "4/" + state.moveHistory().substring(0, 5));
+                String path = (turn < 4 ? String.valueOf(turn) : "4/" + mState.moveHistory().substring(0, 5));
                 try {
-                    List<Move> ret = state.lookupNextMove(am.open(path));
+                    List<Move> ret = mState.lookupNextMove(mAssets.open(path));
                     if (!ret.isEmpty()) {
                         return ret;
                     }
@@ -55,20 +75,7 @@ public class SingleActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            return state.minimaxMoves(this);
-        }
-        @Override
-        protected void onPostExecute(List<Move> moves) {
-            applyMove(moves);
-            gameView.resume();
-            gameView.refresh();
-            invalidateOptionsMenu();
-            progressBar.setVisibility(View.INVISIBLE);
-            botPlay();
-        }
-        @Override
-        public void onProgress(int current, int max) {
-            publishProgress(current, max);
+            return mState.minimaxMoves(null);
         }
     }
 
@@ -141,6 +148,14 @@ public class SingleActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mMinimaxThread != null) {
+            mMinimaxThread.interrupt();
+        }
+        super.onDestroy();
+    }
+
     private void applyMove(List<Move> optimalMoves) {
         List<Move> allMoves = state.availableMoves(false), pool = null;
         switch (mGameDifficulty) {
@@ -185,8 +200,21 @@ public class SingleActivity extends AppCompatActivity {
             invalidateOptionsMenu();
             botPlay();
         } else {
-            new MinimaxTask().execute();
+            gameView.pause();
+            invalidateOptionsMenu();
+            progressBar.setVisibility(View.VISIBLE);
+            mMinimaxThread = new Thread(new MinimaxTask(this));
+            mMinimaxThread.start();
         }
+    }
+    private void finishBotMove(List<Move> moves) {
+        mMinimaxThread = null;
+        applyMove(moves);
+        gameView.resume();
+        gameView.refresh();
+        invalidateOptionsMenu();
+        progressBar.setVisibility(View.INVISIBLE);
+        botPlay();
     }
     private void resetBoard() {
         state.reset();
