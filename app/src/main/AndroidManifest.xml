@@ -20,29 +20,17 @@
             android:name=".OptionsActivity"
             android:label="@string/activity_options_title"
             android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop">
-            <meta-data
-                android:name="androidx.core.app.NavUtils.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
-        </activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".SingleActivity"
             android:label="@string/activity_single_title"
             android:parentActivityName=".OptionsActivity"
-            android:configChanges="orientation|screenSize">
-            <meta-data
-                android:name="androidx.core.app.NavUtils.PARENT_ACTIVITY"
-                android:value=".OptionsActivity"/>
-        </activity>
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".MultiActivity"
             android:label="@string/activity_multi_title"
             android:parentActivityName=".MainActivity"
-            android:configChanges="orientation|screenSize">
-            <meta-data
-                android:name="androidx.core.app.NavUtils.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
-        </activity>
+            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>
