@@ -4,7 +4,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
 jobs:
-  unit-tests:
+  debug:
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -16,18 +16,16 @@ jobs:
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
-          java-version: 21
+          java-version-file: .java-version
       - name: Set up Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
           log-accepted-android-sdk-licenses: false
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
-      - name: Run unit tests
-        run: >-
-          ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest
-          :app:verifyPaparazziDebug --no-daemon
-  instrumentation-tests:
+      - name: Run debug tasks
+        run: ./gradlew --no-daemon :app:assembleDebug :app:lintDebug :app:verifyPaparazziDebug
+  instrumentation:
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -39,7 +37,7 @@ jobs:
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
-          java-version: 21
+          java-version-file: .java-version
       - name: Set up Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
@@ -48,8 +46,28 @@ jobs:
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
       - name: Enable KVM
         run: sudo chmod 666 /dev/kvm
-      - name: Run instrumentation tests
+      - name: Run instrumentation tasks
         run: >-
-          ./gradlew :app:pixel2Api36DebugAndroidTest
+          ./gradlew --no-daemon :app:pixel2Api36DebugAndroidTest
           -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
-          --no-daemon
+  release:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version-file: .java-version
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          log-accepted-android-sdk-licenses: false
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+      - name: Run release tasks
+        run: ./gradlew --no-daemon :app:bundleRelease

@@ -1,19 +1,26 @@
-apply plugin: 'com.android.application'
-apply plugin: 'app.cash.paparazzi'
+plugins {
+    id 'com.android.application'
+    id 'app.cash.paparazzi'
+}
 
 android {
+    enableKotlin = false
+    namespace = 'com.gmail.smanis.konstantinos.qttt'
+    compileSdk = 37
+
     defaultConfig {
         applicationId "com.gmail.smanis.konstantinos.qttt"
-        compileSdkVersion 37
-        minSdkVersion 21
-        targetSdkVersion 36
+        minSdk = 21
+        targetSdk = 36
         versionCode 4
         versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            optimization {
+                enable = true
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -30,11 +37,17 @@ android {
             }
         }
     }
-    namespace = 'com.gmail.smanis.konstantinos.qttt'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(
+            rootProject.file('.java-version').text.trim().toInteger()
+        )
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.13.0'

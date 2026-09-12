@@ -1,5 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "datasourceTemplate": "java-version",
+      "depNameTemplate": "java",
+      "extractVersionTemplate": "^(?<version>\\d+)",
+      "managerFilePatterns": [
+        "/^\\.java-version$/"
+      ],
+      "matchStrings": [
+        "(?<currentValue>\\d+)"
+      ]
+    }
+  ],
   "extends": [
     "KSmanis/renovate-config"
   ],
