@@ -308,9 +308,9 @@ public class GameView extends View {
                         mMarkPaint.setColor(cCollapsedColor);
                     }
                     mMarkPaint.setTextSize(3 * cTextSize);
-                    canvas.drawText(cCell.name().substring(0, 1), x, y + mTextRect.height(), mMarkPaint);
+                    canvas.drawText(cCell.name(), 0, 1, x, y + mTextRect.height(), mMarkPaint);
                     mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    canvas.drawText(cCell.name().substring(1, 2), x + mTextRect.width() + 3 * cSubscriptPadding, y + mTextRect.height(), mMarkPaint);
+                    canvas.drawText(cCell.name(), 1, 2, x + mTextRect.width() + 3 * cSubscriptPadding, y + mTextRect.height(), mMarkPaint);
                     mMarkPaint.clearShadowLayer();
                     continue;
                 }
@@ -348,11 +348,11 @@ public class GameView extends View {
                         float x = cellRect.left + iCellCol * cellRect.width() / 3f + (cellRect.width() / 3f - cTextWidth - cTextPadding) / 2f;
                         float y = cellRect.top + iCellRow * cellRect.height() / 3f + (cellRect.height() / 3f - cTextHeight) / 2f;
                         mMarkPaint.setTextSize(cTextSize);
-                        canvas.drawText(mark.name().substring(0, 1), x, y + cTextHeight, mMarkPaint);
+                        canvas.drawText(mark.name(), 0, 1, x, y + cTextHeight, mMarkPaint);
                         mMarkPaint.setUnderlineText(false);
                         mMarkPaint.clearShadowLayer();
                         mMarkPaint.setTextSize(cSubscriptSize);
-                        canvas.drawText(mark.name().substring(1, 2), x + cTextWidth + cSubscriptPadding, y + cTextHeight, mMarkPaint);
+                        canvas.drawText(mark.name(), 1, 2, x + cTextWidth + cSubscriptPadding, y + cTextHeight, mMarkPaint);
                     }
                 }
             }
