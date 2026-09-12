@@ -7,14 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.Stack;
 
 enum CellState {X1, O2, X3, O4, X5, O6, X7, O8, X9}
 enum Player {X, O}
@@ -220,7 +221,7 @@ public class State {
 			return ret;
 		}
 
-		Stack<Integer> stack = new Stack<>();
+		Deque<Integer> stack = new ArrayDeque<>();
 		stack.push(mLastMove.firstCellIndex());
 		ret.add(mLastMove.firstCellIndex());
 		do {
@@ -253,7 +254,7 @@ public class State {
 				m_parent = parent;
 			}
 		}
-		Stack<Node> stack = new Stack<>();
+		Deque<Node> stack = new ArrayDeque<>();
 		boolean[] visited = new boolean[9];
 
 		stack.push(new Node(mLastMove.firstCellIndex()));
