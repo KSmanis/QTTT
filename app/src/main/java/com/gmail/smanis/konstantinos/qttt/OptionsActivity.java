@@ -3,7 +3,6 @@ package com.gmail.smanis.konstantinos.qttt;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -17,9 +16,10 @@ public class OptionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_options);
         setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.button_start).setOnClickListener(view -> start());
     }
 
-    public void start(View view) {
+    private void start() {
         RadioGroup radioGroupPlayer = findViewById(R.id.radioGroup_player);
         int radioButtonPlayerId = radioGroupPlayer.getCheckedRadioButtonId();
         RadioButton radioButtonPlayer = findViewById(radioButtonPlayerId);

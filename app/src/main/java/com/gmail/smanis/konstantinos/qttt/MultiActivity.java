@@ -6,7 +6,6 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 public class MultiActivity extends AppCompatActivity {
     private GameView gameView;
@@ -21,35 +20,22 @@ public class MultiActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         gameView = findViewById(R.id.gameView);
-        gameView.setOnGameOverListener(new GameView.OnGameOverListener() {
-            @Override
-            public void onGameOver(GameResult res) {
-                String message;
-                if (res.gameOver()) {
-                    if (res.draw()) {
-                        message = getString(R.string.result_draw);
-                    } else {
-                        message = getString(R.string.result_winner, res.winner());
-                    }
+        gameView.setOnGameOverListener(res -> {
+            String message;
+            if (res.gameOver()) {
+                if (res.draw()) {
+                    message = getString(R.string.result_draw);
                 } else {
-                    message = getString(R.string.result_in_progress);
+                    message = getString(R.string.result_winner, res.winner());
                 }
-                mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
-                mSnackbar.setAction(R.string.action_reset, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        resetBoard();
-                    }
-                });
-                mSnackbar.show();
+            } else {
+                message = getString(R.string.result_in_progress);
             }
+            mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
+            mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
+            mSnackbar.show();
         });
-        gameView.setOnInputListener(new GameView.OnInputListener() {
-            @Override
-            public void onInput(State s) {
-                invalidateOptionsMenu();
-            }
-        });
+        gameView.setOnInputListener(state -> invalidateOptionsMenu());
         state = gameView.state();
     }
     @Override

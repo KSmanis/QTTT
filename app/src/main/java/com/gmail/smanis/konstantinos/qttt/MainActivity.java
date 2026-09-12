@@ -3,7 +3,6 @@ package com.gmail.smanis.konstantinos.qttt;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -11,12 +10,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
-    }
-
-    public void singlePlay(View view) {
-        startActivity(new Intent(this, OptionsActivity.class));
-    }
-    public void multiPlay(View view) {
-        startActivity(new Intent(this, MultiActivity.class));
+        findViewById(R.id.button_single_play)
+                .setOnClickListener(view -> startActivity(new Intent(this, OptionsActivity.class)));
+        findViewById(R.id.button_multi_play)
+                .setOnClickListener(view -> startActivity(new Intent(this, MultiActivity.class)));
     }
 }

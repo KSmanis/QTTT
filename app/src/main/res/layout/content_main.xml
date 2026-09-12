@@ -42,11 +42,11 @@
                 android:textSize="@dimen/card_body_size"/>
 
             <Button
+                android:id="@+id/button_single_play"
                 android:text="@string/button_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:onClick="singlePlay"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
         </LinearLayout>
@@ -86,11 +86,11 @@
                 android:textSize="@dimen/card_body_size"/>
 
             <Button
+                android:id="@+id/button_multi_play"
                 android:text="@string/button_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:onClick="multiPlay"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
         </LinearLayout>
