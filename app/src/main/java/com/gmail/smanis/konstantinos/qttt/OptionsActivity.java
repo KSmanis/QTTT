@@ -3,7 +3,6 @@ package com.gmail.smanis.konstantinos.qttt;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,18 +15,18 @@ public class OptionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void start(View view) {
-        RadioGroup radioGroupPlayer = (RadioGroup) findViewById(R.id.radioGroup_player);
+        RadioGroup radioGroupPlayer = findViewById(R.id.radioGroup_player);
         int radioButtonPlayerId = radioGroupPlayer.getCheckedRadioButtonId();
-        RadioButton radioButtonPlayer = (RadioButton) findViewById(radioButtonPlayerId);
+        RadioButton radioButtonPlayer = findViewById(radioButtonPlayerId);
         int playerIndex = radioGroupPlayer.indexOfChild(radioButtonPlayer);
-        RadioGroup radioGroupDifficulty = (RadioGroup) findViewById(R.id.radioGroup_difficulty);
+        RadioGroup radioGroupDifficulty = findViewById(R.id.radioGroup_difficulty);
         int radioButtonDifficultyId = radioGroupDifficulty.getCheckedRadioButtonId();
-        RadioButton radioButtonDifficulty = (RadioButton) findViewById(radioButtonDifficultyId);
+        RadioButton radioButtonDifficulty = findViewById(radioButtonDifficultyId);
         int difficultyIndex = radioGroupDifficulty.indexOfChild(radioButtonDifficulty);
 
         Intent intent = new Intent(this, SingleActivity.class);

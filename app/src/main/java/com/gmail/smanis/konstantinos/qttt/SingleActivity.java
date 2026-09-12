@@ -8,7 +8,6 @@ import android.os.Looper;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,15 +82,15 @@ public class SingleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         mHumanPlayer = Player.values()[intent.getIntExtra(OptionsActivity.EXTRA_PLAYER, 0)];
         mGameDifficulty = Difficulty.values()[intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, 2)];
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        gameView = (GameView) findViewById(R.id.gameView);
+        progressBar = findViewById(R.id.progressBar);
+        gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(new GameView.OnGameOverListener() {
             @Override
             public void onGameOver(GameResult res) {
