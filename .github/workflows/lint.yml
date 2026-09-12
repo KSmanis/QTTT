@@ -3,12 +3,12 @@ on: [pull_request, push, workflow_dispatch]
 concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+env:
+  PREK_COLOR: always
+permissions:
+  contents: read
 jobs:
   lint:
-    env:
-      PREK_COLOR: always
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository

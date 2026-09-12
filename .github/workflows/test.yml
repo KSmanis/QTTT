@@ -3,10 +3,10 @@ on: [pull_request, push, workflow_dispatch]
 concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+permissions:
+  contents: read
 jobs:
   debug:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -26,8 +26,6 @@ jobs:
       - name: Run debug tasks
         run: ./gradlew --no-daemon :app:assembleDebug :app:lintDebug :app:verifyPaparazziDebug
   instrumentation:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -51,8 +49,6 @@ jobs:
           ./gradlew --no-daemon :app:pixel2Api36DebugAndroidTest
           -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
   release:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
