@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <RadioGroup
@@ -27,7 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView_player"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
         <RadioButton
@@ -50,7 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroup_player"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <RadioGroup
@@ -58,7 +55,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView_difficulty"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
         <RadioButton
@@ -99,7 +95,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroup_difficulty"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="start"/>
 
