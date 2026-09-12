@@ -3,8 +3,8 @@ package com.gmail.smanis.konstantinos.qttt;
 import java.util.Locale;
 
 public class Utility {
-	private int mValue;
-	private int mDepth;
+	private final int mValue;
+	private final int mDepth;
 
 	public Utility(int value) {
 		mValue = value;
@@ -21,13 +21,6 @@ public class Utility {
 	public int depth() {
 		return mDepth;
 	}
-	public void setValue(int value) {
-		mValue = value;
-	}
-	public void setDepth(int depth) {
-		mDepth = depth;
-	}
-
     public String toShortString() {
         return String.format(Locale.ROOT, "%d,%d", mValue, mDepth);
     }
@@ -52,6 +45,6 @@ public class Utility {
     }
 	public static Utility valueOf(String s) {
         String[] fields = s.split(",");
-        return new Utility(Integer.valueOf(fields[0]), Integer.valueOf(fields[1]));
+        return new Utility(Integer.parseInt(fields[0]), Integer.parseInt(fields[1]));
     }
 }

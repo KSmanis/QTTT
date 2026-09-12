@@ -9,9 +9,9 @@ public class Move {
 		@Override
 		public int compare(Move o1, Move o2) {
 			if (o1.mUtility.value() != o2.mUtility.value()) {
-                return Integer.valueOf(o1.mUtility.value()).compareTo(o2.mUtility.value());
+				return Integer.compare(o1.mUtility.value(), o2.mUtility.value());
 			} else {
-                return Integer.valueOf(o2.mUtility.depth()).compareTo(o1.mUtility.depth());
+				return Integer.compare(o2.mUtility.depth(), o1.mUtility.depth());
 			}
 		}
 	}
@@ -19,9 +19,9 @@ public class Move {
 		@Override
 		public int compare(Move o1, Move o2) {
 			if (o1.mUtility.value() != o2.mUtility.value()) {
-                return Integer.valueOf(o1.mUtility.value()).compareTo(o2.mUtility.value());
+				return Integer.compare(o1.mUtility.value(), o2.mUtility.value());
 			} else {
-                return Integer.valueOf(o1.mUtility.depth()).compareTo(o2.mUtility.depth());
+				return Integer.compare(o1.mUtility.depth(), o2.mUtility.depth());
 			}
 		}
 	}
@@ -30,7 +30,7 @@ public class Move {
         REGULAR,
         COLLAPSE
     }
-	private Type mType;
+    private final Type mType;
     private int mCellIndex1, mCellIndex2;
     private CellState mCellState;
     private Utility mUtility;
@@ -48,13 +48,6 @@ public class Move {
 		mCellIndex2 = cellIndex2;
 		mCellState = cellState;
 	}
-	public Move(int cellIndex1, int cellIndex2, CellState cellState, Utility utility) {
-		mType = Type.REGULAR;
-		mCellIndex1 = cellIndex1;
-		mCellIndex2 = cellIndex2;
-		mCellState = cellState;
-		mUtility = utility;
-	}
     public Move(int cellIndex) {
         mType = Type.COLLAPSE;
         mCellIndex1 = cellIndex;
@@ -65,13 +58,6 @@ public class Move {
 		mCellIndex1 = cellIndex;
 		mCellIndex2 = -1;
 		mCellState = cellState;
-	}
-	public Move(int cellIndex, CellState cellState, Utility utility) {
-		mType = Type.COLLAPSE;
-		mCellIndex1 = cellIndex;
-		mCellIndex2 = -1;
-		mCellState = cellState;
-		mUtility = utility;
 	}
 
     public Type type() {
@@ -94,9 +80,6 @@ public class Move {
     }
     public List<Integer> collapsedCells() {
         return mCollapsedCells;
-    }
-    public void setType(Type type) {
-        mType = type;
     }
     public void setFirstCellIndex(int firstCellIndex) {
         mCellIndex1 = firstCellIndex;
@@ -144,9 +127,9 @@ public class Move {
     public static Move valueOf(String s) {
         String[] fields = s.split(",");
         if (fields.length == 2) {
-            return new Move(Integer.valueOf(fields[0]), Integer.valueOf(fields[1]));
+            return new Move(Integer.parseInt(fields[0]), Integer.parseInt(fields[1]));
         } else if (fields.length == 1) {
-            return new Move(Integer.valueOf(fields[0]));
+            return new Move(Integer.parseInt(fields[0]));
         } else {
             return null;
         }
