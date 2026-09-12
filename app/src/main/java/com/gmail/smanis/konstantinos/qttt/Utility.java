@@ -1,5 +1,7 @@
 package com.gmail.smanis.konstantinos.qttt;
 
+import java.util.Locale;
+
 public class Utility {
 	private int mValue;
 	private int mDepth;
@@ -27,11 +29,11 @@ public class Utility {
 	}
 
     public String toShortString() {
-        return String.format("%d,%d", mValue, mDepth);
+        return String.format(Locale.ROOT, "%d,%d", mValue, mDepth);
     }
 	@Override
     public String toString() {
-    	return String.format("Utility [Value: %d; Depth: %d]", mValue, mDepth);
+	    	return String.format(Locale.ROOT, "Utility [Value: %d; Depth: %d]", mValue, mDepth);
     }
 
     public static Utility min(Utility a, Utility b) {

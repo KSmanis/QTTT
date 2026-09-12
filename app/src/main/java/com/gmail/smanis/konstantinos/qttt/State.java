@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -50,10 +51,10 @@ public class State {
 		}
 
 		if (entangled()) {
-            if (cellIndex != mLastMove.firstCellIndex() &&
-                cellIndex != mLastMove.secondCellIndex()) {
-                return false;
-            }
+			if (cellIndex != mLastMove.firstCellIndex() &&
+				cellIndex != mLastMove.secondCellIndex()) {
+				return false;
+			}
 			applyMove(new Move(cellIndex, previousMark()));
 		} else {
 			if (mInput == null) {
@@ -152,11 +153,11 @@ public class State {
 				System.out.println("Available moves:");
 				List<Move> moves = availableMoves(false);
 				for (int i = 0; i < moves.size(); ++i) {
-					System.out.println(String.format("%2d: %s", i + 1, moves.get(i)));
+					System.out.println(String.format(Locale.getDefault(), "%2d: %s", i + 1, moves.get(i)));
 				}
 				int input;
 				do {
-					System.out.print(String.format("Input your choice (1-%d): ", moves.size()));
+					System.out.print(String.format(Locale.getDefault(), "Input your choice (1-%d): ", moves.size()));
 					input = s.nextInt();
 				} while (input < 1 || input > moves.size());
 				applyMove(moves.get(input - 1));
@@ -443,11 +444,11 @@ public class State {
 		while (!moves.isEmpty()) {
 			System.out.println("Available moves:");
 			for (int i = 0; i < moves.size(); ++i) {
-				System.out.println(String.format("%2d: %s", i + 1, moves.get(i)));
+				System.out.println(String.format(Locale.getDefault(), "%2d: %s", i + 1, moves.get(i)));
 			}
 			int input;
 			do {
-				System.out.print(String.format("Input your choice (1-%d): ", moves.size()));
+				System.out.print(String.format(Locale.getDefault(), "Input your choice (1-%d): ", moves.size()));
 				input = s.nextInt();
 			} while (input < 1 || input > moves.size());
 			applyMove(moves.get(input - 1));

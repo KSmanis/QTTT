@@ -2,6 +2,7 @@ package com.gmail.smanis.konstantinos.qttt;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class Move {
 	static class MinUtilComparator implements Comparator<Move> {
@@ -62,13 +63,13 @@ public class Move {
 	public Move(int cellIndex, CellState cellState) {
 		mType = Type.COLLAPSE;
 		mCellIndex1 = cellIndex;
-        mCellIndex2 = -1;
+		mCellIndex2 = -1;
 		mCellState = cellState;
 	}
 	public Move(int cellIndex, CellState cellState, Utility utility) {
 		mType = Type.COLLAPSE;
 		mCellIndex1 = cellIndex;
-        mCellIndex2 = -1;
+		mCellIndex2 = -1;
 		mCellState = cellState;
 		mUtility = utility;
 	}
@@ -118,24 +119,24 @@ public class Move {
 
     public String toShortString() {
         if (mType == Type.REGULAR) {
-            return String.format("%d,%d", mCellIndex1, mCellIndex2);
+            return String.format(Locale.ROOT, "%d,%d", mCellIndex1, mCellIndex2);
         } else {
-            return String.format("%d", mCellIndex1);
+            return String.format(Locale.ROOT, "%d", mCellIndex1);
         }
     }
 	@Override
 	public String toString() {
 		if (mType == Type.REGULAR) {
 			if (mUtility != null) {
-				return String.format("Move [%s; %s; %d; %d] -> %s", mType, mCellState, mCellIndex1, mCellIndex2, mUtility);
+				return String.format(Locale.ROOT, "Move [%s; %s; %d; %d] -> %s", mType, mCellState, mCellIndex1, mCellIndex2, mUtility);
 			} else {
-				return String.format("Move [%s; %s; %d; %d]", mType, mCellState, mCellIndex1, mCellIndex2);
+				return String.format(Locale.ROOT, "Move [%s; %s; %d; %d]", mType, mCellState, mCellIndex1, mCellIndex2);
 			}
 		} else {
 			if (mUtility != null) {
-				return String.format("Move [%s; %s; %d] -> %s", mType, mCellState, mCellIndex1, mUtility);
+				return String.format(Locale.ROOT, "Move [%s; %s; %d] -> %s", mType, mCellState, mCellIndex1, mUtility);
 			} else {
-				return String.format("Move [%s; %s; %d]", mType, mCellState, mCellIndex1);
+				return String.format(Locale.ROOT, "Move [%s; %s; %d]", mType, mCellState, mCellIndex1);
 			}
 		}
 	}
