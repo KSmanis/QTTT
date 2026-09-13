@@ -70,7 +70,7 @@ public class GameView extends View {
     private float[] mGridLines;
     private RectF[] mGridCells;
     private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
-    private boolean mDirty, mHistoryShown, mHasInput, mPaused;
+    private boolean mHistoryShown, mHasInput, mPaused;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -190,7 +190,7 @@ public class GameView extends View {
     private boolean activateCell(int cellIndex) {
         if (mState.classicBoard().get(cellIndex) != null) {
             mHistoryShown = !mHistoryShown;
-            repaint();
+            invalidate();
             mAccessibilityHelper.invalidateRoot();
         } else if (!mPaused && mState.applyInput(cellIndex)) {
             mHasInput = true;
@@ -224,13 +224,6 @@ public class GameView extends View {
         }
     }
 
-    private void repaint() {
-        if (!mDirty) {
-            invalidate();
-            mDirty = true;
-        }
-    }
-
     public boolean isPaused() {
         return mPaused;
     }
@@ -253,7 +246,7 @@ public class GameView extends View {
         checkEntanglement();
         checkGameOver();
         mAccessibilityHelper.invalidateRoot();
-        repaint();
+        invalidate();
     }
 
     public void resume() {
@@ -397,7 +390,6 @@ public class GameView extends View {
             }
         }
 
-        mDirty = false;
         if (mEntangled) {
             if (mGlowInc) {
                 mGlowRadius += cGlowStep;
@@ -410,7 +402,6 @@ public class GameView extends View {
                 mGlowInc = false;
             }
             postInvalidateDelayed(1000 / cFps);
-            mDirty = true;
         }
         if (mHasInput) {
             mHasInput = false;
