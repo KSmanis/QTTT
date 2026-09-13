@@ -79,7 +79,7 @@ public class SingleActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            return mState.minimaxMoves(null);
+            return mState.minimaxMoves();
         }
     }
 

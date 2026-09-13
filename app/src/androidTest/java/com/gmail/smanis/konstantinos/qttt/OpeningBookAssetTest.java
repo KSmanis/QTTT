@@ -77,7 +77,7 @@ public class OpeningBookAssetTest {
                         new Move(7, CellState.X7));
 
         assertTrue(lookup(context, "1", state).isEmpty());
-        assertNotNull(state.minimaxMove(null));
+        assertNotNull(state.minimaxMove());
     }
 
     @Test

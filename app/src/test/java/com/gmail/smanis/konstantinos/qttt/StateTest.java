@@ -232,7 +232,7 @@ public class StateTest {
     public void minimaxSelectsTheUniqueBestEndgameMove() {
         State state = play("3,7", "2,4", "1,7", "1,5", "7,8", "4,8", "7,8", "7");
 
-        Move move = state.minimaxMove(null);
+        Move move = state.minimaxMove();
 
         assertEquals(Player.O, state.currentPlayer());
         assertEquals(Move.Type.REGULAR, move.type());

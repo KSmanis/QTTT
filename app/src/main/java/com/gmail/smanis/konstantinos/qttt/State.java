@@ -36,10 +36,6 @@ enum Player {
 }
 
 public class State {
-    public interface OnProgressListener {
-        void onProgress(int current, int max);
-    }
-
     private final int[][] cLines = {
         {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // rows
         {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // columns
@@ -188,7 +184,7 @@ public class State {
             } else {
                 System.out.println("It's the computer's turn!");
 
-                applyMove(minimaxMove(null));
+                applyMove(minimaxMove());
             }
         }
         System.out.println(this);
@@ -541,7 +537,7 @@ public class State {
         return ret;
     }
 
-    private List<Move> minimaxEvaluation(OnProgressListener l) {
+    private List<Move> minimaxEvaluation() {
         Player player = currentPlayer();
         List<Move> moves = availableMoves(false);
         for (int i = 0; i < moves.size(); ++i) {
@@ -553,17 +549,12 @@ public class State {
                 move.setUtility(maxValue(Integer.MIN_VALUE, Integer.MAX_VALUE, false));
             }
             undoLastMove();
-
-            //			System.out.println(move);
-            if (l != null) {
-                l.onProgress(i + 1, moves.size());
-            }
         }
         return moves;
     }
 
-    public Move minimaxMove(OnProgressListener l) {
-        List<Move> moves = minimaxEvaluation(l);
+    public Move minimaxMove() {
+        List<Move> moves = minimaxEvaluation();
         if (moves.isEmpty()) {
             return null;
         }
@@ -575,8 +566,8 @@ public class State {
         }
     }
 
-    public List<Move> minimaxMoves(OnProgressListener l) {
-        List<Move> moves = minimaxEvaluation(l);
+    public List<Move> minimaxMoves() {
+        List<Move> moves = minimaxEvaluation();
         if (moves.isEmpty()) {
             return moves;
         }
@@ -768,7 +759,7 @@ public class State {
     }
 
     private void printMoves() {
-        List<Move> moves = minimaxMoves(null);
+        List<Move> moves = minimaxMoves();
         System.out.println(
                 String.format("%s:%s", moveHistory(), moves.get(0).utility().toShortString()));
         for (Move m : moves) {
