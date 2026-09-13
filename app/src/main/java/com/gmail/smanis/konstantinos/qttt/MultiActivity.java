@@ -41,7 +41,7 @@ public class MultiActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_multi, menu);
+        getMenuInflater().inflate(R.menu.menu_single, menu);
         menu.findItem(R.id.action_undo).setVisible(state.isUndoAvailable());
         return super.onCreateOptionsMenu(menu);
     }
