@@ -43,9 +43,7 @@ public class ActivitySmokeTest {
         onView(withId(R.id.radioButton_random)).perform(click());
         onView(withId(R.id.button_start)).check(matches(isDisplayed())).perform(click());
         onView(withText(R.string.activity_single_title)).check(matches(isDisplayed()));
-        onView(withId(R.id.gameView))
-                .check(matches(isDisplayed()))
-                .check(hasCurrentTurn(1));
+        onView(withId(R.id.gameView)).check(matches(isDisplayed())).check(hasCurrentTurn(1));
 
         pressBack();
         pressBack();
@@ -75,7 +73,8 @@ public class ActivitySmokeTest {
 
     @Test
     public void multiplayerStateSurvivesRotation() {
-        try (ActivityScenario<MultiActivity> scenario = ActivityScenario.launch(MultiActivity.class)) {
+        try (ActivityScenario<MultiActivity> scenario =
+                ActivityScenario.launch(MultiActivity.class)) {
             onView(withId(R.id.gameView))
                     .perform(clickCell(0, 0), clickCell(0, 1))
                     .check(hasCurrentTurn(1));
@@ -109,17 +108,18 @@ public class ActivitySmokeTest {
     }
 
     private static GeneralClickAction clickCell(int row, int column) {
-        CoordinatesProvider coordinates = new CoordinatesProvider() {
-            @Override
-            public float[] calculateCoordinates(View view) {
-                int[] location = new int[2];
-                view.getLocationOnScreen(location);
-                return new float[] {
-                    location[0] + view.getWidth() * (column + 0.5f) / 3,
-                    location[1] + view.getHeight() * (row + 0.5f) / 3
+        CoordinatesProvider coordinates =
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+                        int[] location = new int[2];
+                        view.getLocationOnScreen(location);
+                        return new float[] {
+                            location[0] + view.getWidth() * (column + 0.5f) / 3,
+                            location[1] + view.getHeight() * (row + 0.5f) / 3
+                        };
+                    }
                 };
-            }
-        };
         return new GeneralClickAction(
                 Tap.SINGLE,
                 coordinates,

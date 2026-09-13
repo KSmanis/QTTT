@@ -1,5 +1,9 @@
 package com.gmail.smanis.konstantinos.qttt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
@@ -7,18 +11,12 @@ import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityNodeProviderCompat;
-
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class MultiActivitySnapshotTest {
-    @Rule
-    public final Paparazzi paparazzi = new Paparazzi();
+    @Rule public final Paparazzi paparazzi = new Paparazzi();
 
     @Test
     public void emptyBoard() {
@@ -103,26 +101,28 @@ public class MultiActivitySnapshotTest {
 
         AccessibilityDelegateCompat delegate = ViewCompat.getAccessibilityDelegate(gameView);
         assertNotNull(delegate);
-        AccessibilityNodeProviderCompat provider =
-                delegate.getAccessibilityNodeProvider(gameView);
+        AccessibilityNodeProviderCompat provider = delegate.getAccessibilityNodeProvider(gameView);
         assertNotNull(provider);
         AccessibilityNodeInfoCompat firstCell = provider.createAccessibilityNodeInfo(0);
         assertNotNull(firstCell);
         assertEquals(
-                gameView.getResources().getString(
-                        R.string.game_cell_description,
-                        1,
-                        1,
-                        gameView.getResources().getString(R.string.game_cell_empty)),
+                gameView.getResources()
+                        .getString(
+                                R.string.game_cell_description,
+                                1,
+                                1,
+                                gameView.getResources().getString(R.string.game_cell_empty)),
                 firstCell.getContentDescription());
-        assertTrue(provider.performAction(
-                0,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
-                null));
-        assertTrue(provider.performAction(
-                1,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
-                null));
+        assertTrue(
+                provider.performAction(
+                        0,
+                        AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                        null));
+        assertTrue(
+                provider.performAction(
+                        1,
+                        AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                        null));
         assertEquals(1, gameView.state().currentTurn());
     }
 

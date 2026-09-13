@@ -1,17 +1,16 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class StateInvariantTest {
     @Test
@@ -61,8 +60,9 @@ public class StateInvariantTest {
                 assertTrue(state.entangled());
                 assertNotNull(state.lastMove());
                 assertEquals(state.lastMove().cellState(), move.cellState());
-                assertTrue(move.firstCellIndex() == state.lastMove().firstCellIndex()
-                    || move.firstCellIndex() == state.lastMove().secondCellIndex());
+                assertTrue(
+                        move.firstCellIndex() == state.lastMove().firstCellIndex()
+                                || move.firstCellIndex() == state.lastMove().secondCellIndex());
             }
         }
     }
@@ -84,7 +84,10 @@ public class StateInvariantTest {
                     ++occurrences;
                 }
             }
-            assertTrue(occurrences == 0 || occurrences == 2 || (mark == CellState.X9 && occurrences == 1));
+            assertTrue(
+                    occurrences == 0
+                            || occurrences == 2
+                            || (mark == CellState.X9 && occurrences == 1));
         }
 
         if (state.gameOver()) {

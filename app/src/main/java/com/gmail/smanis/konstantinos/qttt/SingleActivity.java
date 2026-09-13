@@ -5,14 +5,12 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -26,6 +24,7 @@ public class SingleActivity extends AppCompatActivity {
         Hard,
         Optimal
     }
+
     private ProgressBar progressBar;
     private GameView gameView;
     private State state;
@@ -53,18 +52,24 @@ public class SingleActivity extends AppCompatActivity {
             if (Thread.currentThread().isInterrupted()) {
                 return;
             }
-            MAIN_HANDLER.post(() -> {
-                SingleActivity activity = mActivity.get();
-                if (activity != null && !activity.isFinishing() && !activity.isDestroyed()) {
-                    activity.finishBotMove(moves);
-                }
-            });
+            MAIN_HANDLER.post(
+                    () -> {
+                        SingleActivity activity = mActivity.get();
+                        if (activity != null
+                                && !activity.isFinishing()
+                                && !activity.isDestroyed()) {
+                            activity.finishBotMove(moves);
+                        }
+                    });
         }
 
         private List<Move> findMoves() {
             int turn = mState.currentTurn();
             if (turn < 5) {
-                String path = (turn < 4 ? String.valueOf(turn) : "4/" + mState.moveHistory().substring(0, 5));
+                String path =
+                        (turn < 4
+                                ? String.valueOf(turn)
+                                : "4/" + mState.moveHistory().substring(0, 5));
                 try {
                     List<Move> ret = mState.lookupNextMove(mAssets.open(path));
                     if (!ret.isEmpty()) {
@@ -87,42 +92,48 @@ public class SingleActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mHumanPlayer = Player.values()[intent.getIntExtra(OptionsActivity.EXTRA_PLAYER, 0)];
-        mGameDifficulty = Difficulty.values()[intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, 2)];
+        mGameDifficulty =
+                Difficulty.values()[intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, 2)];
 
         progressBar = findViewById(R.id.progressBar);
         gameView = findViewById(R.id.gameView);
-        gameView.setOnGameOverListener(res -> {
-            String message;
-            if (res.gameOver()) {
-                if (res.draw()) {
-                    message = getString(R.string.result_draw);
-                } else {
-                    message = getString(R.string.result_winner, res.winner());
-                }
-            } else {
-                message = getString(R.string.result_in_progress);
-            }
-            mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
-            mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
-            mSnackbar.show();
-        });
-        gameView.setOnInputListener(state -> {
-            invalidateOptionsMenu();
-            botPlay();
-        });
+        gameView.setOnGameOverListener(
+                res -> {
+                    String message;
+                    if (res.gameOver()) {
+                        if (res.draw()) {
+                            message = getString(R.string.result_draw);
+                        } else {
+                            message = getString(R.string.result_winner, res.winner());
+                        }
+                    } else {
+                        message = getString(R.string.result_in_progress);
+                    }
+                    mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
+                    mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
+                    mSnackbar.show();
+                });
+        gameView.setOnInputListener(
+                state -> {
+                    invalidateOptionsMenu();
+                    botPlay();
+                });
         state = gameView.state();
         mRng = new Random();
 
         botPlay();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!gameView.isPaused()) {
             getMenuInflater().inflate(R.menu.menu_single, menu);
-            menu.findItem(R.id.action_undo).setVisible(state.hasIncompleteInput() || state.currentTurn() >= 2);
+            menu.findItem(R.id.action_undo)
+                    .setVisible(state.hasIncompleteInput() || state.currentTurn() >= 2);
         }
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -147,36 +158,37 @@ public class SingleActivity extends AppCompatActivity {
     private void applyMove(List<Move> optimalMoves) {
         List<Move> allMoves = state.availableMoves(false), pool = null;
         switch (mGameDifficulty) {
-        case Random:
-            pool = allMoves;
-            break;
-        case Easy:
-            if (mRng.nextFloat() < 0.5) {
-                pool = optimalMoves;
-            } else {
+            case Random:
                 pool = allMoves;
-            }
-            break;
-        case Medium:
-            if (mRng.nextFloat() < 0.75) {
+                break;
+            case Easy:
+                if (mRng.nextFloat() < 0.5) {
+                    pool = optimalMoves;
+                } else {
+                    pool = allMoves;
+                }
+                break;
+            case Medium:
+                if (mRng.nextFloat() < 0.75) {
+                    pool = optimalMoves;
+                } else {
+                    pool = allMoves;
+                }
+                break;
+            case Hard:
+                if (mRng.nextFloat() < 0.9 || state.entangled()) {
+                    pool = optimalMoves;
+                } else {
+                    pool = allMoves;
+                }
+                break;
+            case Optimal:
                 pool = optimalMoves;
-            } else {
-                pool = allMoves;
-            }
-            break;
-        case Hard:
-            if (mRng.nextFloat() < 0.9 || state.entangled()) {
-                pool = optimalMoves;
-            } else {
-                pool = allMoves;
-            }
-            break;
-        case Optimal:
-            pool = optimalMoves;
-            break;
+                break;
         }
         state.applyMove(pool.get(mRng.nextInt(pool.size())));
     }
+
     private void botPlay() {
         if (state.currentPlayer() == mHumanPlayer || state.gameOver()) {
             return;
@@ -195,6 +207,7 @@ public class SingleActivity extends AppCompatActivity {
             mMinimaxThread.start();
         }
     }
+
     private void finishBotMove(List<Move> moves) {
         mMinimaxThread = null;
         applyMove(moves);
@@ -204,6 +217,7 @@ public class SingleActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         botPlay();
     }
+
     private void resetBoard() {
         state.reset();
         gameView.refresh();
@@ -214,6 +228,7 @@ public class SingleActivity extends AppCompatActivity {
         }
         botPlay();
     }
+
     private void undoMove() {
         if (state.hasIncompleteInput()) {
             state.undoLastMove();

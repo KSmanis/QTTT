@@ -5,6 +5,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
 env:
   PREK_COLOR: always
+  SKIP: spotless
 permissions:
   contents: read
 jobs:

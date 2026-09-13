@@ -1,18 +1,16 @@
 package com.gmail.smanis.konstantinos.qttt;
 
+import static org.junit.Assert.assertEquals;
+
 import android.view.View;
 import android.widget.TextView;
-
 import app.cash.paparazzi.DeviceConfig;
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 public class OptionsActivitySnapshotTest {
-    @Rule
-    public final Paparazzi paparazzi = new Paparazzi();
+    @Rule public final Paparazzi paparazzi = new Paparazzi();
 
     @Test
     public void defaultOptions() {

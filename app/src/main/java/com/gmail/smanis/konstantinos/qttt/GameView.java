@@ -8,16 +8,15 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import androidx.customview.widget.ExploreByTouchHelper;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.customview.widget.ExploreByTouchHelper;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -26,13 +25,15 @@ public class GameView extends View {
     public interface OnGameOverListener {
         void onGameOver(GameResult res);
     }
+
     public interface OnInputListener {
         void onInput(State s);
     }
-    //Listeners
+
+    // Listeners
     private OnGameOverListener mOnGameOverListener;
     private OnInputListener mOnInputListener;
-    //Constants
+    // Constants
     private final float cGridLineWidth;
     private final float cGridLinePadding;
     private final float cTextSize;
@@ -46,14 +47,14 @@ public class GameView extends View {
     private final int cInactiveColor;
     private final int cTextWidth;
     private final int cTextHeight;
-    //Entanglement Animation
+    // Entanglement Animation
     private final float cMinGlowRadius = 5.f;
     private final float cMaxGlowRadius = 20.f;
     private final float cGlowStep = 1.f;
     private final int cFps = 30;
     private float mGlowRadius;
     private boolean mGlowInc;
-    //Game State
+    // Game State
     private State mState;
     private List<CellState> mClassicBoardSnapshot;
     private List<EnumSet<CellState>> mQuantumBoardSnapshot;
@@ -61,7 +62,7 @@ public class GameView extends View {
     private List<Integer> mEntangledCells;
     private boolean mGameOver;
     private List<Integer> mWinningCells;
-    //View State
+    // View State
     private Paint mLinePaint, mMarkPaint;
     private final Rect mTextRect = new Rect();
     private final Rect mSubscriptRect = new Rect();
@@ -129,12 +130,15 @@ public class GameView extends View {
         protected void onPopulateNodeForVirtualView(
                 int virtualViewId, AccessibilityNodeInfoCompat node) {
             RectF bounds = mGridCells[virtualViewId];
-            setBoundsInScreenFromBoundsInParent(node, new Rect(
-                    Math.round(bounds.left), Math.round(bounds.top),
-                    Math.round(bounds.right), Math.round(bounds.bottom)));
+            setBoundsInScreenFromBoundsInParent(
+                    node,
+                    new Rect(
+                            Math.round(bounds.left), Math.round(bounds.top),
+                            Math.round(bounds.right), Math.round(bounds.bottom)));
             node.setContentDescription(cellDescription(virtualViewId));
-            boolean enabled = mState.classicBoard().get(virtualViewId) != null ||
-                    (!mPaused && !mState.gameOver());
+            boolean enabled =
+                    mState.classicBoard().get(virtualViewId) != null
+                            || (!mPaused && !mState.gameOver());
             node.setEnabled(enabled);
             node.setClickable(enabled);
             if (enabled) {
@@ -145,8 +149,8 @@ public class GameView extends View {
         @Override
         protected boolean onPerformActionForVirtualView(
                 int virtualViewId, int action, Bundle arguments) {
-            if (action != AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId() ||
-                    !activateCell(virtualViewId)) {
+            if (action != AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId()
+                    || !activateCell(virtualViewId)) {
                 return false;
             }
             sendEventForVirtualView(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED);
@@ -175,11 +179,12 @@ public class GameView extends View {
         } else {
             state = mState.quantumBoard().get(cellIndex).toString();
         }
-        return getResources().getString(
-                R.string.game_cell_description,
-                cellIndex / 3 + 1,
-                cellIndex % 3 + 1,
-                state);
+        return getResources()
+                .getString(
+                        R.string.game_cell_description,
+                        cellIndex / 3 + 1,
+                        cellIndex % 3 + 1,
+                        state);
     }
 
     private boolean activateCell(int cellIndex) {
@@ -206,6 +211,7 @@ public class GameView extends View {
             mEntangledCells = null;
         }
     }
+
     private void checkGameOver() {
         mGameOver = mState.gameOver();
         if (mGameOver) {
@@ -217,6 +223,7 @@ public class GameView extends View {
             mWinningCells = null;
         }
     }
+
     private void repaint() {
         if (!mDirty) {
             invalidate();
@@ -227,6 +234,7 @@ public class GameView extends View {
     public boolean isPaused() {
         return mPaused;
     }
+
     public void pause() {
         if (mPaused) {
             return;
@@ -240,12 +248,14 @@ public class GameView extends View {
             mQuantumBoardSnapshot.add(EnumSet.copyOf(mState.quantumBoard().get(i)));
         }
     }
+
     public void refresh() {
         checkEntanglement();
         checkGameOver();
         mAccessibilityHelper.invalidateRoot();
         repaint();
     }
+
     public void resume() {
         if (!mPaused) {
             return;
@@ -255,12 +265,15 @@ public class GameView extends View {
         mClassicBoardSnapshot = null;
         mQuantumBoardSnapshot = null;
     }
+
     public void setOnGameOverListener(OnGameOverListener l) {
         mOnGameOverListener = l;
     }
+
     public void setOnInputListener(OnInputListener l) {
         mOnInputListener = l;
     }
+
     public State state() {
         return mState;
     }
@@ -298,7 +311,13 @@ public class GameView extends View {
                     mMarkPaint.getTextBounds(cCell.name(), 0, 1, mTextRect);
                     mMarkPaint.setTextSize(3 * cSubscriptSize);
                     mMarkPaint.getTextBounds(cCell.name(), 1, 2, mSubscriptRect);
-                    float x = cellRect.left + (cellRect.width() - mTextRect.width() - 3 * cSubscriptPadding - mSubscriptRect.width()) / 2f;
+                    float x =
+                            cellRect.left
+                                    + (cellRect.width()
+                                                    - mTextRect.width()
+                                                    - 3 * cSubscriptPadding
+                                                    - mSubscriptRect.width())
+                                            / 2f;
                     float y = cellRect.top + (cellRect.height() - mTextRect.height()) / 2f;
 
                     if (mGameOver && mWinningCells.contains(iGridIndex)) {
@@ -310,7 +329,13 @@ public class GameView extends View {
                     mMarkPaint.setTextSize(3 * cTextSize);
                     canvas.drawText(cCell.name(), 0, 1, x, y + mTextRect.height(), mMarkPaint);
                     mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    canvas.drawText(cCell.name(), 1, 2, x + mTextRect.width() + 3 * cSubscriptPadding, y + mTextRect.height(), mMarkPaint);
+                    canvas.drawText(
+                            cCell.name(),
+                            1,
+                            2,
+                            x + mTextRect.width() + 3 * cSubscriptPadding,
+                            y + mTextRect.height(),
+                            mMarkPaint);
                     mMarkPaint.clearShadowLayer();
                     continue;
                 }
@@ -327,7 +352,8 @@ public class GameView extends View {
                             mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
                             if (mEntangled) {
                                 if (mEntangledCells.contains(iGridIndex)) {
-                                    mMarkPaint.setShadowLayer(mGlowRadius, 0, 0, mMarkPaint.getColor());
+                                    mMarkPaint.setShadowLayer(
+                                            mGlowRadius, 0, 0, mMarkPaint.getColor());
                                     if (mark == mState.lastMove().cellState()) {
                                         mMarkPaint.setUnderlineText(true);
                                     }
@@ -338,21 +364,34 @@ public class GameView extends View {
                         } else if (cCell == mark) {
                             if (mGameOver && mWinningCells.contains(iGridIndex)) {
                                 mMarkPaint.setColor((cCell.ordinal() & 1) == 0 ? cXColor : cOColor);
-                                mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
+                                mMarkPaint.setShadowLayer(
+                                        cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
                             } else {
                                 mMarkPaint.setColor(cCollapsedColor);
                             }
                         } else {
                             mMarkPaint.setColor(cInactiveColor);
                         }
-                        float x = cellRect.left + iCellCol * cellRect.width() / 3f + (cellRect.width() / 3f - cTextWidth - cTextPadding) / 2f;
-                        float y = cellRect.top + iCellRow * cellRect.height() / 3f + (cellRect.height() / 3f - cTextHeight) / 2f;
+                        float x =
+                                cellRect.left
+                                        + iCellCol * cellRect.width() / 3f
+                                        + (cellRect.width() / 3f - cTextWidth - cTextPadding) / 2f;
+                        float y =
+                                cellRect.top
+                                        + iCellRow * cellRect.height() / 3f
+                                        + (cellRect.height() / 3f - cTextHeight) / 2f;
                         mMarkPaint.setTextSize(cTextSize);
                         canvas.drawText(mark.name(), 0, 1, x, y + cTextHeight, mMarkPaint);
                         mMarkPaint.setUnderlineText(false);
                         mMarkPaint.clearShadowLayer();
                         mMarkPaint.setTextSize(cSubscriptSize);
-                        canvas.drawText(mark.name(), 1, 2, x + cTextWidth + cSubscriptPadding, y + cTextHeight, mMarkPaint);
+                        canvas.drawText(
+                                mark.name(),
+                                1,
+                                2,
+                                x + cTextWidth + cSubscriptPadding,
+                                y + cTextHeight,
+                                mMarkPaint);
                     }
                 }
             }
@@ -380,6 +419,7 @@ public class GameView extends View {
             }
         }
     }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
@@ -387,47 +427,81 @@ public class GameView extends View {
         int size = Math.min(width, height);
         setMeasuredDimension(size, size);
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        mGridLines = new float[] {
-            w / 3f - cGridLinePadding, 0, w / 3f - cGridLinePadding, h,
-            w / 3f + cGridLinePadding, 0, w / 3f + cGridLinePadding, h,
-            2 * w / 3f - cGridLinePadding, 0, 2 * w / 3f - cGridLinePadding, h,
-            2 * w / 3f + cGridLinePadding, 0, 2 * w / 3f + cGridLinePadding, h,
-            0, w / 3f - cGridLinePadding, w, w / 3f - cGridLinePadding,
-            0, w / 3f + cGridLinePadding, w, w / 3f + cGridLinePadding,
-            0, 2 * w / 3f - cGridLinePadding, w, 2 * w / 3f - cGridLinePadding,
-            0, 2 * w / 3f + cGridLinePadding, w, 2 * w / 3f + cGridLinePadding
-        };
+        mGridLines =
+                new float[] {
+                    w / 3f - cGridLinePadding,
+                    0,
+                    w / 3f - cGridLinePadding,
+                    h,
+                    w / 3f + cGridLinePadding,
+                    0,
+                    w / 3f + cGridLinePadding,
+                    h,
+                    2 * w / 3f - cGridLinePadding,
+                    0,
+                    2 * w / 3f - cGridLinePadding,
+                    h,
+                    2 * w / 3f + cGridLinePadding,
+                    0,
+                    2 * w / 3f + cGridLinePadding,
+                    h,
+                    0,
+                    w / 3f - cGridLinePadding,
+                    w,
+                    w / 3f - cGridLinePadding,
+                    0,
+                    w / 3f + cGridLinePadding,
+                    w,
+                    w / 3f + cGridLinePadding,
+                    0,
+                    2 * w / 3f - cGridLinePadding,
+                    w,
+                    2 * w / 3f - cGridLinePadding,
+                    0,
+                    2 * w / 3f + cGridLinePadding,
+                    w,
+                    2 * w / 3f + cGridLinePadding
+                };
 
         mGridCells = new RectF[9];
         for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
             for (int iGridCol = 0; iGridCol < 3; ++iGridCol) {
                 int iGridIndex = 3 * iGridRow + iGridCol;
                 mGridCells[iGridIndex] = new RectF();
-                mGridCells[iGridIndex].left = iGridCol * w / 3f + (iGridCol == 0 ? 0 : 1) * cGridLinePadding;
-                mGridCells[iGridIndex].top = iGridRow * w / 3f + (iGridRow == 0 ? 0 : 1) * cGridLinePadding;
-                mGridCells[iGridIndex].right = (iGridCol + 1) * w / 3f - (iGridCol == 2 ? 0 : 1) * cGridLinePadding;
-                mGridCells[iGridIndex].bottom = (iGridRow + 1) * w / 3f - (iGridRow == 2 ? 0 : 1) * cGridLinePadding;
+                mGridCells[iGridIndex].left =
+                        iGridCol * w / 3f + (iGridCol == 0 ? 0 : 1) * cGridLinePadding;
+                mGridCells[iGridIndex].top =
+                        iGridRow * w / 3f + (iGridRow == 0 ? 0 : 1) * cGridLinePadding;
+                mGridCells[iGridIndex].right =
+                        (iGridCol + 1) * w / 3f - (iGridCol == 2 ? 0 : 1) * cGridLinePadding;
+                mGridCells[iGridIndex].bottom =
+                        (iGridRow + 1) * w / 3f - (iGridRow == 2 ? 0 : 1) * cGridLinePadding;
             }
         }
         mAccessibilityHelper.invalidateRoot();
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         return mAccessibilityHelper.dispatchKeyEvent(event) || super.dispatchKeyEvent(event);
     }
+
     @Override
     public boolean dispatchHoverEvent(MotionEvent event) {
         return mAccessibilityHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
     }
+
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         mAccessibilityHelper.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
+
     @Override
     public boolean performClick() {
         boolean handled = super.performClick();
@@ -436,30 +510,31 @@ public class GameView extends View {
         }
         return handled;
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         switch (e.getActionMasked()) {
-        case MotionEvent.ACTION_DOWN:
-            mPendingCell = cellAt(e.getX(), e.getY());
-            if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
-                setPressed(true);
-                return true;
-            }
-            break;
-        case MotionEvent.ACTION_UP:
-            if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
-                if (mPendingCell == cellAt(e.getX(), e.getY())) {
-                    performClick();
+            case MotionEvent.ACTION_DOWN:
+                mPendingCell = cellAt(e.getX(), e.getY());
+                if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
+                    setPressed(true);
+                    return true;
                 }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mPendingCell != ExploreByTouchHelper.INVALID_ID) {
+                    if (mPendingCell == cellAt(e.getX(), e.getY())) {
+                        performClick();
+                    }
+                    mPendingCell = ExploreByTouchHelper.INVALID_ID;
+                    setPressed(false);
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
                 mPendingCell = ExploreByTouchHelper.INVALID_ID;
                 setPressed(false);
                 return true;
-            }
-            break;
-        case MotionEvent.ACTION_CANCEL:
-            mPendingCell = ExploreByTouchHelper.INVALID_ID;
-            setPressed(false);
-            return true;
         }
         return super.onTouchEvent(e);
     }

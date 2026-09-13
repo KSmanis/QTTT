@@ -2,13 +2,13 @@ package com.gmail.smanis.konstantinos.qttt;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class OptionsActivity extends AppCompatActivity {
-    public final static String EXTRA_PLAYER = "com.gmail.smanis.konstantinos.qttt.PLAYER";
-    public final static String EXTRA_DIFFICULTY = "com.gmail.smanis.konstantinos.qttt.DIFFICULTY";
+    public static final String EXTRA_PLAYER = "com.gmail.smanis.konstantinos.qttt.PLAYER";
+    public static final String EXTRA_DIFFICULTY = "com.gmail.smanis.konstantinos.qttt.DIFFICULTY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

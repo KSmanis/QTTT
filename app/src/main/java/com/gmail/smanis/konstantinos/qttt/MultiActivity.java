@@ -1,11 +1,10 @@
 package com.gmail.smanis.konstantinos.qttt;
 
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MultiActivity extends AppCompatActivity {
     private GameView gameView;
@@ -20,30 +19,33 @@ public class MultiActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         gameView = findViewById(R.id.gameView);
-        gameView.setOnGameOverListener(res -> {
-            String message;
-            if (res.gameOver()) {
-                if (res.draw()) {
-                    message = getString(R.string.result_draw);
-                } else {
-                    message = getString(R.string.result_winner, res.winner());
-                }
-            } else {
-                message = getString(R.string.result_in_progress);
-            }
-            mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
-            mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
-            mSnackbar.show();
-        });
+        gameView.setOnGameOverListener(
+                res -> {
+                    String message;
+                    if (res.gameOver()) {
+                        if (res.draw()) {
+                            message = getString(R.string.result_draw);
+                        } else {
+                            message = getString(R.string.result_winner, res.winner());
+                        }
+                    } else {
+                        message = getString(R.string.result_in_progress);
+                    }
+                    mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
+                    mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
+                    mSnackbar.show();
+                });
         gameView.setOnInputListener(state -> invalidateOptionsMenu());
         state = gameView.state();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_multi, menu);
         menu.findItem(R.id.action_undo).setVisible(state.isUndoAvailable());
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -66,6 +68,7 @@ public class MultiActivity extends AppCompatActivity {
             mSnackbar = null;
         }
     }
+
     private void undoMove() {
         state.undoLastMove();
         gameView.refresh();

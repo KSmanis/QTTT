@@ -1,18 +1,17 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import org.junit.Test;
 
 public class StateTest {
     @Test
@@ -109,18 +108,19 @@ public class StateTest {
 
     @Test
     public void evaluatesACompleteWinFromTheBoard() {
-        State state = play(
-                new Move(0, 5, CellState.X1),
-                new Move(3, 7, CellState.O2),
-                new Move(2, 8, CellState.X3),
-                new Move(2, 7, CellState.O4),
-                new Move(6, 7, CellState.X5),
-                new Move(0, 7, CellState.O6),
-                new Move(0, 7, CellState.X7),
-                new Move(0, CellState.X7),
-                new Move(1, 4, CellState.O8),
-                new Move(1, 4, CellState.X9),
-                new Move(4, CellState.X9));
+        State state =
+                play(
+                        new Move(0, 5, CellState.X1),
+                        new Move(3, 7, CellState.O2),
+                        new Move(2, 8, CellState.X3),
+                        new Move(2, 7, CellState.O4),
+                        new Move(6, 7, CellState.X5),
+                        new Move(0, 7, CellState.O6),
+                        new Move(0, 7, CellState.X7),
+                        new Move(0, CellState.X7),
+                        new Move(1, 4, CellState.O8),
+                        new Move(1, 4, CellState.X9),
+                        new Move(4, CellState.X9));
 
         assertTrue(state.gameOver());
         assertEquals(GameResult.PlayerResult.COMPLETE_WIN, state.result().xResult());
@@ -129,19 +129,20 @@ public class StateTest {
 
     @Test
     public void evaluatesADrawFromTheBoard() {
-        State state = play(
-                new Move(2, 6, CellState.X1),
-                new Move(2, 8, CellState.O2),
-                new Move(0, 4, CellState.X3),
-                new Move(0, 4, CellState.O4),
-                new Move(4, CellState.O4),
-                new Move(3, 6, CellState.X5),
-                new Move(1, 7, CellState.O6),
-                new Move(5, 8, CellState.X7),
-                new Move(3, 6, CellState.O8),
-                new Move(3, CellState.O8),
-                new Move(1, 7, CellState.X9),
-                new Move(7, CellState.X9));
+        State state =
+                play(
+                        new Move(2, 6, CellState.X1),
+                        new Move(2, 8, CellState.O2),
+                        new Move(0, 4, CellState.X3),
+                        new Move(0, 4, CellState.O4),
+                        new Move(4, CellState.O4),
+                        new Move(3, 6, CellState.X5),
+                        new Move(1, 7, CellState.O6),
+                        new Move(5, 8, CellState.X7),
+                        new Move(3, 6, CellState.O8),
+                        new Move(3, CellState.O8),
+                        new Move(1, 7, CellState.X9),
+                        new Move(7, CellState.X9));
 
         assertTrue(state.gameOver());
         assertTrue(state.result().draw());
@@ -154,25 +155,59 @@ public class StateTest {
                 GameResult.PlayerResult.LOSS,
                 Player.O,
                 Arrays.asList(2, 4, 6),
-                "3,7", "2,4", "1,7", "1,5", "7,8", "4,8", "7,8", "7",
-                "0,6", "0,6", "0");
+                "3,7",
+                "2,4",
+                "1,7",
+                "1,5",
+                "7,8",
+                "4,8",
+                "7,8",
+                "7",
+                "0,6",
+                "0,6",
+                "0");
         assertTerminalResult(
                 GameResult.PlayerResult.DOUBLE_COMPLETE_WIN,
                 Player.X,
                 Arrays.asList(3, 4, 5, 0, 4, 8),
-                "4,5", "2,4", "0,4", "1,4", "0,4", "0", "3,7", "6,8",
-                "3,6", "3,7", "3");
+                "4,5",
+                "2,4",
+                "0,4",
+                "1,4",
+                "0,4",
+                "0",
+                "3,7",
+                "6,8",
+                "3,6",
+                "3,7",
+                "3");
         assertTerminalResult(
                 GameResult.PlayerResult.NARROW_WIN_SECOND,
                 Player.O,
                 Arrays.asList(0, 1, 2, 3, 4, 5),
-                "0,2", "4,7", "2,4", "5,7", "7,8", "1,3", "4,8", "8",
-                "1,6", "1,6", "1");
+                "0,2",
+                "4,7",
+                "2,4",
+                "5,7",
+                "7,8",
+                "1,3",
+                "4,8",
+                "8",
+                "1,6",
+                "1,6",
+                "1");
         assertTerminalResult(
                 GameResult.PlayerResult.NARROW_WIN_FIRST,
                 Player.X,
                 Arrays.asList(0, 3, 6, 2, 5, 8),
-                "3,4", "2,8", "1,4", "0,4", "0,2", "5,8", "3,6", "6,8",
+                "3,4",
+                "2,8",
+                "1,4",
+                "0,4",
+                "0,2",
+                "5,8",
+                "3,6",
+                "6,8",
                 "8");
     }
 
@@ -181,8 +216,9 @@ public class StateTest {
         State state = new State();
         String openingBook = "():1,13\n0,8\n2,6\n\n";
 
-        List<Move> moves = state.lookupNextMove(new ByteArrayInputStream(
-                openingBook.getBytes(StandardCharsets.UTF_8)));
+        List<Move> moves =
+                state.lookupNextMove(
+                        new ByteArrayInputStream(openingBook.getBytes(StandardCharsets.UTF_8)));
 
         assertEquals(2, moves.size());
         assertEquals("0,8", moves.get(0).toShortString());

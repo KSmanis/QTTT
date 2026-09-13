@@ -1,14 +1,12 @@
 package com.gmail.smanis.konstantinos.qttt;
 
 import android.view.View;
-
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class MainActivitySnapshotTest {
-    @Rule
-    public final Paparazzi paparazzi = new Paparazzi();
+    @Rule public final Paparazzi paparazzi = new Paparazzi();
 
     @Test
     public void mainScreen() {

@@ -20,6 +20,7 @@ repos:
         priority: &write-serial null
       - id: trailing-whitespace
         priority: *write-serial
+  # General
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 44.65.5
     hooks:
@@ -49,12 +50,22 @@ repos:
     hooks:
       - id: actionlint
         priority: *read-only
+  # Java
+  - repo: local
+    hooks:
+      - id: spotless
+        name: spotless
+        entry: ./gradlew :app:spotlessApply
+        language: system
+        pass_filenames: false
+        priority: &write-parallel 999
+        types: ["java"]
   # JSON
   - repo: builtin
     hooks:
       - id: pretty-format-json
         args: ["--autofix", "--no-ensure-ascii"]
-        priority: &write-parallel 999
+        priority: *write-parallel
       - id: check-json
         priority: *read-only
   # Markdown

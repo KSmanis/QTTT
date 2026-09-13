@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'app.cash.paparazzi'
+    id 'com.diffplug.spotless'
 }
 
 android {
@@ -44,6 +45,14 @@ java {
         languageVersion = JavaLanguageVersion.of(
             rootProject.file('.java-version').text.trim().toInteger()
         )
+    }
+}
+
+spotless {
+    java {
+        target 'src/*/java/**/*.java'
+        removeUnusedImports()
+        googleJavaFormat().aosp()
     }
 }
 
