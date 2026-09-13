@@ -72,7 +72,7 @@ repos:
         priority: *read-only
   # TOML
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.4
+    rev: v0.25.0
     hooks:
       - id: toml-sort-fix
         args: ["--all", "--in-place", "--trailing-comma-inline-array"]
