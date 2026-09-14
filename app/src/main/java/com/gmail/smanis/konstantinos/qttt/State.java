@@ -15,8 +15,6 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 enum CellState {
     X1,
@@ -149,47 +147,6 @@ public class State {
             }
         }
         return ret;
-    }
-
-    public void botPlay() {
-        Scanner s = new Scanner(System.in);
-        char mark;
-        do {
-            System.out.print("Select your mark (X or O): ");
-            mark = s.next().charAt(0);
-        } while (mark != 'X' && mark != 'O');
-        Player humanPlayer = (mark == 'X' ? Player.X : Player.O);
-
-        while (!gameOver()) {
-            System.out.println(this);
-            if (currentPlayer() == humanPlayer) {
-                System.out.println("It's your turn!");
-
-                System.out.println("Available moves:");
-                List<Move> moves = availableMoves(false);
-                for (int i = 0; i < moves.size(); ++i) {
-                    System.out.println(
-                            String.format(Locale.getDefault(), "%2d: %s", i + 1, moves.get(i)));
-                }
-                int input;
-                do {
-                    System.out.print(
-                            String.format(
-                                    Locale.getDefault(),
-                                    "Input your choice (1-%d): ",
-                                    moves.size()));
-                    input = s.nextInt();
-                } while (input < 1 || input > moves.size());
-                applyMove(moves.get(input - 1));
-            } else {
-                System.out.println("It's the computer's turn!");
-
-                applyMove(minimaxMove());
-            }
-        }
-        System.out.println(this);
-        System.out.println(result());
-        s.close();
     }
 
     private int cellPair(CellState mark, int cellIndex) {
@@ -475,32 +432,6 @@ public class State {
             ret = EnumSet.of((cs[0].ordinal() & 1) == 0 ? Player.X : Player.O);
         }
         return ret;
-    }
-
-    public void listPlay() {
-        Scanner s = new Scanner(System.in);
-        System.out.println(this);
-        List<Move> moves = availableMoves(false);
-        while (!moves.isEmpty()) {
-            System.out.println("Available moves:");
-            for (int i = 0; i < moves.size(); ++i) {
-                System.out.println(
-                        String.format(Locale.getDefault(), "%2d: %s", i + 1, moves.get(i)));
-            }
-            int input;
-            do {
-                System.out.print(
-                        String.format(
-                                Locale.getDefault(), "Input your choice (1-%d): ", moves.size()));
-                input = s.nextInt();
-            } while (input < 1 || input > moves.size());
-            applyMove(moves.get(input - 1));
-
-            System.out.println(this);
-            moves = availableMoves(false);
-        }
-        System.out.println(result());
-        s.close();
     }
 
     public List<Move> lookupNextMove(InputStream is) {
