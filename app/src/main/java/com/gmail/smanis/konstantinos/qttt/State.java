@@ -29,8 +29,27 @@ enum CellState {
 }
 
 enum Player {
-    X,
-    O
+    X(0),
+    O(1);
+
+    private final int id;
+
+    Player(int id) {
+        this.id = id;
+    }
+
+    int id() {
+        return id;
+    }
+
+    static Player fromId(int id) {
+        for (Player player : values()) {
+            if (player.id == id) {
+                return player;
+            }
+        }
+        throw new IllegalArgumentException("Unknown player id: " + id);
+    }
 }
 
 public class State {

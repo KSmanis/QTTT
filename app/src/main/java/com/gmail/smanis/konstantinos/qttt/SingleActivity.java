@@ -18,11 +18,30 @@ import java.util.Random;
 
 public class SingleActivity extends AppCompatActivity {
     enum Difficulty {
-        Random,
-        Easy,
-        Medium,
-        Hard,
-        Optimal
+        Random(0),
+        Easy(1),
+        Medium(2),
+        Hard(3),
+        Optimal(4);
+
+        private final int id;
+
+        Difficulty(int id) {
+            this.id = id;
+        }
+
+        int id() {
+            return id;
+        }
+
+        static Difficulty fromId(int id) {
+            for (Difficulty difficulty : values()) {
+                if (difficulty.id == id) {
+                    return difficulty;
+                }
+            }
+            throw new IllegalArgumentException("Unknown difficulty id: " + id);
+        }
     }
 
     private ProgressBar progressBar;
@@ -91,9 +110,13 @@ public class SingleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mHumanPlayer = Player.values()[intent.getIntExtra(OptionsActivity.EXTRA_PLAYER, 0)];
+        if (!intent.hasExtra(OptionsActivity.EXTRA_PLAYER)
+                || !intent.hasExtra(OptionsActivity.EXTRA_DIFFICULTY)) {
+            throw new IllegalArgumentException("SingleActivity options are missing");
+        }
+        mHumanPlayer = Player.fromId(intent.getIntExtra(OptionsActivity.EXTRA_PLAYER, -1));
         mGameDifficulty =
-                Difficulty.values()[intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, 2)];
+                Difficulty.fromId(intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, -1));
 
         progressBar = findViewById(R.id.progressBar);
         gameView = findViewById(R.id.gameView);

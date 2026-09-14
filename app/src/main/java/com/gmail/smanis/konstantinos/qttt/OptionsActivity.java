@@ -2,7 +2,6 @@ package com.gmail.smanis.konstantinos.qttt;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,17 +20,39 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void start() {
         RadioGroup radioGroupPlayer = findViewById(R.id.radioGroup_player);
-        int radioButtonPlayerId = radioGroupPlayer.getCheckedRadioButtonId();
-        RadioButton radioButtonPlayer = findViewById(radioButtonPlayerId);
-        int playerIndex = radioGroupPlayer.indexOfChild(radioButtonPlayer);
         RadioGroup radioGroupDifficulty = findViewById(R.id.radioGroup_difficulty);
-        int radioButtonDifficultyId = radioGroupDifficulty.getCheckedRadioButtonId();
-        RadioButton radioButtonDifficulty = findViewById(radioButtonDifficultyId);
-        int difficultyIndex = radioGroupDifficulty.indexOfChild(radioButtonDifficulty);
 
         Intent intent = new Intent(this, SingleActivity.class);
-        intent.putExtra(EXTRA_PLAYER, playerIndex);
-        intent.putExtra(EXTRA_DIFFICULTY, difficultyIndex);
+        intent.putExtra(
+                EXTRA_PLAYER,
+                playerForRadioButton(radioGroupPlayer.getCheckedRadioButtonId()).id());
+        intent.putExtra(
+                EXTRA_DIFFICULTY,
+                difficultyForRadioButton(radioGroupDifficulty.getCheckedRadioButtonId()).id());
         startActivity(intent);
+    }
+
+    static Player playerForRadioButton(int id) {
+        if (id == R.id.radioButton_x) {
+            return Player.X;
+        } else if (id == R.id.radioButton_o) {
+            return Player.O;
+        }
+        throw new IllegalArgumentException("Unknown player radio button id: " + id);
+    }
+
+    static SingleActivity.Difficulty difficultyForRadioButton(int id) {
+        if (id == R.id.radioButton_random) {
+            return SingleActivity.Difficulty.Random;
+        } else if (id == R.id.radioButton_easy) {
+            return SingleActivity.Difficulty.Easy;
+        } else if (id == R.id.radioButton_medium) {
+            return SingleActivity.Difficulty.Medium;
+        } else if (id == R.id.radioButton_hard) {
+            return SingleActivity.Difficulty.Hard;
+        } else if (id == R.id.radioButton_optimal) {
+            return SingleActivity.Difficulty.Optimal;
+        }
+        throw new IllegalArgumentException("Unknown difficulty radio button id: " + id);
     }
 }
