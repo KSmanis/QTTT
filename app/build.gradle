@@ -5,7 +5,6 @@ plugins {
 }
 
 android {
-    enableKotlin = false
     namespace = 'com.gmail.smanis.konstantinos.qttt'
     compileSdk = 37
 
