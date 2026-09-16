@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Random;
 
 public class SingleActivity extends AppCompatActivity {
+    private static final String STATE_HISTORY = "single.state.history";
+
     enum Difficulty {
         Random(0),
         Easy(1),
@@ -52,17 +54,20 @@ public class SingleActivity extends AppCompatActivity {
     private Difficulty mGameDifficulty;
     private Random mRng;
     private Thread mMinimaxThread;
+    private long mMinimaxGeneration;
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     private static class MinimaxTask implements Runnable {
         private final WeakReference<SingleActivity> mActivity;
         private final State mState;
         private final AssetManager mAssets;
+        private final long mGeneration;
 
-        MinimaxTask(SingleActivity activity) {
+        MinimaxTask(SingleActivity activity, long generation) {
             mActivity = new WeakReference<>(activity);
-            mState = activity.state;
+            mState = new State(activity.state);
             mAssets = activity.getApplicationContext().getAssets();
+            mGeneration = generation;
         }
 
         @Override
@@ -77,7 +82,7 @@ public class SingleActivity extends AppCompatActivity {
                         if (activity != null
                                 && !activity.isFinishing()
                                 && !activity.isDestroyed()) {
-                            activity.finishBotMove(moves);
+                            activity.finishBotMove(mGeneration, moves);
                         }
                     });
         }
@@ -138,9 +143,19 @@ public class SingleActivity extends AppCompatActivity {
                     botPlay();
                 });
         state = gameView.state();
+        if (savedInstanceState != null) {
+            state.restore(savedInstanceState.getString(STATE_HISTORY));
+            gameView.refresh();
+        }
         mRng = new Random();
 
         botPlay();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_HISTORY, state.moveHistory());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -168,9 +183,7 @@ public class SingleActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (mMinimaxThread != null) {
-            mMinimaxThread.interrupt();
-        }
+        cancelMinimax();
         super.onDestroy();
     }
 
@@ -208,7 +221,7 @@ public class SingleActivity extends AppCompatActivity {
         state.applyMove(pool.get(mRng.nextInt(pool.size())));
     }
 
-    private void botPlay() {
+    void botPlay() {
         if (state.currentPlayer() == mHumanPlayer || state.gameOver()) {
             return;
         }
@@ -222,12 +235,17 @@ public class SingleActivity extends AppCompatActivity {
             gameView.pause();
             invalidateOptionsMenu();
             progressBar.setVisibility(View.VISIBLE);
-            mMinimaxThread = new Thread(new MinimaxTask(this));
+            long generation = ++mMinimaxGeneration;
+            mMinimaxThread = new Thread(new MinimaxTask(this, generation));
             mMinimaxThread.start();
         }
     }
 
-    private void finishBotMove(List<Move> moves) {
+    private void finishBotMove(long generation, List<Move> moves) {
+        if (generation != mMinimaxGeneration || isFinishing() || isDestroyed()) {
+            return;
+        }
+
         mMinimaxThread = null;
         applyMove(moves);
         gameView.resume();
@@ -237,8 +255,10 @@ public class SingleActivity extends AppCompatActivity {
         botPlay();
     }
 
-    private void resetBoard() {
+    void resetBoard() {
+        cancelMinimax();
         state.reset();
+        gameView.resume();
         gameView.refresh();
         invalidateOptionsMenu();
         if (mSnackbar != null) {
@@ -248,7 +268,9 @@ public class SingleActivity extends AppCompatActivity {
         botPlay();
     }
 
-    private void undoMove() {
+    void undoMove() {
+        cancelMinimax();
+        gameView.resume();
         if (state.hasIncompleteInput()) {
             state.undoLastMove();
         } else {
@@ -264,6 +286,17 @@ public class SingleActivity extends AppCompatActivity {
         if (mSnackbar != null) {
             mSnackbar.dismiss();
             mSnackbar = null;
+        }
+    }
+
+    private void cancelMinimax() {
+        ++mMinimaxGeneration;
+        if (mMinimaxThread != null) {
+            mMinimaxThread.interrupt();
+            mMinimaxThread = null;
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }

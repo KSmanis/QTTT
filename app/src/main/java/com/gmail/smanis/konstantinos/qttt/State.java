@@ -66,6 +66,57 @@ public class State {
         reset();
     }
 
+    State(State source) {
+        mClassicBoard = new ArrayList<>(source.mClassicBoard);
+        mQuantumBoard = new ArrayList<>(source.mQuantumBoard.size());
+        for (EnumSet<CellState> cell : source.mQuantumBoard) {
+            mQuantumBoard.add(EnumSet.copyOf(cell));
+        }
+        mTurn = source.mTurn;
+        mDepth = source.mDepth;
+        mLastMove = copyMove(source.mLastMove);
+        mInput = copyMove(source.mInput);
+        mEntangled = source.mEntangled;
+        if (source.mResult != null) {
+            mResult = new GameResult();
+            mResult.setXResult(source.mResult.xResult());
+        }
+    }
+
+    private static Move copyMove(Move source) {
+        if (source == null) {
+            return null;
+        }
+
+        Move copy =
+                source.type() == Move.Type.REGULAR
+                        ? new Move(
+                                source.firstCellIndex(),
+                                source.secondCellIndex(),
+                                source.cellState())
+                        : new Move(source.firstCellIndex(), source.cellState());
+        copy.setUtility(source.utility());
+        copy.setPreviousMove(copyMove(source.previousMove()));
+        if (source.collapsedCells() != null) {
+            copy.setCollapsedCells(new ArrayList<>(source.collapsedCells()));
+        }
+        return copy;
+    }
+
+    void restore(String history) {
+        reset();
+        if (history == null || history.equals("()")) {
+            return;
+        }
+
+        String encodedMoves = history.substring(1, history.length() - 1);
+        for (String encodedMove : encodedMoves.split("\\)\\(")) {
+            Move move = Move.valueOf(encodedMove);
+            move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
+            applyMove(move);
+        }
+    }
+
     public boolean applyInput(int cellIndex) {
         if (gameOver()) {
             return false;
