@@ -86,13 +86,4 @@ public class GameResult {
 
         return (xScore() > oScore() ? Player.X : Player.O);
     }
-
-    @Override
-    public String toString() {
-        if (gameOver()) {
-            return String.format("GameResult [Game Over; X: %s; O: %s]", xResult(), oResult());
-        } else {
-            return "GameResult [Game In Progress]";
-        }
-    }
 }

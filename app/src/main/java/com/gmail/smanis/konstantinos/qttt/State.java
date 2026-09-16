@@ -642,28 +642,4 @@ public class State {
         }
         return ret;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
-            for (int iCellRow = 0; iCellRow < 3; ++iCellRow) {
-                for (int iGridCol = 0; iGridCol < 3; ++iGridCol) {
-                    CellState cCell = mClassicBoard.get(iGridRow * 3 + iGridCol);
-                    EnumSet<CellState> qCell = mQuantumBoard.get(iGridRow * 3 + iGridCol);
-                    for (int iCellCol = 0; iCellCol < 3; ++iCellCol) {
-                        CellState mark = CellState.values()[iCellRow * 3 + iCellCol];
-                        sb.append(qCell.contains(mark) ? mark.toString() : "  ");
-                        sb.append(cCell != null && cCell == mark ? '*' : ' ');
-                    }
-                    sb.append(iGridCol < 2 ? "|" : System.getProperty("line.separator"));
-                }
-            }
-            if (iGridRow < 2) {
-                sb.append("-----------------------------")
-                        .append(System.getProperty("line.separator"));
-            }
-        }
-        return sb.toString();
-    }
 }

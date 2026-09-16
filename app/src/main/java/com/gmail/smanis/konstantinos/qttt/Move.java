@@ -125,43 +125,6 @@ public class Move {
         }
     }
 
-    @Override
-    public String toString() {
-        if (mType == Type.REGULAR) {
-            if (mUtility != null) {
-                return String.format(
-                        Locale.ROOT,
-                        "Move [%s; %s; %d; %d] -> %s",
-                        mType,
-                        mCellState,
-                        mCellIndex1,
-                        mCellIndex2,
-                        mUtility);
-            } else {
-                return String.format(
-                        Locale.ROOT,
-                        "Move [%s; %s; %d; %d]",
-                        mType,
-                        mCellState,
-                        mCellIndex1,
-                        mCellIndex2);
-            }
-        } else {
-            if (mUtility != null) {
-                return String.format(
-                        Locale.ROOT,
-                        "Move [%s; %s; %d] -> %s",
-                        mType,
-                        mCellState,
-                        mCellIndex1,
-                        mUtility);
-            } else {
-                return String.format(
-                        Locale.ROOT, "Move [%s; %s; %d]", mType, mCellState, mCellIndex1);
-            }
-        }
-    }
-
     public static Move valueOf(String s) {
         String[] fields = s.split(",");
         if (fields.length == 2) {

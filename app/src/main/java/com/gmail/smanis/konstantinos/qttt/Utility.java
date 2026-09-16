@@ -28,11 +28,6 @@ public class Utility {
         return String.format(Locale.ROOT, "%d,%d", mValue, mDepth);
     }
 
-    @Override
-    public String toString() {
-        return String.format(Locale.ROOT, "Utility [Value: %d; Depth: %d]", mValue, mDepth);
-    }
-
     public static Utility min(Utility a, Utility b) {
         if (a.mValue != b.mValue) {
             return (a.mValue < b.mValue ? a : b);
