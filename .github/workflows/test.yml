@@ -9,7 +9,7 @@ jobs:
   gradle:
     name: ${{ matrix.id }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -18,7 +18,9 @@ jobs:
           - bundleRelease
           - compileOpeningBookGenerator
           - lintDebug
+          - pixel2Api27DebugAndroidTest
           - pixel2Api36DebugAndroidTest
+          - pixel2Api37DebugAndroidTest
           - spotlessCheck
           - verifyPaparazziDebug
     steps:
@@ -33,14 +35,22 @@ jobs:
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
           log-accepted-android-sdk-licenses: false
-          packages: platform-tools
+          packages: ${{ matrix.id == 'pixel2Api27DebugAndroidTest' && 'emulator' || '' }} platform-tools
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
       - name: Enable KVM
-        if: matrix.id == 'pixel2Api36DebugAndroidTest'
+        if: contains(matrix.id, 'DebugAndroidTest')
         run: sudo chmod 666 /dev/kvm
       - name: Run Gradle task
         run: >-
           ./gradlew --no-daemon
-          ${{ matrix.id == 'pixel2Api36DebugAndroidTest' && '-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect' || '' }}
+          ${{ contains(matrix.id, 'DebugAndroidTest') && '-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect' || '' }}
           :app:${{ matrix.id }}
+      - name: Upload Android test reports
+        if: failure() && contains(matrix.id, 'DebugAndroidTest')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: android-test-reports-${{ matrix.id }}
+          path: |
+            app/build/reports/androidTests/managedDevice/**
+            app/build/outputs/androidTest-results/managedDevice/**

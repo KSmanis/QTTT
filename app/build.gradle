@@ -29,10 +29,22 @@ android {
         animationsDisabled = true
         managedDevices {
             localDevices {
+                create("pixel2Api27") {
+                    device = "Pixel 2"
+                    sdkVersion = 27
+                    systemImageSource = "aosp"
+                    testedAbi = "x86"
+                }
                 create("pixel2Api36") {
                     device = "Pixel 2"
                     sdkVersion = 36
                     systemImageSource = "aosp-atd"
+                    testedAbi = "x86_64"
+                }
+                create("pixel2Api37") {
+                    device = "Pixel 2"
+                    sdkVersion = 37
+                    systemImageSource = "google"
                     testedAbi = "x86_64"
                 }
             }
