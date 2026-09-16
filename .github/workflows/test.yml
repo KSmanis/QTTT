@@ -13,7 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        id: [assembleDebug, lintDebug, spotlessCheck, verifyPaparazziDebug, pixel2Api36DebugAndroidTest, bundleRelease]
+        id:
+          - assembleDebug
+          - bundleRelease
+          - compileOpeningBookGenerator
+          - lintDebug
+          - pixel2Api36DebugAndroidTest
+          - spotlessCheck
+          - verifyPaparazziDebug
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 plugins {
     id 'com.android.application'
     id 'app.cash.paparazzi'
@@ -38,11 +40,40 @@ android {
     }
 }
 
+def javaVersion = rootProject.file('.java-version').text.trim().toInteger()
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(
-            rootProject.file('.java-version').text.trim().toInteger()
-        )
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+}
+
+def openingBookClasses = layout.buildDirectory.dir('opening-book/classes')
+def openingBookSources = files(
+    'src/main/java/com/gmail/smanis/konstantinos/qttt/GameResult.java',
+    'src/main/java/com/gmail/smanis/konstantinos/qttt/Move.java',
+    'src/main/java/com/gmail/smanis/konstantinos/qttt/State.java',
+    'src/main/java/com/gmail/smanis/konstantinos/qttt/Utility.java',
+    rootProject.file('tools/OpeningBookGenerator.java')
+)
+
+def compileOpeningBookGenerator = tasks.register('compileOpeningBookGenerator', JavaCompile) {
+    source(openingBookSources)
+    destinationDirectory.set(openingBookClasses)
+    classpath = files()
+    options.release.set(javaVersion)
+    options.encoding = 'UTF-8'
+}
+
+tasks.register('generateOpeningBook', JavaExec) {
+    def openingBookTurn = providers.gradleProperty('turn').orElse('')
+
+    dependsOn(compileOpeningBookGenerator)
+    classpath = files(openingBookClasses)
+    mainClass.set('com.gmail.smanis.konstantinos.qttt.OpeningBookGenerator')
+    workingDir(rootProject.projectDir)
+    doFirst {
+        args(openingBookTurn.get())
     }
 }
 

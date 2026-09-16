@@ -1,12 +1,9 @@
 package com.gmail.smanis.konstantinos.qttt;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -283,138 +280,6 @@ public class State {
 
     public boolean gameOver() {
         return result().gameOver();
-    }
-
-    public void generateOpeningMoves(int turn) throws FileNotFoundException {
-        System.setOut(new PrintStream(new FileOutputStream(turn + ".txt")));
-        switch (turn) {
-            case 0:
-                printMoves();
-                break;
-            case 1:
-                for (Move m1 : availableMoves(false)) {
-                    applyMove(m1);
-                    printMoves();
-                    undoLastMove();
-                }
-                break;
-            case 2:
-                for (Move m1 : availableMoves(false)) {
-                    applyMove(m1);
-                    for (Move m2 : availableMoves(false)) {
-                        applyMove(m2);
-                        printMoves();
-                        if (entangled()) {
-                            for (Move m2e : availableMoves(false)) {
-                                applyMove(m2e);
-                                printMoves();
-                                undoLastMove();
-                            }
-                        }
-                        undoLastMove();
-                    }
-                    undoLastMove();
-                }
-                break;
-            case 3:
-                for (Move m1 : availableMoves(false)) {
-                    applyMove(m1);
-                    for (Move m2 : availableMoves(false)) {
-                        applyMove(m2);
-                        if (entangled()) {
-                            for (Move m2e : availableMoves(false)) {
-                                applyMove(m2e);
-                                for (Move m3 : availableMoves(false)) {
-                                    applyMove(m3);
-                                    printMoves();
-                                    undoLastMove();
-                                }
-                                undoLastMove();
-                            }
-                        } else {
-                            for (Move m3 : availableMoves(false)) {
-                                applyMove(m3);
-                                printMoves();
-                                if (entangled()) {
-                                    for (Move m3e : availableMoves(false)) {
-                                        applyMove(m3e);
-                                        printMoves();
-                                        undoLastMove();
-                                    }
-                                }
-                                undoLastMove();
-                            }
-                        }
-                        undoLastMove();
-                    }
-                    undoLastMove();
-                }
-                break;
-            case 4:
-                for (Move m1 : availableMoves(false)) {
-                    applyMove(m1);
-                    for (Move m2 : availableMoves(false)) {
-                        applyMove(m2);
-                        if (entangled()) {
-                            for (Move m2e : availableMoves(false)) {
-                                applyMove(m2e);
-                                for (Move m3 : availableMoves(false)) {
-                                    applyMove(m3);
-                                    for (Move m4 : availableMoves(false)) {
-                                        applyMove(m4);
-                                        printMoves();
-                                        if (entangled()) {
-                                            for (Move m4e : availableMoves(false)) {
-                                                applyMove(m4e);
-                                                printMoves();
-                                                undoLastMove();
-                                            }
-                                        }
-                                        undoLastMove();
-                                    }
-                                    undoLastMove();
-                                }
-                                undoLastMove();
-                            }
-                        } else {
-                            for (Move m3 : availableMoves(false)) {
-                                applyMove(m3);
-                                if (entangled()) {
-                                    for (Move m3e : availableMoves(false)) {
-                                        applyMove(m3e);
-                                        for (Move m4 : availableMoves(false)) {
-                                            applyMove(m4);
-                                            printMoves();
-                                            undoLastMove();
-                                        }
-                                        undoLastMove();
-                                    }
-                                } else {
-                                    for (Move m4 : availableMoves(false)) {
-                                        applyMove(m4);
-                                        printMoves();
-                                        if (entangled()) {
-                                            for (Move m4e : availableMoves(false)) {
-                                                applyMove(m4e);
-                                                printMoves();
-                                                undoLastMove();
-                                            }
-                                        }
-                                        undoLastMove();
-                                    }
-                                }
-                                undoLastMove();
-                            }
-                        }
-                        undoLastMove();
-                    }
-                    undoLastMove();
-                }
-                break;
-            default:
-                break;
-        }
-        System.setOut(System.out);
     }
 
     public boolean hasIncompleteInput() {
@@ -706,16 +571,6 @@ public class State {
             mResult = resultEvaluation();
         }
         return mResult;
-    }
-
-    private void printMoves() {
-        List<Move> moves = minimaxMoves();
-        System.out.println(
-                String.format("%s:%s", moveHistory(), moves.get(0).utility().toShortString()));
-        for (Move m : moves) {
-            System.out.println(m.toShortString());
-        }
-        System.out.println();
     }
 
     public void undoLastMove() {
