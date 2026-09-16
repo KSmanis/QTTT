@@ -1,3 +1,6 @@
+[settings]
+java.shorthand_vendor = "temurin"
+
 [tasks]
 format = "./gradlew :app:spotlessApply"
 test = { depends = ["test:*"] }
@@ -12,4 +15,5 @@ test = { depends = ["test:*"] }
 "test:verifyPaparazziDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 
 [tools]
+java = "21.0.12+101.0.LTS"
 prek = "0.5.3"

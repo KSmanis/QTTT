@@ -52,7 +52,7 @@ android {
     }
 }
 
-def javaVersion = rootProject.file('.java-version').text.trim().toInteger()
+def javaVersion = rootProject.file('mise.toml').text.find(/(?m)^java = "(\d+)/) { _, major -> major.toInteger() }
 
 java {
     toolchain {
