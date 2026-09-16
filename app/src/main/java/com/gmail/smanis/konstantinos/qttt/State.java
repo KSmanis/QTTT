@@ -368,19 +368,6 @@ public class State {
         return moves;
     }
 
-    public Move minimaxMove() {
-        List<Move> moves = minimaxEvaluation();
-        if (moves.isEmpty()) {
-            return null;
-        }
-
-        if (currentPlayer() == Player.X) {
-            return Collections.max(moves, new Move.MaxUtilComparator());
-        } else {
-            return Collections.min(moves, new Move.MinUtilComparator());
-        }
-    }
-
     public List<Move> minimaxMoves() {
         List<Move> moves = minimaxEvaluation();
         if (moves.isEmpty()) {
