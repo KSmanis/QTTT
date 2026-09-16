@@ -27,7 +27,7 @@ public class GameView extends View {
     }
 
     public interface OnInputListener {
-        void onInput(State s);
+        void onInput();
     }
 
     // Listeners
@@ -406,7 +406,7 @@ public class GameView extends View {
         if (mHasInput) {
             mHasInput = false;
             if (mOnInputListener != null) {
-                mOnInputListener.onInput(mState);
+                mOnInputListener.onInput();
             }
         }
     }

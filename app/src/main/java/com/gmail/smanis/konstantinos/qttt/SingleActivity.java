@@ -133,7 +133,7 @@ public class SingleActivity extends AppCompatActivity {
                     mSnackbar.show();
                 });
         gameView.setOnInputListener(
-                state -> {
+                () -> {
                     invalidateOptionsMenu();
                     botPlay();
                 });

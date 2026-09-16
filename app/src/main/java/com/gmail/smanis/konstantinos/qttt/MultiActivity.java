@@ -31,7 +31,7 @@ public class MultiActivity extends AppCompatActivity {
                     mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
                     mSnackbar.show();
                 });
-        gameView.setOnInputListener(state -> invalidateOptionsMenu());
+        gameView.setOnInputListener(() -> invalidateOptionsMenu());
         state = gameView.state();
     }
 
