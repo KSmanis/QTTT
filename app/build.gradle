@@ -73,7 +73,7 @@ def compileOpeningBookGenerator = tasks.register('compileOpeningBookGenerator', 
     source(openingBookSources)
     destinationDirectory.set(openingBookClasses)
     classpath = files()
-    options.release.set(javaVersion)
+    options.release.set(javaVersion.toInteger())
     options.encoding = 'UTF-8'
 }
 
