@@ -16,15 +16,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Set up mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+      - name: Cache prek hooks
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          python-version: '3.x'
-      - name: Set up prek
-        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
-        with:
-          install-only: true
+          path: ~/.cache/prek
+          key: prek|${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: prek|
       - name: Run gitlint
-        run: prek run --hook-stage manual gitlint-ci
+        run: mise exec -- prek run --hook-stage manual gitlint-ci
       - name: Run prek
-        run: prek run --all-files --show-diff-on-failure
+        run: mise exec -- prek run --all-files --show-diff-on-failure

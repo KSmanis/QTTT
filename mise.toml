@@ -1,0 +1,15 @@
+[tasks]
+format = "./gradlew :app:spotlessApply"
+test = { depends = ["test:*"] }
+"test:assembleDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:bundleRelease" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:compileOpeningBookGenerator" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:lintDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:pixel2Api27DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:pixel2Api36DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:pixel2Api37DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:spotlessCheck" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+"test:verifyPaparazziDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
+
+[tools]
+prek = "0.5.3"
