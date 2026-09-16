@@ -22,14 +22,10 @@ public class MultiActivity extends AppCompatActivity {
         gameView.setOnGameOverListener(
                 res -> {
                     String message;
-                    if (res.gameOver()) {
-                        if (res.draw()) {
-                            message = getString(R.string.result_draw);
-                        } else {
-                            message = getString(R.string.result_winner, res.winner());
-                        }
+                    if (res.draw()) {
+                        message = getString(R.string.result_draw);
                     } else {
-                        message = getString(R.string.result_in_progress);
+                        message = getString(R.string.result_winner, res.winner());
                     }
                     mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
                     mSnackbar.setAction(R.string.action_reset, view -> resetBoard());

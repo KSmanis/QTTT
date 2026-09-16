@@ -14,7 +14,6 @@
     <string name="radioButton_random">Τυχαίες Κινήσεις</string>
     <string name="radioButton_optimal">Βέλτιστη</string>
     <string name="result_draw">Η παρτίδα έληξε! Είναι ισοπαλία!</string>
-    <string name="result_in_progress">Η παρτίδα βρίσκεται σε εξέλιξη!</string>
     <string name="result_winner">Η παρτίδα έληξε! Νικητής: %1$s!</string>
     <string name="textView_difficulty">Δυσκολία Παρτίδας</string>
     <string name="textView_player">Ανθρώπινος Παίχτης</string>

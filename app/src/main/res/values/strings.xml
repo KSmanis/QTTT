@@ -23,7 +23,6 @@
     <string name="action_undo">Undo Move</string>
     <string name="action_reset">Reset Board</string>
 
-    <string name="result_in_progress">Game In Progress!</string>
     <string name="result_draw">Game Over! It\'s a draw!</string>
     <string name="result_winner">Game Over! Winner: %1$s!</string>
     <string name="game_cell_description">Row %1$d, column %2$d: %3$s</string>
