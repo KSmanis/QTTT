@@ -9,6 +9,7 @@ permissions:
   contents: read
 jobs:
   lint:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
