@@ -294,32 +294,20 @@ public class State {
             return false;
         }
 
-        class Node {
-            int m_self, m_parent;
-
-            Node(int self) {
-                m_self = self;
-                m_parent = -1;
-            }
-
-            Node(int self, int parent) {
-                m_self = self;
-                m_parent = parent;
-            }
-        }
+        record Node(int self, int parent) {}
         Deque<Node> stack = new ArrayDeque<>();
         boolean[] visited = new boolean[9];
 
-        stack.push(new Node(mLastMove.firstCellIndex()));
+        stack.push(new Node(mLastMove.firstCellIndex(), -1));
         visited[mLastMove.firstCellIndex()] = true;
         do {
             Node node = stack.pop();
-            for (CellState cs : mQuantumBoard.get(node.m_self)) {
-                int neighbour = cellPair(cs, node.m_self);
+            for (CellState cs : mQuantumBoard.get(node.self())) {
+                int neighbour = cellPair(cs, node.self());
                 if (!visited[neighbour]) {
-                    stack.push(new Node(neighbour, node.m_self));
+                    stack.push(new Node(neighbour, node.self()));
                     visited[neighbour] = true;
-                } else if (neighbour != node.m_parent) {
+                } else if (neighbour != node.parent()) {
                     return true;
                 }
             }
