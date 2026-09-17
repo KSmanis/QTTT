@@ -30,7 +30,16 @@ public class StateInvariantTest {
                 sawEntanglement |= state.entangled();
                 Move move = moves.get(random.nextInt(moves.size()));
                 sawCollapse |= move.type() == Move.Type.COLLAPSE;
+
+                State inputState = new State(state);
+                assertTrue(inputState.applyInput(move.firstCellIndex()));
+                if (move.type() == Move.Type.REGULAR
+                        && move.firstCellIndex() != move.secondCellIndex()) {
+                    assertTrue(inputState.applyInput(move.secondCellIndex()));
+                }
+
                 state.applyMove(move);
+                assertEquals("input seed " + seed, snapshot(state), snapshot(inputState));
                 assertStateIsValid(state);
                 assertRoundTripAndCopyIsolation(state, seed);
             }
