@@ -1,6 +1,8 @@
 package com.gmail.smanis.konstantinos.qttt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Intent;
 import android.view.View;
@@ -138,6 +140,31 @@ public class SingleActivityLifecycleTest {
                         });
     }
 
+    @Test
+    public void singlePlayerUndoRestoresEachHumanTurn() {
+        InstrumentationRegistry.getInstrumentation()
+                .runOnMainSync(
+                        () -> {
+                            GameViewModel xGame = gameWithMoves(2);
+                            xGame.undoSinglePlayer(Player.X);
+                            assertEquals(0, xGame.snapshot().currentTurn());
+                            assertEquals(Player.X, xGame.snapshot().currentPlayer());
+
+                            GameViewModel oGame = gameWithMoves(3);
+                            oGame.undoSinglePlayer(Player.O);
+                            assertEquals(1, oGame.snapshot().currentTurn());
+                            assertEquals(Player.O, oGame.snapshot().currentPlayer());
+
+                            assertTrue(oGame.applyInput(4));
+                            oGame.undoSinglePlayer(Player.O);
+                            assertEquals(1, oGame.snapshot().currentTurn());
+                            assertFalse(oGame.snapshot().hasIncompleteInput());
+
+                            xGame.onCleared();
+                            oGame.onCleared();
+                        });
+    }
+
     private static ActivityScenario<SingleActivity> launch(
             Player humanPlayer, Difficulty difficulty) {
         Intent intent =
@@ -145,6 +172,16 @@ public class SingleActivityLifecycleTest {
         intent.putExtra(OptionsActivity.EXTRA_PLAYER, humanPlayer.id());
         intent.putExtra(OptionsActivity.EXTRA_DIFFICULTY, difficulty.id());
         return ActivityScenario.launch(intent);
+    }
+
+    private static GameViewModel gameWithMoves(int count) {
+        GameViewModel game =
+                new GameViewModel(
+                        ApplicationProvider.getApplicationContext(), new SavedStateHandle());
+        for (int i = 0; i < count; ++i) {
+            game.applyMove(game.snapshot().availableMoves(false).get(0));
+        }
+        return game;
     }
 
     private static void seedBotTurn(SingleActivity activity) {
