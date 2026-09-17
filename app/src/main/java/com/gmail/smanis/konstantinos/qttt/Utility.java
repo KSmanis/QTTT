@@ -1,44 +1,27 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-public class Utility {
-    private final int mValue;
-    private final int mDepth;
-
+public record Utility(int value, int depth) {
     public Utility(int value) {
-        mValue = value;
-        mDepth = -1;
-    }
-
-    public Utility(int value, int depth) {
-        mValue = value;
-        mDepth = depth;
-    }
-
-    public int value() {
-        return mValue;
-    }
-
-    public int depth() {
-        return mDepth;
+        this(value, -1);
     }
 
     public String toShortString() {
-        return mValue + "," + mDepth;
+        return value + "," + depth;
     }
 
     public static Utility min(Utility a, Utility b) {
-        if (a.mValue != b.mValue) {
-            return (a.mValue < b.mValue ? a : b);
+        if (a.value != b.value) {
+            return (a.value < b.value ? a : b);
         } else {
-            return (a.mDepth >= b.mDepth ? a : b);
+            return (a.depth >= b.depth ? a : b);
         }
     }
 
     public static Utility max(Utility a, Utility b) {
-        if (a.mValue != b.mValue) {
-            return (a.mValue > b.mValue ? a : b);
+        if (a.value != b.value) {
+            return (a.value > b.value ? a : b);
         } else {
-            return (a.mDepth >= b.mDepth ? a : b);
+            return (a.depth >= b.depth ? a : b);
         }
     }
 
