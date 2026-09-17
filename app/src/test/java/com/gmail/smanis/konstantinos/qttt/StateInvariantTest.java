@@ -32,6 +32,7 @@ public class StateInvariantTest {
                 sawCollapse |= move.type() == Move.Type.COLLAPSE;
                 state.applyMove(move);
                 assertStateIsValid(state);
+                assertRoundTripAndCopyIsolation(state, seed);
             }
             results.add(state.result());
 
@@ -95,9 +96,29 @@ public class StateInvariantTest {
         }
     }
 
+    private static void assertRoundTripAndCopyIsolation(State state, int seed) {
+        String expected = snapshot(state);
+
+        State restored = new State();
+        restored.restore(state.moveHistory());
+        assertEquals("restored seed " + seed, expected, snapshot(restored));
+
+        State copy = new State(state);
+        assertEquals("copied seed " + seed, expected, snapshot(copy));
+        copy.undoLastMove();
+        assertEquals("isolated seed " + seed, expected, snapshot(state));
+    }
+
     private static String snapshot(State state) {
         StringBuilder result = new StringBuilder();
-        result.append(state.currentTurn()).append('|').append(state.moveHistory()).append('|');
+        result.append(state.currentTurn())
+                .append('|')
+                .append(state.moveHistory())
+                .append('|')
+                .append(state.result())
+                .append('|')
+                .append(state.entangled())
+                .append('|');
         for (CellState cell : state.classicBoard()) {
             result.append(cell == null ? '-' : cell.name());
         }
