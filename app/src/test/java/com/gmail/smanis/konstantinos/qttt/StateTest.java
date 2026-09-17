@@ -231,9 +231,15 @@ public class StateTest {
     @Test
     public void minimaxSelectsTheUniqueBestEndgameMove() {
         State state = play("3,7", "2,4", "1,7", "1,5", "7,8", "4,8", "7,8", "7");
+        State before = new State(state);
 
         Move move = state.minimaxMoves().get(0);
 
+        assertEquals(before.moveHistory(), state.moveHistory());
+        assertEquals(before.classicBoard(), state.classicBoard());
+        assertEquals(before.quantumBoard(), state.quantumBoard());
+        assertEquals(before.result(), state.result());
+        assertEquals(before.entangled(), state.entangled());
         assertEquals(Player.O, state.currentPlayer());
         assertEquals(Move.Type.REGULAR, move.type());
         assertEquals("0,6", move.toShortString());
