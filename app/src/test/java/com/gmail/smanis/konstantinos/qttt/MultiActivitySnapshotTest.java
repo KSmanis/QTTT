@@ -1,6 +1,7 @@
 package com.gmail.smanis.konstantinos.qttt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -99,7 +100,7 @@ public class MultiActivitySnapshotTest {
     }
 
     @Test
-    public void boardCellsAcceptAccessibilityClicks() {
+    public void boardCellsExposeAccessibleInputState() {
         GameView gameView = boardView().findViewById(R.id.gameView);
         State state = bind(gameView);
         gameView.layout(0, 0, 900, 900);
@@ -118,6 +119,20 @@ public class MultiActivitySnapshotTest {
                                 1,
                                 gameView.getResources().getString(R.string.game_cell_empty)),
                 firstCell.getContentDescription());
+
+        gameView.setPaused(true);
+        AccessibilityNodeInfoCompat pausedCell = provider.createAccessibilityNodeInfo(0);
+        assertNotNull(pausedCell);
+        assertFalse(pausedCell.isEnabled());
+        assertFalse(pausedCell.isClickable());
+        assertFalse(
+                provider.performAction(
+                        0,
+                        AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                        null));
+        assertEquals(0, state.currentTurn());
+
+        gameView.setPaused(false);
         assertTrue(
                 provider.performAction(
                         0,
