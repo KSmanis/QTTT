@@ -64,7 +64,6 @@ public class GameView extends View {
     private final Rect mTextRect = new Rect();
     private final Rect mSubscriptRect = new Rect();
     private final ExploreByTouchHelper mAccessibilityHelper;
-    private float[] mGridLines;
     private RectF[] mGridCells;
     private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
     private boolean mHistoryShown, mPaused;
@@ -253,14 +252,23 @@ public class GameView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mGridLines == null || mGridCells == null) {
+        if (mGridCells == null) {
             return;
         }
 
         List<CellState> classicBoard = mSnapshot.classicBoard();
         List<EnumSet<CellState>> quantumBoard = mSnapshot.quantumBoard();
 
-        canvas.drawLines(mGridLines, mLinePaint);
+        for (int i = 1; i < 3; ++i) {
+            float x = i * getWidth() / 3f;
+            canvas.drawLine(x - cGridLinePadding, 0, x - cGridLinePadding, getHeight(), mLinePaint);
+            canvas.drawLine(x + cGridLinePadding, 0, x + cGridLinePadding, getHeight(), mLinePaint);
+        }
+        for (int i = 1; i < 3; ++i) {
+            float y = i * getHeight() / 3f;
+            canvas.drawLine(0, y - cGridLinePadding, getWidth(), y - cGridLinePadding, mLinePaint);
+            canvas.drawLine(0, y + cGridLinePadding, getWidth(), y + cGridLinePadding, mLinePaint);
+        }
         for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
             for (int iGridCol = 0; iGridCol < 3; ++iGridCol) {
                 int iGridIndex = 3 * iGridRow + iGridCol;
@@ -388,42 +396,6 @@ public class GameView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
-        mGridLines =
-                new float[] {
-                    w / 3f - cGridLinePadding,
-                    0,
-                    w / 3f - cGridLinePadding,
-                    h,
-                    w / 3f + cGridLinePadding,
-                    0,
-                    w / 3f + cGridLinePadding,
-                    h,
-                    2 * w / 3f - cGridLinePadding,
-                    0,
-                    2 * w / 3f - cGridLinePadding,
-                    h,
-                    2 * w / 3f + cGridLinePadding,
-                    0,
-                    2 * w / 3f + cGridLinePadding,
-                    h,
-                    0,
-                    w / 3f - cGridLinePadding,
-                    w,
-                    w / 3f - cGridLinePadding,
-                    0,
-                    w / 3f + cGridLinePadding,
-                    w,
-                    w / 3f + cGridLinePadding,
-                    0,
-                    2 * w / 3f - cGridLinePadding,
-                    w,
-                    2 * w / 3f - cGridLinePadding,
-                    0,
-                    2 * w / 3f + cGridLinePadding,
-                    w,
-                    2 * w / 3f + cGridLinePadding
-                };
 
         mGridCells = new RectF[9];
         for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
