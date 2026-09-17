@@ -2,7 +2,6 @@ package com.gmail.smanis.konstantinos.qttt;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class Move {
     static class MinUtilComparator implements Comparator<Move> {
@@ -39,23 +38,11 @@ public class Move {
     private Move mPrevMove;
     private List<Integer> mCollapsedCells;
 
-    public Move(int cellIndex1, int cellIndex2) {
-        mType = Type.REGULAR;
-        mCellIndex1 = cellIndex1;
-        mCellIndex2 = cellIndex2;
-    }
-
     public Move(int cellIndex1, int cellIndex2, CellState cellState) {
         mType = Type.REGULAR;
         mCellIndex1 = cellIndex1;
         mCellIndex2 = cellIndex2;
         mCellState = cellState;
-    }
-
-    public Move(int cellIndex) {
-        mType = Type.COLLAPSE;
-        mCellIndex1 = cellIndex;
-        mCellIndex2 = -1;
     }
 
     public Move(int cellIndex, CellState cellState) {
@@ -119,18 +106,18 @@ public class Move {
 
     public String toShortString() {
         if (mType == Type.REGULAR) {
-            return String.format(Locale.ROOT, "%d,%d", mCellIndex1, mCellIndex2);
+            return mCellIndex1 + "," + mCellIndex2;
         } else {
-            return String.format(Locale.ROOT, "%d", mCellIndex1);
+            return Integer.toString(mCellIndex1);
         }
     }
 
     public static Move valueOf(String s) {
         String[] fields = s.split(",");
         if (fields.length == 2) {
-            return new Move(Integer.parseInt(fields[0]), Integer.parseInt(fields[1]));
+            return new Move(Integer.parseInt(fields[0]), Integer.parseInt(fields[1]), null);
         } else if (fields.length == 1) {
-            return new Move(Integer.parseInt(fields[0]));
+            return new Move(Integer.parseInt(fields[0]), null);
         } else {
             return null;
         }
