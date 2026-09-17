@@ -45,6 +45,9 @@ public class ActivitySmokeTest {
         onView(withId(R.id.button_start)).check(matches(isDisplayed())).perform(click());
         onView(withText(R.string.activity_single_title)).check(matches(isDisplayed()));
         onView(withId(R.id.gameView)).check(matches(isDisplayed())).check(hasCurrentTurn(1));
+        onView(withId(R.id.gameView))
+                .perform(clickCell(0, 0), clickCell(0, 1))
+                .check(hasCurrentTurn(3));
 
         pressBack();
         pressBack();
