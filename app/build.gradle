@@ -3,7 +3,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 plugins {
     id 'com.android.application'
     id 'app.cash.paparazzi'
-    id 'com.diffplug.spotless'
 }
 
 android {
@@ -86,14 +85,6 @@ tasks.register('generateOpeningBook', JavaExec) {
     workingDir(rootProject.projectDir)
     doFirst {
         args(openingBookTurn.get())
-    }
-}
-
-spotless {
-    java {
-        target 'src/*/java/**/*.java'
-        removeUnusedImports()
-        googleJavaFormat().aosp()
     }
 }
 

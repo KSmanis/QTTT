@@ -2,6 +2,41 @@
 
 lockfile_version = 2
 
+[[tools.google-java-format]]
+version = "1.36.1"
+backend = "aqua:google/google-java-format"
+specifiers = ["1.36.1"]
+
+[tools.google-java-format."platforms.linux-arm64"]
+checksum = "sha256:37d27263fce029fc59aa4e1b556ac6997d0eb2266a38ba2b8746b709f6c77b11"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_linux-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658509"
+
+[tools.google-java-format."platforms.linux-arm64-musl"]
+checksum = "sha256:37d27263fce029fc59aa4e1b556ac6997d0eb2266a38ba2b8746b709f6c77b11"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_linux-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658509"
+
+[tools.google-java-format."platforms.linux-x64"]
+checksum = "sha256:8dc71663a6c9cb17b02ba9709bfab5c4de59de6f4ac133fd7a1d5a4394b1193b"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_linux-x86-64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658560"
+
+[tools.google-java-format."platforms.linux-x64-musl"]
+checksum = "sha256:8dc71663a6c9cb17b02ba9709bfab5c4de59de6f4ac133fd7a1d5a4394b1193b"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_linux-x86-64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658560"
+
+[tools.google-java-format."platforms.macos-arm64"]
+checksum = "sha256:572c8be5ea4e15c674f7f9c89f9c0a4b9336950d9c42c07220557e97a4002bce"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_darwin-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658217"
+
+[tools.google-java-format."platforms.windows-x64"]
+checksum = "sha256:23a6acedcfd9253da8413984dd1e3aecab32f00543477566d1abe5ae5aab1019"
+url = "https://github.com/google/google-java-format/releases/download/v1.36.1/google-java-format_windows-x86-64.exe"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/495658633"
+
 [[tools.java]]
 version = "21.0.12+101.0.LTS"
 backend = "core:java"

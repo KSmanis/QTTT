@@ -21,7 +21,6 @@ jobs:
           - pixel2Api27DebugAndroidTest
           - pixel2Api36DebugAndroidTest
           - pixel2Api37DebugAndroidTest
-          - spotlessCheck
           - verifyPaparazziDebug
     steps:
       - name: Check out repository

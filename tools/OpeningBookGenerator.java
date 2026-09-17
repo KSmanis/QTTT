@@ -171,10 +171,7 @@ public final class OpeningBookGenerator extends State {
     private void printMoves() {
         List<Move> moves = minimaxMoves();
         output.printf(
-                Locale.ROOT,
-                "%s:%s%n",
-                moveHistory(),
-                moves.get(0).utility().toShortString());
+                Locale.ROOT, "%s:%s%n", moveHistory(), moves.get(0).utility().toShortString());
         for (Move move : moves) {
             output.println(move.toShortString());
         }

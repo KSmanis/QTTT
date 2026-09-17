@@ -2,7 +2,6 @@
 java.shorthand_vendor = "temurin"
 
 [tasks]
-format = "./gradlew :app:spotlessApply"
 test = { depends = ["test:*"] }
 "test:assembleDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 "test:bundleRelease" = "./gradlew :app:${MISE_TASK_NAME#test:}"
@@ -11,9 +10,9 @@ test = { depends = ["test:*"] }
 "test:pixel2Api27DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 "test:pixel2Api36DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 "test:pixel2Api37DebugAndroidTest" = "./gradlew :app:${MISE_TASK_NAME#test:}"
-"test:spotlessCheck" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 "test:verifyPaparazziDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 
 [tools]
+google-java-format = "1.36.1"
 java = "21.0.12+101.0.LTS"
-prek = "0.5.3"
+prek = { depends = ["google-java-format"], version = "0.5.3" }

@@ -53,11 +53,10 @@ repos:
   # Java
   - repo: local
     hooks:
-      - id: spotless
-        name: spotless
-        entry: ./gradlew :app:spotlessApply
+      - id: google-java-format
+        name: google-java-format
+        entry: mise exec -- google-java-format --aosp --skip-sorting-imports --replace
         language: system
-        pass_filenames: false
         priority: &write-parallel 999
         types: ["java"]
   # JSON
