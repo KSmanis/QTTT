@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.customview.widget.ExploreByTouchHelper;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class GameView extends View {
     }
 
     public interface OnInputListener {
-        void onInput();
+        boolean onInput(int cellIndex);
     }
 
     // Listeners
@@ -54,10 +53,8 @@ public class GameView extends View {
     private final int cFps = 30;
     private float mGlowRadius;
     private boolean mGlowInc;
-    // Game State
-    private State mState;
-    private List<CellState> mClassicBoardSnapshot;
-    private List<EnumSet<CellState>> mQuantumBoardSnapshot;
+    // Rendered State
+    private State mSnapshot;
     private boolean mEntangled;
     private List<Integer> mEntangledCells;
     private boolean mGameOver;
@@ -70,11 +67,11 @@ public class GameView extends View {
     private float[] mGridLines;
     private RectF[] mGridCells;
     private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
-    private boolean mHistoryShown, mHasInput, mPaused;
+    private boolean mHistoryShown, mPaused;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mState = new State();
+        mSnapshot = new State();
 
         Resources res = getResources();
         cGridLineWidth = res.getDimension(R.dimen.grid_line_width);
@@ -137,8 +134,8 @@ public class GameView extends View {
                             Math.round(bounds.right), Math.round(bounds.bottom)));
             node.setContentDescription(cellDescription(virtualViewId));
             boolean enabled =
-                    mState.classicBoard().get(virtualViewId) != null
-                            || (!mPaused && !mState.gameOver());
+                    mSnapshot.classicBoard().get(virtualViewId) != null
+                            || (!mPaused && !mSnapshot.gameOver());
             node.setEnabled(enabled);
             node.setClickable(enabled);
             if (enabled) {
@@ -170,14 +167,14 @@ public class GameView extends View {
     }
 
     private CharSequence cellDescription(int cellIndex) {
-        CellState classicCell = mState.classicBoard().get(cellIndex);
+        CellState classicCell = mSnapshot.classicBoard().get(cellIndex);
         String state;
         if (classicCell != null) {
             state = classicCell.name();
-        } else if (mState.quantumBoard().get(cellIndex).isEmpty()) {
+        } else if (mSnapshot.quantumBoard().get(cellIndex).isEmpty()) {
             state = getResources().getString(R.string.game_cell_empty);
         } else {
-            state = mState.quantumBoard().get(cellIndex).toString();
+            state = mSnapshot.quantumBoard().get(cellIndex).toString();
         }
         return getResources()
                 .getString(
@@ -188,13 +185,12 @@ public class GameView extends View {
     }
 
     private boolean activateCell(int cellIndex) {
-        if (mState.classicBoard().get(cellIndex) != null) {
+        if (mSnapshot.classicBoard().get(cellIndex) != null) {
             mHistoryShown = !mHistoryShown;
             invalidate();
             mAccessibilityHelper.invalidateRoot();
-        } else if (!mPaused && mState.applyInput(cellIndex)) {
-            mHasInput = true;
-            refresh();
+        } else if (!mPaused && mOnInputListener != null && mOnInputListener.onInput(cellIndex)) {
+            return true;
         } else {
             return false;
         }
@@ -202,9 +198,9 @@ public class GameView extends View {
     }
 
     private void checkEntanglement() {
-        mEntangled = mState.entangled();
+        mEntangled = mSnapshot.entangled();
         if (mEntangled) {
-            mEntangledCells = mState.entangledCells();
+            mEntangledCells = mSnapshot.entangledCells();
             mGlowRadius = 0.f;
             mGlowInc = true;
         } else {
@@ -213,11 +209,11 @@ public class GameView extends View {
     }
 
     private void checkGameOver() {
-        mGameOver = mState.gameOver();
+        mGameOver = mSnapshot.gameOver();
         if (mGameOver) {
-            mWinningCells = mState.winningCells();
+            mWinningCells = mSnapshot.winningCells();
             if (mOnGameOverListener != null) {
-                mOnGameOverListener.onGameOver(mState.result());
+                mOnGameOverListener.onGameOver(mSnapshot.result());
             }
         } else {
             mWinningCells = null;
@@ -228,35 +224,18 @@ public class GameView extends View {
         return mPaused;
     }
 
-    public void pause() {
-        if (mPaused) {
-            return;
-        }
-
-        mPaused = true;
-        mClassicBoardSnapshot = new ArrayList<>(9);
-        mQuantumBoardSnapshot = new ArrayList<>(9);
-        for (int i = 0; i < 9; ++i) {
-            mClassicBoardSnapshot.add(mState.classicBoard().get(i));
-            mQuantumBoardSnapshot.add(EnumSet.copyOf(mState.quantumBoard().get(i)));
-        }
-    }
-
-    public void refresh() {
+    public void render(State state) {
+        mSnapshot = state;
         checkEntanglement();
         checkGameOver();
         mAccessibilityHelper.invalidateRoot();
         invalidate();
     }
 
-    public void resume() {
-        if (!mPaused) {
-            return;
-        }
-
-        mPaused = false;
-        mClassicBoardSnapshot = null;
-        mQuantumBoardSnapshot = null;
+    public void setPaused(boolean paused) {
+        mPaused = paused;
+        mAccessibilityHelper.invalidateRoot();
+        invalidate();
     }
 
     public void setOnGameOverListener(OnGameOverListener l) {
@@ -267,8 +246,8 @@ public class GameView extends View {
         mOnInputListener = l;
     }
 
-    public State state() {
-        return mState;
+    int currentTurn() {
+        return mSnapshot.currentTurn();
     }
 
     @Override
@@ -278,15 +257,8 @@ public class GameView extends View {
             return;
         }
 
-        List<CellState> classicBoard;
-        List<EnumSet<CellState>> quantumBoard;
-        if (mPaused) {
-            classicBoard = mClassicBoardSnapshot;
-            quantumBoard = mQuantumBoardSnapshot;
-        } else {
-            classicBoard = mState.classicBoard();
-            quantumBoard = mState.quantumBoard();
-        }
+        List<CellState> classicBoard = mSnapshot.classicBoard();
+        List<EnumSet<CellState>> quantumBoard = mSnapshot.quantumBoard();
 
         canvas.drawLines(mGridLines, mLinePaint);
         for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
@@ -347,7 +319,7 @@ public class GameView extends View {
                                 if (mEntangledCells.contains(iGridIndex)) {
                                     mMarkPaint.setShadowLayer(
                                             mGlowRadius, 0, 0, mMarkPaint.getColor());
-                                    if (mark == mState.lastMove().cellState()) {
+                                    if (mark == mSnapshot.lastMove().cellState()) {
                                         mMarkPaint.setUnderlineText(true);
                                     }
                                 } else {
@@ -402,12 +374,6 @@ public class GameView extends View {
                 mGlowInc = false;
             }
             postInvalidateDelayed(1000 / cFps);
-        }
-        if (mHasInput) {
-            mHasInput = false;
-            if (mOnInputListener != null) {
-                mOnInputListener.onInput();
-            }
         }
     }
 

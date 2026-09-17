@@ -41,17 +41,17 @@ public class OptionsActivity extends AppCompatActivity {
         throw new IllegalArgumentException("Unknown player radio button id: " + id);
     }
 
-    static SingleActivity.Difficulty difficultyForRadioButton(int id) {
+    static Difficulty difficultyForRadioButton(int id) {
         if (id == R.id.radioButton_random) {
-            return SingleActivity.Difficulty.Random;
+            return Difficulty.Random;
         } else if (id == R.id.radioButton_easy) {
-            return SingleActivity.Difficulty.Easy;
+            return Difficulty.Easy;
         } else if (id == R.id.radioButton_medium) {
-            return SingleActivity.Difficulty.Medium;
+            return Difficulty.Medium;
         } else if (id == R.id.radioButton_hard) {
-            return SingleActivity.Difficulty.Hard;
+            return Difficulty.Hard;
         } else if (id == R.id.radioButton_optimal) {
-            return SingleActivity.Difficulty.Optimal;
+            return Difficulty.Optimal;
         }
         throw new IllegalArgumentException("Unknown difficulty radio button id: " + id);
     }

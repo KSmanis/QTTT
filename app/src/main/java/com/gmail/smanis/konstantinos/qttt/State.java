@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 enum CellState {
     X1,
@@ -337,6 +338,10 @@ public class State {
         return (mInput != null);
     }
 
+    Integer pendingInputCell() {
+        return mInput == null ? null : mInput.firstCellIndex();
+    }
+
     private boolean isFull() {
         for (CellState cs : mClassicBoard) {
             if (cs == null) {
@@ -377,6 +382,7 @@ public class State {
             boolean found = false;
             String line, moveHistory = moveHistory();
             while ((line = br.readLine()) != null) {
+                throwIfInterrupted();
                 if (found) {
                     if (line.isEmpty()) {
                         break;
@@ -404,6 +410,7 @@ public class State {
     }
 
     private List<Move> minimaxEvaluation() {
+        throwIfInterrupted();
         Player player = currentPlayer();
         List<Move> moves = availableMoves(false);
         for (int i = 0; i < moves.size(); ++i) {
@@ -445,6 +452,7 @@ public class State {
     }
 
     private Utility minValue(int a, int b, boolean substitute) {
+        throwIfInterrupted();
         if (!substitute && mLastMove.type() == Move.Type.COLLAPSE) {
             return maxValue(a, b, true);
         }
@@ -467,6 +475,7 @@ public class State {
     }
 
     private Utility maxValue(int a, int b, boolean substitute) {
+        throwIfInterrupted();
         if (!substitute && mLastMove.type() == Move.Type.COLLAPSE) {
             return minValue(a, b, true);
         }
@@ -486,6 +495,12 @@ public class State {
             a = Math.max(a, ret.value());
         }
         return ret;
+    }
+
+    private static void throwIfInterrupted() {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new CancellationException();
+        }
     }
 
     public String moveHistory() {

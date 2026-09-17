@@ -18,13 +18,13 @@ public class OptionsIntentTest {
 
     @Test
     public void difficultyIdsRemainStableAndInvalidValuesFail() {
-        assertEquals(0, SingleActivity.Difficulty.Random.id());
-        assertEquals(1, SingleActivity.Difficulty.Easy.id());
-        assertEquals(2, SingleActivity.Difficulty.Medium.id());
-        assertEquals(3, SingleActivity.Difficulty.Hard.id());
-        assertEquals(4, SingleActivity.Difficulty.Optimal.id());
-        assertSame(SingleActivity.Difficulty.Medium, SingleActivity.Difficulty.fromId(2));
-        assertThrows(IllegalArgumentException.class, () -> SingleActivity.Difficulty.fromId(-1));
+        assertEquals(0, Difficulty.Random.id());
+        assertEquals(1, Difficulty.Easy.id());
+        assertEquals(2, Difficulty.Medium.id());
+        assertEquals(3, Difficulty.Hard.id());
+        assertEquals(4, Difficulty.Optimal.id());
+        assertSame(Difficulty.Medium, Difficulty.fromId(2));
+        assertThrows(IllegalArgumentException.class, () -> Difficulty.fromId(-1));
     }
 
     @Test
@@ -32,19 +32,17 @@ public class OptionsIntentTest {
         assertSame(Player.X, OptionsActivity.playerForRadioButton(R.id.radioButton_x));
         assertSame(Player.O, OptionsActivity.playerForRadioButton(R.id.radioButton_o));
         assertSame(
-                SingleActivity.Difficulty.Random,
+                Difficulty.Random,
                 OptionsActivity.difficultyForRadioButton(R.id.radioButton_random));
         assertSame(
-                SingleActivity.Difficulty.Easy,
-                OptionsActivity.difficultyForRadioButton(R.id.radioButton_easy));
+                Difficulty.Easy, OptionsActivity.difficultyForRadioButton(R.id.radioButton_easy));
         assertSame(
-                SingleActivity.Difficulty.Medium,
+                Difficulty.Medium,
                 OptionsActivity.difficultyForRadioButton(R.id.radioButton_medium));
         assertSame(
-                SingleActivity.Difficulty.Hard,
-                OptionsActivity.difficultyForRadioButton(R.id.radioButton_hard));
+                Difficulty.Hard, OptionsActivity.difficultyForRadioButton(R.id.radioButton_hard));
         assertSame(
-                SingleActivity.Difficulty.Optimal,
+                Difficulty.Optimal,
                 OptionsActivity.difficultyForRadioButton(R.id.radioButton_optimal));
         assertThrows(
                 IllegalArgumentException.class, () -> OptionsActivity.playerForRadioButton(-1));

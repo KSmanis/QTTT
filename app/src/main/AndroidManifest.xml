@@ -24,13 +24,11 @@
         <activity
             android:name=".SingleActivity"
             android:label="@string/activity_single_title"
-            android:parentActivityName=".OptionsActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:parentActivityName=".OptionsActivity"/>
         <activity
             android:name=".MultiActivity"
             android:label="@string/activity_multi_title"
-            android:parentActivityName=".MainActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

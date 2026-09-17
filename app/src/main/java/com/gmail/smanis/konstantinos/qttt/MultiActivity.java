@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MultiActivity extends AppCompatActivity {
     private GameView gameView;
-    private State state;
+    private GameViewModel game;
     private Snackbar mSnackbar;
 
     @Override
@@ -18,6 +19,7 @@ public class MultiActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        game = new ViewModelProvider(this).get(GameViewModel.class);
         gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(
                 res -> {
@@ -31,14 +33,20 @@ public class MultiActivity extends AppCompatActivity {
                     mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
                     mSnackbar.show();
                 });
-        gameView.setOnInputListener(() -> invalidateOptionsMenu());
-        state = gameView.state();
+        gameView.setOnInputListener(game::applyInput);
+        game.snapshots()
+                .observe(
+                        this,
+                        state -> {
+                            gameView.render(state);
+                            invalidateOptionsMenu();
+                        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_single, menu);
-        menu.findItem(R.id.action_undo).setVisible(state.isUndoAvailable());
+        menu.findItem(R.id.action_undo).setVisible(game.snapshot().isUndoAvailable());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -56,9 +64,7 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     private void resetBoard() {
-        state.reset();
-        gameView.refresh();
-        invalidateOptionsMenu();
+        game.reset();
         if (mSnackbar != null) {
             mSnackbar.dismiss();
             mSnackbar = null;
@@ -66,9 +72,7 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     private void undoMove() {
-        state.undoLastMove();
-        gameView.refresh();
-        invalidateOptionsMenu();
+        game.undo();
         if (mSnackbar != null) {
             mSnackbar.dismiss();
             mSnackbar = null;

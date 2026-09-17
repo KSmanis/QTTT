@@ -27,8 +27,9 @@ public class MultiActivitySnapshotTest {
     public void firstMove() {
         View view = boardView();
         GameView gameView = view.findViewById(R.id.gameView);
-        gameView.state().applyMove(new Move(0, 1, CellState.X1));
-        gameView.refresh();
+        State state = bind(gameView);
+        state.applyMove(new Move(0, 1, CellState.X1));
+        gameView.render(state);
 
         paparazzi.snapshot(view);
     }
@@ -37,12 +38,13 @@ public class MultiActivitySnapshotTest {
     public void entangledMove() {
         View view = boardView();
         GameView gameView = view.findViewById(R.id.gameView);
-        gameView.state().applyMove(new Move(0, 1, CellState.X1));
-        gameView.state().applyMove(new Move(1, 2, CellState.O2));
-        gameView.state().applyMove(new Move(0, 2, CellState.X3));
-        gameView.refresh();
+        State state = bind(gameView);
+        state.applyMove(new Move(0, 1, CellState.X1));
+        state.applyMove(new Move(1, 2, CellState.O2));
+        state.applyMove(new Move(0, 2, CellState.X3));
+        gameView.render(state);
 
-        assertTrue(gameView.state().entangled());
+        assertTrue(state.entangled());
         paparazzi.snapshot(view);
     }
 
@@ -50,6 +52,7 @@ public class MultiActivitySnapshotTest {
     public void gameOver() {
         View view = boardView();
         GameView gameView = view.findViewById(R.id.gameView);
+        State state = bind(gameView);
         Move[] moves = {
             new Move(3, 7, CellState.X1),
             new Move(2, 4, CellState.O2),
@@ -64,12 +67,12 @@ public class MultiActivitySnapshotTest {
             new Move(0, CellState.X9)
         };
         for (Move move : moves) {
-            gameView.state().applyMove(move);
+            state.applyMove(move);
         }
-        gameView.refresh();
+        gameView.render(state);
 
-        assertTrue(gameView.state().gameOver());
-        assertEquals(GameResult.PlayerResult.LOSS, gameView.state().result().xResult());
+        assertTrue(state.gameOver());
+        assertEquals(GameResult.PlayerResult.LOSS, state.result().xResult());
         paparazzi.snapshot(view);
     }
 
@@ -77,10 +80,11 @@ public class MultiActivitySnapshotTest {
     public void collapsedMoveHistory() {
         View view = boardView();
         GameView gameView = view.findViewById(R.id.gameView);
-        gameView.state().applyMove(new Move(0, 1, CellState.X1));
-        gameView.state().applyMove(new Move(0, 1, CellState.O2));
-        gameView.state().applyMove(new Move(0, CellState.O2));
-        gameView.refresh();
+        State state = bind(gameView);
+        state.applyMove(new Move(0, 1, CellState.X1));
+        state.applyMove(new Move(0, 1, CellState.O2));
+        state.applyMove(new Move(0, CellState.O2));
+        gameView.render(state);
         gameView.layout(0, 0, 900, 900);
 
         long now = SystemClock.uptimeMillis();
@@ -90,13 +94,14 @@ public class MultiActivitySnapshotTest {
         gameView.onTouchEvent(tap);
         tap.recycle();
 
-        assertEquals(CellState.O2, gameView.state().classicBoard().get(0));
+        assertEquals(CellState.O2, state.classicBoard().get(0));
         paparazzi.snapshot(view);
     }
 
     @Test
     public void boardCellsAcceptAccessibilityClicks() {
         GameView gameView = boardView().findViewById(R.id.gameView);
+        State state = bind(gameView);
         gameView.layout(0, 0, 900, 900);
 
         AccessibilityDelegateCompat delegate = ViewCompat.getAccessibilityDelegate(gameView);
@@ -123,7 +128,21 @@ public class MultiActivitySnapshotTest {
                         1,
                         AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
                         null));
-        assertEquals(1, gameView.state().currentTurn());
+        assertEquals(1, state.currentTurn());
+    }
+
+    private static State bind(GameView gameView) {
+        State state = new State();
+        gameView.setOnInputListener(
+                cellIndex -> {
+                    if (!state.applyInput(cellIndex)) {
+                        return false;
+                    }
+                    gameView.render(state);
+                    return true;
+                });
+        gameView.render(state);
+        return state;
     }
 
     private View boardView() {

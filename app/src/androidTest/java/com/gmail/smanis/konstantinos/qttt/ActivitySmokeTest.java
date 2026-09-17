@@ -103,7 +103,7 @@ public class ActivitySmokeTest {
             if (error != null) {
                 throw error;
             }
-            assertEquals(expected, ((GameView) view).state().currentTurn());
+            assertEquals(expected, ((GameView) view).currentTurn());
         };
     }
 
