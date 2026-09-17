@@ -78,10 +78,7 @@ public class State {
         mLastMove = copyMove(source.mLastMove);
         mInput = copyMove(source.mInput);
         mEntangled = source.mEntangled;
-        if (source.mResult != null) {
-            mResult = new GameResult();
-            mResult.setXResult(source.mResult.xResult());
-        }
+        mResult = source.mResult;
     }
 
     private static Move copyMove(Move source) {
@@ -574,10 +571,9 @@ public class State {
     }
 
     private GameResult resultEvaluation() {
-        GameResult ret = new GameResult();
         // It takes at least 5 turns for a win!
         if (mTurn < 5) {
-            return ret;
+            return GameResult.INVALID;
         }
 
         int xWins = 0, oWins = 0, xWinMove = -1, oWinMove = -1;
@@ -602,21 +598,21 @@ public class State {
         }
 
         if (xWins == 2) {
-            ret.setXResult(GameResult.PlayerResult.DOUBLE_COMPLETE_WIN);
+            return GameResult.DOUBLE_COMPLETE_WIN;
         } else if (xWins == 1 && oWins == 0) {
-            ret.setXResult(GameResult.PlayerResult.COMPLETE_WIN);
+            return GameResult.COMPLETE_WIN;
         } else if (xWins == 1 && oWins == 1) {
             if (xWinMove < oWinMove) {
-                ret.setXResult(GameResult.PlayerResult.NARROW_WIN_FIRST);
+                return GameResult.NARROW_WIN_FIRST;
             } else {
-                ret.setXResult(GameResult.PlayerResult.NARROW_WIN_SECOND);
+                return GameResult.NARROW_WIN_SECOND;
             }
         } else if (xWins == 0 && oWins == 1) {
-            ret.setXResult(GameResult.PlayerResult.LOSS);
+            return GameResult.LOSS;
         } else if (isFull()) {
-            ret.setXResult(GameResult.PlayerResult.DRAW);
+            return GameResult.DRAW;
         }
-        return ret;
+        return GameResult.INVALID;
     }
 
     public GameResult result() {
@@ -661,7 +657,7 @@ public class State {
     }
 
     private Utility utility() {
-        switch (result().xResult()) {
+        switch (result()) {
             case DOUBLE_COMPLETE_WIN:
                 return new Utility(3, mDepth);
             case COMPLETE_WIN:
@@ -682,7 +678,7 @@ public class State {
 
     public List<Integer> winningCells() {
         List<Integer> ret = new ArrayList<>();
-        if (!gameOver() || result().xResult() == GameResult.PlayerResult.DRAW) {
+        if (!gameOver() || result() == GameResult.DRAW) {
             return ret;
         }
 

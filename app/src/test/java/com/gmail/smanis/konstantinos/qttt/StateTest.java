@@ -123,7 +123,7 @@ public class StateTest {
                         new Move(4, CellState.X9));
 
         assertTrue(state.gameOver());
-        assertEquals(GameResult.PlayerResult.COMPLETE_WIN, state.result().xResult());
+        assertEquals(GameResult.COMPLETE_WIN, state.result());
         assertEquals(Player.X, state.result().winner());
     }
 
@@ -152,7 +152,7 @@ public class StateTest {
     @Test
     public void evaluatesEveryTerminalResultAndWinningCells() {
         assertTerminalResult(
-                GameResult.PlayerResult.LOSS,
+                GameResult.LOSS,
                 Player.O,
                 Arrays.asList(2, 4, 6),
                 "3,7",
@@ -167,7 +167,7 @@ public class StateTest {
                 "0,6",
                 "0");
         assertTerminalResult(
-                GameResult.PlayerResult.DOUBLE_COMPLETE_WIN,
+                GameResult.DOUBLE_COMPLETE_WIN,
                 Player.X,
                 Arrays.asList(3, 4, 5, 0, 4, 8),
                 "4,5",
@@ -182,7 +182,7 @@ public class StateTest {
                 "3,7",
                 "3");
         assertTerminalResult(
-                GameResult.PlayerResult.NARROW_WIN_SECOND,
+                GameResult.NARROW_WIN_SECOND,
                 Player.O,
                 Arrays.asList(0, 1, 2, 3, 4, 5),
                 "0,2",
@@ -197,7 +197,7 @@ public class StateTest {
                 "1,6",
                 "1");
         assertTerminalResult(
-                GameResult.PlayerResult.NARROW_WIN_FIRST,
+                GameResult.NARROW_WIN_FIRST,
                 Player.X,
                 Arrays.asList(0, 3, 6, 2, 5, 8),
                 "3,4",
@@ -260,14 +260,14 @@ public class StateTest {
     }
 
     private static void assertTerminalResult(
-            GameResult.PlayerResult expectedResult,
+            GameResult expectedResult,
             Player expectedWinner,
             List<Integer> expectedWinningCells,
             String... encodedMoves) {
         State state = play(encodedMoves);
 
         assertTrue(state.gameOver());
-        assertEquals(expectedResult, state.result().xResult());
+        assertEquals(expectedResult, state.result());
         assertEquals(expectedWinner, state.result().winner());
         assertEquals(expectedWinningCells, state.winningCells());
     }

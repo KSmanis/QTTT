@@ -17,7 +17,7 @@ public class StateInvariantTest {
     public void seededLegalSequencesPreserveStateInvariants() {
         boolean sawEntanglement = false;
         boolean sawCollapse = false;
-        EnumSet<GameResult.PlayerResult> results = EnumSet.noneOf(GameResult.PlayerResult.class);
+        EnumSet<GameResult> results = EnumSet.noneOf(GameResult.class);
         for (int seed = 0; seed < 128; ++seed) {
             State state = new State();
             String initial = snapshot(state);
@@ -33,7 +33,7 @@ public class StateInvariantTest {
                 state.applyMove(move);
                 assertStateIsValid(state);
             }
-            results.add(state.result().xResult());
+            results.add(state.result());
 
             while (state.isUndoAvailable()) {
                 state.undoLastMove();
@@ -43,7 +43,7 @@ public class StateInvariantTest {
 
         assertTrue(sawEntanglement);
         assertTrue(sawCollapse);
-        assertEquals(EnumSet.complementOf(EnumSet.of(GameResult.PlayerResult.INVALID)), results);
+        assertEquals(EnumSet.complementOf(EnumSet.of(GameResult.INVALID)), results);
     }
 
     private static void assertAvailableMovesAreLegal(State state, List<Move> moves) {

@@ -72,7 +72,7 @@ public class MultiActivitySnapshotTest {
         gameView.render(state);
 
         assertTrue(state.gameOver());
-        assertEquals(GameResult.PlayerResult.LOSS, state.result().xResult());
+        assertEquals(GameResult.LOSS, state.result());
         paparazzi.snapshot(view);
     }
 

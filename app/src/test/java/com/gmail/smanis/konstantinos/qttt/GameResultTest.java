@@ -10,7 +10,7 @@ import org.junit.Test;
 public class GameResultTest {
     @Test
     public void invalidResultIsAnInProgressGame() {
-        GameResult result = new GameResult();
+        GameResult result = GameResult.INVALID;
 
         assertFalse(result.gameOver());
         assertFalse(result.draw());
@@ -19,63 +19,58 @@ public class GameResultTest {
 
     @Test
     public void completeWinProducesTheOppositeLoss() {
-        GameResult result = new GameResult();
-        result.setXResult(GameResult.PlayerResult.COMPLETE_WIN);
+        GameResult result = GameResult.COMPLETE_WIN;
 
         assertTrue(result.gameOver());
         assertEquals(Player.X, result.winner());
-        assertEquals(GameResult.PlayerResult.LOSS, result.oResult());
+        assertEquals(GameResult.LOSS, result.oResult());
         assertEquals(1.0f, result.xScore(), 0.0f);
         assertEquals(0.0f, result.oScore(), 0.0f);
     }
 
     @Test
     public void drawHasNoWinner() {
-        GameResult result = new GameResult();
-        result.setXResult(GameResult.PlayerResult.DRAW);
+        GameResult result = GameResult.DRAW;
 
         assertTrue(result.gameOver());
         assertTrue(result.draw());
         assertNull(result.winner());
-        assertEquals(GameResult.PlayerResult.DRAW, result.oResult());
+        assertEquals(GameResult.DRAW, result.oResult());
     }
 
     @Test
     public void doubleCompleteWinScoresTwo() {
-        GameResult result = new GameResult();
-        result.setXResult(GameResult.PlayerResult.DOUBLE_COMPLETE_WIN);
+        GameResult result = GameResult.DOUBLE_COMPLETE_WIN;
 
         assertEquals(Player.X, result.winner());
-        assertEquals(GameResult.PlayerResult.LOSS, result.oResult());
+        assertEquals(GameResult.LOSS, result.oResult());
         assertEquals(2.0f, result.xScore(), 0.0f);
         assertEquals(0.0f, result.oScore(), 0.0f);
     }
 
     @Test
     public void narrowWinResultsSwapScoresAndWinner() {
-        GameResult result = new GameResult();
-        result.setXResult(GameResult.PlayerResult.NARROW_WIN_FIRST);
+        GameResult result = GameResult.NARROW_WIN_FIRST;
 
         assertEquals(Player.X, result.winner());
-        assertEquals(GameResult.PlayerResult.NARROW_WIN_SECOND, result.oResult());
+        assertEquals(GameResult.NARROW_WIN_SECOND, result.oResult());
         assertEquals(1.0f, result.xScore(), 0.0f);
         assertEquals(0.5f, result.oScore(), 0.0f);
 
-        result.setXResult(GameResult.PlayerResult.NARROW_WIN_SECOND);
+        result = GameResult.NARROW_WIN_SECOND;
 
         assertEquals(Player.O, result.winner());
-        assertEquals(GameResult.PlayerResult.NARROW_WIN_FIRST, result.oResult());
+        assertEquals(GameResult.NARROW_WIN_FIRST, result.oResult());
         assertEquals(0.5f, result.xScore(), 0.0f);
         assertEquals(1.0f, result.oScore(), 0.0f);
     }
 
     @Test
     public void lossMakesOTheWinner() {
-        GameResult result = new GameResult();
-        result.setXResult(GameResult.PlayerResult.LOSS);
+        GameResult result = GameResult.LOSS;
 
         assertEquals(Player.O, result.winner());
-        assertEquals(GameResult.PlayerResult.COMPLETE_WIN, result.oResult());
+        assertEquals(GameResult.COMPLETE_WIN, result.oResult());
         assertEquals(0.0f, result.xScore(), 0.0f);
         assertEquals(1.0f, result.oScore(), 0.0f);
     }

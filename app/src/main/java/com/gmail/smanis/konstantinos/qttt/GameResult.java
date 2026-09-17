@@ -1,82 +1,53 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-public class GameResult {
-    enum PlayerResult {
-        DOUBLE_COMPLETE_WIN,
-        COMPLETE_WIN,
-        NARROW_WIN_FIRST,
-        NARROW_WIN_SECOND,
-        DRAW,
-        LOSS,
-        INVALID
-    }
+public enum GameResult {
+    DOUBLE_COMPLETE_WIN(2.0f),
+    COMPLETE_WIN(1.0f),
+    NARROW_WIN_FIRST(1.0f),
+    NARROW_WIN_SECOND(0.5f),
+    DRAW(0.0f),
+    LOSS(0.0f),
+    INVALID(0.0f);
 
-    private PlayerResult mResultX;
+    private final float score;
 
-    public GameResult() {
-        mResultX = PlayerResult.INVALID;
-    }
-
-    private float score(PlayerResult res) {
-        switch (res) {
-            case DOUBLE_COMPLETE_WIN:
-                return 2.0f;
-            case COMPLETE_WIN:
-            case NARROW_WIN_FIRST:
-                return 1.0f;
-            case NARROW_WIN_SECOND:
-                return 0.5f;
-            case DRAW:
-            case LOSS:
-            case INVALID:
-            default:
-                return 0.0f;
-        }
+    GameResult(float score) {
+        this.score = score;
     }
 
     public boolean draw() {
-        return (mResultX == PlayerResult.DRAW);
+        return this == DRAW;
     }
 
     public boolean gameOver() {
-        return (mResultX != PlayerResult.INVALID);
+        return this != INVALID;
     }
 
-    public void setXResult(PlayerResult res) {
-        if (res != null) {
-            mResultX = res;
-        }
-    }
-
-    public PlayerResult xResult() {
-        return mResultX;
-    }
-
-    public PlayerResult oResult() {
-        switch (mResultX) {
+    public GameResult oResult() {
+        switch (this) {
             case DOUBLE_COMPLETE_WIN:
             case COMPLETE_WIN:
-                return PlayerResult.LOSS;
+                return LOSS;
             case NARROW_WIN_FIRST:
-                return PlayerResult.NARROW_WIN_SECOND;
+                return NARROW_WIN_SECOND;
             case NARROW_WIN_SECOND:
-                return PlayerResult.NARROW_WIN_FIRST;
+                return NARROW_WIN_FIRST;
             case LOSS:
-                return PlayerResult.COMPLETE_WIN;
+                return COMPLETE_WIN;
             case DRAW:
-                return PlayerResult.DRAW;
+                return DRAW;
             case INVALID:
             default:
-                return PlayerResult.INVALID;
+                return INVALID;
         }
     }
 
     public float xScore() {
-        return score(xResult());
+        return score;
     }
 
     public float oScore() {
-        return score(oResult());
+        return oResult().score;
     }
 
     public Player winner() {
