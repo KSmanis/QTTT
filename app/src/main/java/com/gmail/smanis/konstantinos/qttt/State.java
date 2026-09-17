@@ -356,8 +356,7 @@ public class State {
         return mLastMove;
     }
 
-    private EnumSet<Player> lineWinner(int[] line) {
-        EnumSet<Player> ret = EnumSet.noneOf(Player.class);
+    private Player lineWinner(int[] line) {
         CellState[] cs = {
             mClassicBoard.get(line[0]), mClassicBoard.get(line[1]), mClassicBoard.get(line[2])
         };
@@ -366,9 +365,9 @@ public class State {
                 && cs[2] != null
                 && (cs[0].ordinal() & 1) == (cs[1].ordinal() & 1)
                 && (cs[1].ordinal() & 1) == (cs[2].ordinal() & 1)) {
-            ret = EnumSet.of((cs[0].ordinal() & 1) == 0 ? Player.X : Player.O);
+            return (cs[0].ordinal() & 1) == 0 ? Player.X : Player.O;
         }
-        return ret;
+        return null;
     }
 
     public List<Move> lookupNextMove(InputStream is) {
@@ -578,8 +577,8 @@ public class State {
 
         int xWins = 0, oWins = 0, xWinMove = -1, oWinMove = -1;
         for (int[] line : cLines) {
-            EnumSet<Player> lineWinner = lineWinner(line);
-            if (!lineWinner.isEmpty()) {
+            Player lineWinner = lineWinner(line);
+            if (lineWinner != null) {
                 int[] arr = {
                     mClassicBoard.get(line[0]).ordinal(),
                     mClassicBoard.get(line[1]).ordinal(),
@@ -587,10 +586,10 @@ public class State {
                 };
                 int winMove = Math.max(arr[0], Math.max(arr[1], arr[2])) + 1;
 
-                if (lineWinner.contains(Player.X)) {
+                if (lineWinner == Player.X) {
                     ++xWins;
                     xWinMove = winMove;
-                } else if (lineWinner.contains(Player.O)) {
+                } else {
                     ++oWins;
                     oWinMove = winMove;
                 }
@@ -683,7 +682,7 @@ public class State {
         }
 
         for (int[] line : cLines) {
-            if (!lineWinner(line).isEmpty()) {
+            if (lineWinner(line) != null) {
                 for (int cell : line) {
                     ret.add(cell);
                 }
