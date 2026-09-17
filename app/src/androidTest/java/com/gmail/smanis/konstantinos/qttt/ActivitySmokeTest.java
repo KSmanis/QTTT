@@ -26,6 +26,7 @@ import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Tap;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.lifecycle.ViewModelProvider;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,6 +91,43 @@ public class ActivitySmokeTest {
                             activity.setRequestedOrientation(
                                     ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));
             onView(withId(R.id.gameView)).check(hasCurrentTurn(1));
+        }
+    }
+
+    @Test
+    public void multiplayerGameOverCanBeReset() {
+        try (ActivityScenario<MultiActivity> scenario =
+                ActivityScenario.launch(MultiActivity.class)) {
+            scenario.onActivity(
+                    activity -> {
+                        GameViewModel game =
+                                new ViewModelProvider(activity).get(GameViewModel.class);
+                        Move[] moves = {
+                            new Move(3, 7, CellState.X1),
+                            new Move(2, 4, CellState.O2),
+                            new Move(1, 7, CellState.X3),
+                            new Move(1, 5, CellState.O4),
+                            new Move(7, 8, CellState.X5),
+                            new Move(4, 8, CellState.O6),
+                            new Move(7, 8, CellState.X7),
+                            new Move(7, CellState.X7),
+                            new Move(0, 6, CellState.O8),
+                            new Move(0, 6, CellState.X9),
+                            new Move(0, CellState.X9)
+                        };
+                        for (Move move : moves) {
+                            game.applyMove(move);
+                        }
+                    });
+
+            onView(
+                            withText(
+                                    ApplicationProvider.getApplicationContext()
+                                            .getString(R.string.result_winner, Player.O)))
+                    .check(matches(isDisplayed()));
+            onView(withText(R.string.action_reset)).perform(click());
+            onView(withId(R.id.gameView)).check(hasCurrentTurn(0));
+            onView(withId(R.id.action_undo)).check(doesNotExist());
         }
     }
 
