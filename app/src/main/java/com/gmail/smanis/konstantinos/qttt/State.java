@@ -328,12 +328,7 @@ public class State {
     }
 
     private boolean isFull() {
-        for (CellState cs : mClassicBoard) {
-            if (cs == null) {
-                return false;
-            }
-        }
-        return true;
+        return !mClassicBoard.contains(null);
     }
 
     public boolean isUndoAvailable() {
