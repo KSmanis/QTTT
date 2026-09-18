@@ -360,29 +360,33 @@ public class State {
         try (BufferedReader br =
                 new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             Utility moveUtility = null;
-            boolean found = false;
             String line;
             String moveHistory = moveHistory();
             while ((line = br.readLine()) != null) {
                 throwIfInterrupted();
-                if (found) {
-                    if (line.isEmpty()) {
-                        break;
-                    }
-
-                    Move m = Move.valueOf(line);
-                    if (m != null) {
-                        m.setCellState(
-                                m.type() == Move.Type.REGULAR ? currentMark() : previousMark());
-                        m.setUtility(moveUtility);
-                        ret.add(m);
-                    }
-                } else if (line.startsWith("(")) {
+                if (line.startsWith("(")) {
                     String[] fields = line.split(":");
                     if (fields[0].equals(moveHistory)) {
-                        found = true;
                         moveUtility = Utility.valueOf(fields[1]);
+                        break;
                     }
+                }
+            }
+            if (moveUtility == null) {
+                return ret;
+            }
+
+            while ((line = br.readLine()) != null) {
+                throwIfInterrupted();
+                if (line.isEmpty()) {
+                    break;
+                }
+
+                Move m = Move.valueOf(line);
+                if (m != null) {
+                    m.setCellState(m.type() == Move.Type.REGULAR ? currentMark() : previousMark());
+                    m.setUtility(moveUtility);
+                    ret.add(m);
                 }
             }
         } catch (IOException e) {
