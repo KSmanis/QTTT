@@ -25,8 +25,7 @@ public enum GameResult {
 
     public GameResult oResult() {
         switch (this) {
-            case DOUBLE_COMPLETE_WIN:
-            case COMPLETE_WIN:
+            case DOUBLE_COMPLETE_WIN, COMPLETE_WIN:
                 return LOSS;
             case NARROW_WIN_FIRST:
                 return NARROW_WIN_SECOND;
