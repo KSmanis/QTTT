@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,6 +77,12 @@ public class MultiActivitySnapshotTest {
         assertTrue(state.gameOver());
         assertEquals(GameResult.LOSS, state.result());
         paparazzi.snapshot(view);
+
+        gameView.layout(0, 0, 900, 900);
+        tapCell(gameView, state.winningCells().get(0));
+        Bitmap history = Bitmap.createBitmap(900, 900, Bitmap.Config.ARGB_8888);
+        gameView.draw(new Canvas(history));
+        history.recycle();
     }
 
     @Test
@@ -88,12 +96,7 @@ public class MultiActivitySnapshotTest {
         gameView.render(state);
         gameView.layout(0, 0, 900, 900);
 
-        long now = SystemClock.uptimeMillis();
-        MotionEvent tap = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, 150, 150, 0);
-        gameView.onTouchEvent(tap);
-        tap.setAction(MotionEvent.ACTION_UP);
-        gameView.onTouchEvent(tap);
-        tap.recycle();
+        tapCell(gameView, 0);
 
         assertEquals(CellState.O2, state.classicBoard().get(0));
         paparazzi.snapshot(view);
@@ -158,6 +161,17 @@ public class MultiActivitySnapshotTest {
                 });
         gameView.render(state);
         return state;
+    }
+
+    private static void tapCell(GameView gameView, int cellIndex) {
+        float x = (cellIndex % 3 + 0.5f) * gameView.getWidth() / 3;
+        float y = (cellIndex / 3 + 0.5f) * gameView.getHeight() / 3;
+        long now = SystemClock.uptimeMillis();
+        MotionEvent tap = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, x, y, 0);
+        gameView.onTouchEvent(tap);
+        tap.setAction(MotionEvent.ACTION_UP);
+        gameView.onTouchEvent(tap);
+        tap.recycle();
     }
 
     private View boardView() {
