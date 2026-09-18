@@ -340,28 +340,7 @@ public class GameView extends View {
             CellState mark,
             CellState classicCell,
             RectF cellBounds) {
-        if (classicCell == null) {
-            mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
-            if (mEntangled) {
-                if (mEntangledCells.contains(cellIndex)) {
-                    mMarkPaint.setShadowLayer(mGlowRadius, 0, 0, mMarkPaint.getColor());
-                    if (mark == mSnapshot.lastMove().cellState()) {
-                        mMarkPaint.setUnderlineText(true);
-                    }
-                } else {
-                    mMarkPaint.setAlpha(64);
-                }
-            }
-        } else if (classicCell == mark) {
-            if (mGameOver && mWinningCells.contains(cellIndex)) {
-                mMarkPaint.setColor((classicCell.ordinal() & 1) == 0 ? cXColor : cOColor);
-                mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
-            } else {
-                mMarkPaint.setColor(cCollapsedColor);
-            }
-        } else {
-            mMarkPaint.setColor(cInactiveColor);
-        }
+        configureMarkPaint(cellIndex, mark, classicCell);
 
         int row = markIndex / 3;
         int column = markIndex % 3;
@@ -380,6 +359,34 @@ public class GameView extends View {
         mMarkPaint.setTextSize(cSubscriptSize);
         canvas.drawText(
                 mark.name(), 1, 2, x + cTextWidth + cSubscriptPadding, y + cTextHeight, mMarkPaint);
+    }
+
+    private void configureMarkPaint(int cellIndex, CellState mark, CellState classicCell) {
+        if (classicCell == null) {
+            mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
+            if (!mEntangled) {
+                return;
+            }
+            if (!mEntangledCells.contains(cellIndex)) {
+                mMarkPaint.setAlpha(64);
+                return;
+            }
+            mMarkPaint.setShadowLayer(mGlowRadius, 0, 0, mMarkPaint.getColor());
+            if (mark == mSnapshot.lastMove().cellState()) {
+                mMarkPaint.setUnderlineText(true);
+            }
+            return;
+        }
+        if (classicCell != mark) {
+            mMarkPaint.setColor(cInactiveColor);
+            return;
+        }
+        if (mGameOver && mWinningCells.contains(cellIndex)) {
+            mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
+            mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
+        } else {
+            mMarkPaint.setColor(cCollapsedColor);
+        }
     }
 
     private void animateEntanglement() {
