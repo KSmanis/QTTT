@@ -154,6 +154,24 @@ public class GameView extends View {
             sendEventForVirtualView(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED);
             return true;
         }
+
+        private CharSequence cellDescription(int cellIndex) {
+            CellState classicCell = mSnapshot.classicBoard().get(cellIndex);
+            String state;
+            if (classicCell != null) {
+                state = classicCell.name();
+            } else if (mSnapshot.quantumBoard().get(cellIndex).isEmpty()) {
+                state = getResources().getString(R.string.game_cell_empty);
+            } else {
+                state = mSnapshot.quantumBoard().get(cellIndex).toString();
+            }
+            return getResources()
+                    .getString(
+                            R.string.game_cell_description,
+                            cellIndex / 3 + 1,
+                            cellIndex % 3 + 1,
+                            state);
+        }
     }
 
     private int cellAt(float x, float y) {
@@ -165,24 +183,6 @@ public class GameView extends View {
             }
         }
         return ExploreByTouchHelper.INVALID_ID;
-    }
-
-    private CharSequence cellDescription(int cellIndex) {
-        CellState classicCell = mSnapshot.classicBoard().get(cellIndex);
-        String state;
-        if (classicCell != null) {
-            state = classicCell.name();
-        } else if (mSnapshot.quantumBoard().get(cellIndex).isEmpty()) {
-            state = getResources().getString(R.string.game_cell_empty);
-        } else {
-            state = mSnapshot.quantumBoard().get(cellIndex).toString();
-        }
-        return getResources()
-                .getString(
-                        R.string.game_cell_description,
-                        cellIndex / 3 + 1,
-                        cellIndex % 3 + 1,
-                        state);
     }
 
     private boolean activateCell(int cellIndex) {
