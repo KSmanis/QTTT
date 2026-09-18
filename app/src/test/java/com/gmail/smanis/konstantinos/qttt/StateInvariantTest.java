@@ -3,6 +3,7 @@ package com.gmail.smanis.konstantinos.qttt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.EnumSet;
@@ -63,8 +64,8 @@ public class StateInvariantTest {
             if (move.type() == Move.Type.REGULAR) {
                 assertTrue(move.firstCellIndex() >= 0 && move.firstCellIndex() < 9);
                 assertTrue(move.secondCellIndex() >= 0 && move.secondCellIndex() < 9);
-                assertTrue(state.classicBoard().get(move.firstCellIndex()) == null);
-                assertTrue(state.classicBoard().get(move.secondCellIndex()) == null);
+                assertNull(state.classicBoard().get(move.firstCellIndex()));
+                assertNull(state.classicBoard().get(move.secondCellIndex()));
                 assertEquals(CellState.values()[state.currentTurn()], move.cellState());
             } else {
                 assertTrue(state.entangled());
