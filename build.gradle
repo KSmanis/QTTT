@@ -14,13 +14,19 @@ sonar {
 project(':app') {
     sonar {
         properties {
-            property 'sonar.coverage.jacoco.xmlReportPaths', layout.buildDirectory.file('reports/coverage/test/debug/report.xml').get().asFile
+            property 'sonar.coverage.jacoco.xmlReportPaths', [
+                layout.buildDirectory.file('reports/coverage/test/debug/report.xml').get().asFile,
+                layout.buildDirectory.file('reports/coverage/androidTest/debug/managedDevice/report.xml').get().asFile
+            ].join(',')
         }
     }
 }
 
 tasks.named('sonar') {
-    dependsOn ':app:createDebugUnitTestCoverageReport'
+    if (!providers.gradleProperty('sonarCoverageReport').isPresent()) {
+        throw new GradleException('sonar requires -PsonarCoverageReport')
+    }
+    dependsOn ':app:createDebugUnitTestCoverageReport', ':app:createManagedDeviceDebugAndroidTestCoverageReport'
 }
 
 tasks.register('clean', Delete) {
