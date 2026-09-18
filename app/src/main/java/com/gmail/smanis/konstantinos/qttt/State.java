@@ -382,17 +382,22 @@ public class State {
                     break;
                 }
 
-                Move m = Move.valueOf(line);
-                if (m != null) {
-                    m.setCellState(m.type() == Move.Type.REGULAR ? currentMark() : previousMark());
-                    m.setUtility(moveUtility);
-                    ret.add(m);
-                }
+                addOpeningMove(ret, line, moveUtility);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    private void addOpeningMove(List<Move> moves, String line, Utility utility) {
+        Move move = Move.valueOf(line);
+        if (move == null) {
+            return;
+        }
+        move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
+        move.setUtility(utility);
+        moves.add(move);
     }
 
     private List<Move> minimaxEvaluation() {
