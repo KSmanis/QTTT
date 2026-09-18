@@ -567,21 +567,23 @@ public class State {
         int oWinMove = -1;
         for (int[] line : cLines) {
             Player lineWinner = lineWinner(line);
-            if (lineWinner != null) {
-                int[] arr = {
-                    mClassicBoard.get(line[0]).ordinal(),
-                    mClassicBoard.get(line[1]).ordinal(),
-                    mClassicBoard.get(line[2]).ordinal()
-                };
-                int winMove = Math.max(arr[0], Math.max(arr[1], arr[2])) + 1;
+            if (lineWinner == null) {
+                continue;
+            }
 
-                if (lineWinner == Player.X) {
-                    ++xWins;
-                    xWinMove = winMove;
-                } else {
-                    ++oWins;
-                    oWinMove = winMove;
-                }
+            int[] arr = {
+                mClassicBoard.get(line[0]).ordinal(),
+                mClassicBoard.get(line[1]).ordinal(),
+                mClassicBoard.get(line[2]).ordinal()
+            };
+            int winMove = Math.max(arr[0], Math.max(arr[1], arr[2])) + 1;
+
+            if (lineWinner == Player.X) {
+                ++xWins;
+                xWinMove = winMove;
+            } else {
+                ++oWins;
+                oWinMove = winMove;
             }
         }
 
