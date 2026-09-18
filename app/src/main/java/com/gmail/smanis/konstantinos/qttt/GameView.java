@@ -190,12 +190,9 @@ public class GameView extends View {
             mHistoryShown = !mHistoryShown;
             invalidate();
             mAccessibilityHelper.invalidateRoot();
-        } else if (!mPaused && mOnInputListener != null && mOnInputListener.onInput(cellIndex)) {
             return true;
-        } else {
-            return false;
         }
-        return true;
+        return !mPaused && mOnInputListener != null && mOnInputListener.onInput(cellIndex);
     }
 
     private void checkEntanglement() {
