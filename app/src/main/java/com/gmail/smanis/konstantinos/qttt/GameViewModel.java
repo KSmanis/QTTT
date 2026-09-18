@@ -204,6 +204,8 @@ public class GameViewModel extends AndroidViewModel {
                     pool = allMoves;
                 }
                 break;
+            case Optimal:
+                break;
         }
         state.applyMove(pool.get(rng.nextInt(pool.size())));
     }
