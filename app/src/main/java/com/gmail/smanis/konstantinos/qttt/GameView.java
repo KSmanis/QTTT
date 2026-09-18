@@ -256,9 +256,12 @@ public class GameView extends View {
             return;
         }
 
-        List<CellState> classicBoard = mSnapshot.classicBoard();
-        List<EnumSet<CellState>> quantumBoard = mSnapshot.quantumBoard();
+        drawGrid(canvas);
+        drawCells(canvas);
+        animateEntanglement();
+    }
 
+    private void drawGrid(Canvas canvas) {
         for (int i = 1; i < 3; ++i) {
             float x = i * getWidth() / 3f;
             canvas.drawLine(x - cGridLinePadding, 0, x - cGridLinePadding, getHeight(), mLinePaint);
@@ -269,107 +272,118 @@ public class GameView extends View {
             canvas.drawLine(0, y - cGridLinePadding, getWidth(), y - cGridLinePadding, mLinePaint);
             canvas.drawLine(0, y + cGridLinePadding, getWidth(), y + cGridLinePadding, mLinePaint);
         }
-        for (int iGridRow = 0; iGridRow < 3; ++iGridRow) {
-            for (int iGridCol = 0; iGridCol < 3; ++iGridCol) {
-                int iGridIndex = 3 * iGridRow + iGridCol;
-                EnumSet<CellState> qCell = quantumBoard.get(iGridIndex);
-                if (qCell.isEmpty()) {
-                    continue;
-                }
+    }
 
-                CellState cCell = classicBoard.get(iGridIndex);
-                RectF cellRect = mGridCells[iGridIndex];
-                if (cCell != null && !mHistoryShown) {
-                    mMarkPaint.setTextSize(3 * cTextSize);
-                    mMarkPaint.getTextBounds(cCell.name(), 0, 1, mTextRect);
-                    mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    mMarkPaint.getTextBounds(cCell.name(), 1, 2, mSubscriptRect);
-                    float x =
-                            cellRect.left
-                                    + (cellRect.width()
-                                                    - mTextRect.width()
-                                                    - 3 * cSubscriptPadding
-                                                    - mSubscriptRect.width())
-                                            / 2f;
-                    float y = cellRect.top + (cellRect.height() - mTextRect.height()) / 2f;
-
-                    if (mGameOver && mWinningCells.contains(iGridIndex)) {
-                        mMarkPaint.setColor((cCell.ordinal() & 1) == 0 ? cXColor : cOColor);
-                        mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
-                    } else {
-                        mMarkPaint.setColor(cCollapsedColor);
-                    }
-                    mMarkPaint.setTextSize(3 * cTextSize);
-                    canvas.drawText(cCell.name(), 0, 1, x, y + mTextRect.height(), mMarkPaint);
-                    mMarkPaint.setTextSize(3 * cSubscriptSize);
-                    canvas.drawText(
-                            cCell.name(),
-                            1,
-                            2,
-                            x + mTextRect.width() + 3 * cSubscriptPadding,
-                            y + mTextRect.height(),
-                            mMarkPaint);
-                    mMarkPaint.clearShadowLayer();
-                    continue;
-                }
-
-                for (int iCellRow = 0; iCellRow < 3; ++iCellRow) {
-                    for (int iCellCol = 0; iCellCol < 3; ++iCellCol) {
-                        int iCellIndex = 3 * iCellRow + iCellCol;
-                        CellState mark = CellState.values()[iCellIndex];
-                        if (!qCell.contains(mark)) {
-                            continue;
-                        }
-
-                        if (cCell == null) {
-                            mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
-                            if (mEntangled) {
-                                if (mEntangledCells.contains(iGridIndex)) {
-                                    mMarkPaint.setShadowLayer(
-                                            mGlowRadius, 0, 0, mMarkPaint.getColor());
-                                    if (mark == mSnapshot.lastMove().cellState()) {
-                                        mMarkPaint.setUnderlineText(true);
-                                    }
-                                } else {
-                                    mMarkPaint.setAlpha(64);
-                                }
-                            }
-                        } else if (cCell == mark) {
-                            if (mGameOver && mWinningCells.contains(iGridIndex)) {
-                                mMarkPaint.setColor((cCell.ordinal() & 1) == 0 ? cXColor : cOColor);
-                                mMarkPaint.setShadowLayer(
-                                        cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
-                            } else {
-                                mMarkPaint.setColor(cCollapsedColor);
-                            }
-                        } else {
-                            mMarkPaint.setColor(cInactiveColor);
-                        }
-                        float x =
-                                cellRect.left
-                                        + iCellCol * cellRect.width() / 3f
-                                        + (cellRect.width() / 3f - cTextWidth - cTextPadding) / 2f;
-                        float y =
-                                cellRect.top
-                                        + iCellRow * cellRect.height() / 3f
-                                        + (cellRect.height() / 3f - cTextHeight) / 2f;
-                        mMarkPaint.setTextSize(cTextSize);
-                        canvas.drawText(mark.name(), 0, 1, x, y + cTextHeight, mMarkPaint);
-                        mMarkPaint.setUnderlineText(false);
-                        mMarkPaint.clearShadowLayer();
-                        mMarkPaint.setTextSize(cSubscriptSize);
-                        canvas.drawText(
-                                mark.name(),
-                                1,
-                                2,
-                                x + cTextWidth + cSubscriptPadding,
-                                y + cTextHeight,
-                                mMarkPaint);
-                    }
-                }
+    private void drawCells(Canvas canvas) {
+        List<CellState> classicBoard = mSnapshot.classicBoard();
+        List<EnumSet<CellState>> quantumBoard = mSnapshot.quantumBoard();
+        for (int cellIndex = 0; cellIndex < quantumBoard.size(); ++cellIndex) {
+            EnumSet<CellState> quantumCell = quantumBoard.get(cellIndex);
+            if (!quantumCell.isEmpty()) {
+                drawCell(canvas, cellIndex, classicBoard.get(cellIndex), quantumCell);
             }
         }
+    }
 
+    private void drawCell(
+            Canvas canvas, int cellIndex, CellState classicCell, EnumSet<CellState> quantumCell) {
+        RectF cellBounds = mGridCells[cellIndex];
+        if (classicCell != null && !mHistoryShown) {
+            drawCollapsedCell(canvas, cellIndex, classicCell, cellBounds);
+            return;
+        }
+
+        for (int markIndex = 0; markIndex < CellState.values().length; ++markIndex) {
+            CellState mark = CellState.values()[markIndex];
+            if (quantumCell.contains(mark)) {
+                drawMark(canvas, cellIndex, markIndex, mark, classicCell, cellBounds);
+            }
+        }
+    }
+
+    private void drawCollapsedCell(Canvas canvas, int cellIndex, CellState cell, RectF cellBounds) {
+        mMarkPaint.setTextSize(3 * cTextSize);
+        mMarkPaint.getTextBounds(cell.name(), 0, 1, mTextRect);
+        mMarkPaint.setTextSize(3 * cSubscriptSize);
+        mMarkPaint.getTextBounds(cell.name(), 1, 2, mSubscriptRect);
+        float x =
+                cellBounds.left
+                        + (cellBounds.width()
+                                        - mTextRect.width()
+                                        - 3 * cSubscriptPadding
+                                        - mSubscriptRect.width())
+                                / 2f;
+        float y = cellBounds.top + (cellBounds.height() - mTextRect.height()) / 2f;
+
+        if (mGameOver && mWinningCells.contains(cellIndex)) {
+            mMarkPaint.setColor((cell.ordinal() & 1) == 0 ? cXColor : cOColor);
+            mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
+        } else {
+            mMarkPaint.setColor(cCollapsedColor);
+        }
+        mMarkPaint.setTextSize(3 * cTextSize);
+        canvas.drawText(cell.name(), 0, 1, x, y + mTextRect.height(), mMarkPaint);
+        mMarkPaint.setTextSize(3 * cSubscriptSize);
+        canvas.drawText(
+                cell.name(),
+                1,
+                2,
+                x + mTextRect.width() + 3 * cSubscriptPadding,
+                y + mTextRect.height(),
+                mMarkPaint);
+        mMarkPaint.clearShadowLayer();
+    }
+
+    private void drawMark(
+            Canvas canvas,
+            int cellIndex,
+            int markIndex,
+            CellState mark,
+            CellState classicCell,
+            RectF cellBounds) {
+        if (classicCell == null) {
+            mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
+            if (mEntangled) {
+                if (mEntangledCells.contains(cellIndex)) {
+                    mMarkPaint.setShadowLayer(mGlowRadius, 0, 0, mMarkPaint.getColor());
+                    if (mark == mSnapshot.lastMove().cellState()) {
+                        mMarkPaint.setUnderlineText(true);
+                    }
+                } else {
+                    mMarkPaint.setAlpha(64);
+                }
+            }
+        } else if (classicCell == mark) {
+            if (mGameOver && mWinningCells.contains(cellIndex)) {
+                mMarkPaint.setColor((classicCell.ordinal() & 1) == 0 ? cXColor : cOColor);
+                mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
+            } else {
+                mMarkPaint.setColor(cCollapsedColor);
+            }
+        } else {
+            mMarkPaint.setColor(cInactiveColor);
+        }
+
+        int row = markIndex / 3;
+        int column = markIndex % 3;
+        float x =
+                cellBounds.left
+                        + column * cellBounds.width() / 3f
+                        + (cellBounds.width() / 3f - cTextWidth - cTextPadding) / 2f;
+        float y =
+                cellBounds.top
+                        + row * cellBounds.height() / 3f
+                        + (cellBounds.height() / 3f - cTextHeight) / 2f;
+        mMarkPaint.setTextSize(cTextSize);
+        canvas.drawText(mark.name(), 0, 1, x, y + cTextHeight, mMarkPaint);
+        mMarkPaint.setUnderlineText(false);
+        mMarkPaint.clearShadowLayer();
+        mMarkPaint.setTextSize(cSubscriptSize);
+        canvas.drawText(
+                mark.name(), 1, 2, x + cTextWidth + cSubscriptPadding, y + cTextHeight, mMarkPaint);
+    }
+
+    private void animateEntanglement() {
         if (mEntangled) {
             if (mGlowInc) {
                 mGlowRadius += cGlowStep;
