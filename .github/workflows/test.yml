@@ -38,15 +38,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
       - name: Enable KVM
-        if: contains(matrix.id, 'DebugAndroidTest')
+        if: endsWith(matrix.id, 'DebugAndroidTest')
         run: sudo chmod 666 /dev/kvm
       - name: Run Gradle task
         run: >-
           ./gradlew --no-daemon
-          ${{ contains(matrix.id, 'DebugAndroidTest') && '-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect' || '' }}
+          ${{ endsWith(matrix.id, 'DebugAndroidTest') && '-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect' || '' }}
           :app:${{ matrix.id }}
       - name: Upload Android test reports
-        if: failure() && contains(matrix.id, 'DebugAndroidTest')
+        if: failure() && endsWith(matrix.id, 'DebugAndroidTest')
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: android-test-reports-${{ matrix.id }}
