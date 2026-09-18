@@ -68,8 +68,9 @@ public class SingleActivity extends AppCompatActivity {
                 .observe(
                         this,
                         thinking -> {
-                            gameView.setPaused(thinking);
-                            progressBar.setVisibility(thinking ? View.VISIBLE : View.INVISIBLE);
+                            boolean isThinking = Boolean.TRUE.equals(thinking);
+                            gameView.setPaused(isThinking);
+                            progressBar.setVisibility(isThinking ? View.VISIBLE : View.INVISIBLE);
                             invalidateOptionsMenu();
                         });
 
