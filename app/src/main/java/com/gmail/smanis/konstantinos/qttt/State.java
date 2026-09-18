@@ -190,28 +190,31 @@ public class State {
 
     public List<Move> availableMoves(boolean reorderMoves) {
         List<Move> ret = new ArrayList<>();
-        if (!gameOver()) {
-            if (entangled()) {
-                ret.add(new Move(mLastMove.firstCellIndex(), mLastMove.cellState()));
-                ret.add(new Move(mLastMove.secondCellIndex(), mLastMove.cellState()));
-            } else {
-                List<Integer> openCells = openCells();
-                if (openCells.size() == 1) {
-                    // Special case: board is full by the last X move;
-                    // place both marks in the only free cell.
-                    ret.add(new Move(openCells.get(0), openCells.get(0), CellState.X9));
-                } else {
-                    CellState currentMark = currentMark();
-                    for (int i = 0; i + 1 < openCells.size(); ++i) {
-                        for (int j = i + 1; j < openCells.size(); ++j) {
-                            ret.add(new Move(openCells.get(i), openCells.get(j), currentMark));
-                        }
-                    }
-                    if (reorderMoves) {
-                        reorderMoves(ret);
-                    }
-                }
+        if (gameOver()) {
+            return ret;
+        }
+        if (entangled()) {
+            ret.add(new Move(mLastMove.firstCellIndex(), mLastMove.cellState()));
+            ret.add(new Move(mLastMove.secondCellIndex(), mLastMove.cellState()));
+            return ret;
+        }
+
+        List<Integer> openCells = openCells();
+        if (openCells.size() == 1) {
+            // Special case: board is full by the last X move;
+            // place both marks in the only free cell.
+            ret.add(new Move(openCells.get(0), openCells.get(0), CellState.X9));
+            return ret;
+        }
+
+        CellState currentMark = currentMark();
+        for (int i = 0; i + 1 < openCells.size(); ++i) {
+            for (int j = i + 1; j < openCells.size(); ++j) {
+                ret.add(new Move(openCells.get(i), openCells.get(j), currentMark));
             }
+        }
+        if (reorderMoves) {
+            reorderMoves(ret);
         }
         return ret;
     }
