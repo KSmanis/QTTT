@@ -47,10 +47,10 @@ public class GameView extends View {
     private final int cTextWidth;
     private final int cTextHeight;
     // Entanglement Animation
-    private final float cMinGlowRadius = 5.f;
-    private final float cMaxGlowRadius = 20.f;
-    private final float cGlowStep = 1.f;
-    private final int cFps = 30;
+    private static final float MIN_GLOW_RADIUS = 5.f;
+    private static final float MAX_GLOW_RADIUS = 20.f;
+    private static final float GLOW_STEP = 1.f;
+    private static final int FPS = 30;
     private float mGlowRadius;
     private boolean mGlowInc;
     // Rendered State
@@ -317,7 +317,7 @@ public class GameView extends View {
 
         if (mGameOver && mWinningCells.contains(cellIndex)) {
             mMarkPaint.setColor((cell.ordinal() & 1) == 0 ? cXColor : cOColor);
-            mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
+            mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
         } else {
             mMarkPaint.setColor(cCollapsedColor);
         }
@@ -356,7 +356,7 @@ public class GameView extends View {
         } else if (classicCell == mark) {
             if (mGameOver && mWinningCells.contains(cellIndex)) {
                 mMarkPaint.setColor((classicCell.ordinal() & 1) == 0 ? cXColor : cOColor);
-                mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
+                mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
             } else {
                 mMarkPaint.setColor(cCollapsedColor);
             }
@@ -386,16 +386,16 @@ public class GameView extends View {
     private void animateEntanglement() {
         if (mEntangled) {
             if (mGlowInc) {
-                mGlowRadius += cGlowStep;
+                mGlowRadius += GLOW_STEP;
             } else {
-                mGlowRadius -= cGlowStep;
+                mGlowRadius -= GLOW_STEP;
             }
-            if (mGlowRadius <= cMinGlowRadius) {
+            if (mGlowRadius <= MIN_GLOW_RADIUS) {
                 mGlowInc = true;
-            } else if (mGlowRadius >= cMaxGlowRadius) {
+            } else if (mGlowRadius >= MAX_GLOW_RADIUS) {
                 mGlowInc = false;
             }
-            postInvalidateDelayed(1000 / cFps);
+            postInvalidateDelayed(1000 / FPS);
         }
     }
 
