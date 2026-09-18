@@ -9,8 +9,10 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import org.junit.Test;
 
 public class StateTest {
@@ -61,8 +63,8 @@ public class StateTest {
         state.applyMove(collapseMoves.get(0));
 
         assertFalse(state.entangled());
-        assertTrue(state.classicBoard().subList(0, 3).stream().allMatch(cell -> cell != null));
-        assertTrue(state.classicBoard().subList(3, 9).stream().allMatch(cell -> cell == null));
+        assertTrue(state.classicBoard().subList(0, 3).stream().allMatch(Objects::nonNull));
+        assertTrue(state.classicBoard().subList(3, 9).stream().allMatch(Objects::isNull));
 
         state.undoLastMove();
 
@@ -102,8 +104,8 @@ public class StateTest {
         assertEquals(0, state.currentTurn());
         assertNull(state.lastMove());
         assertFalse(state.isUndoAvailable());
-        assertTrue(state.classicBoard().stream().allMatch(cell -> cell == null));
-        assertTrue(state.quantumBoard().stream().allMatch(cell -> cell.isEmpty()));
+        assertTrue(state.classicBoard().stream().allMatch(Objects::isNull));
+        assertTrue(state.quantumBoard().stream().allMatch(Collection::isEmpty));
     }
 
     @Test
