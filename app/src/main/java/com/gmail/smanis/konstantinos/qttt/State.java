@@ -590,20 +590,17 @@ public class State {
 
         if (xWins == 2) {
             return GameResult.DOUBLE_COMPLETE_WIN;
-        } else if (xWins == 1 && oWins == 0) {
-            return GameResult.COMPLETE_WIN;
-        } else if (xWins == 1 && oWins == 1) {
-            if (xWinMove < oWinMove) {
-                return GameResult.NARROW_WIN_FIRST;
-            } else {
-                return GameResult.NARROW_WIN_SECOND;
-            }
-        } else if (xWins == 0 && oWins == 1) {
-            return GameResult.LOSS;
-        } else if (isFull()) {
-            return GameResult.DRAW;
         }
-        return GameResult.INVALID;
+        if (xWins == 1 && oWins == 0) {
+            return GameResult.COMPLETE_WIN;
+        }
+        if (xWins == 1 && oWins == 1) {
+            return xWinMove < oWinMove ? GameResult.NARROW_WIN_FIRST : GameResult.NARROW_WIN_SECOND;
+        }
+        if (xWins == 0 && oWins == 1) {
+            return GameResult.LOSS;
+        }
+        return isFull() ? GameResult.DRAW : GameResult.INVALID;
     }
 
     public GameResult result() {
