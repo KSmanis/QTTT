@@ -58,8 +58,10 @@ public class State {
     };
     private List<CellState> mClassicBoard;
     private List<EnumSet<CellState>> mQuantumBoard;
-    private int mTurn, mDepth;
-    private Move mLastMove, mInput;
+    private int mTurn;
+    private int mDepth;
+    private Move mLastMove;
+    private Move mInput;
     private Boolean mEntangled;
     private GameResult mResult;
 
@@ -359,7 +361,8 @@ public class State {
                 new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             Utility moveUtility = null;
             boolean found = false;
-            String line, moveHistory = moveHistory();
+            String line;
+            String moveHistory = moveHistory();
             while ((line = br.readLine()) != null) {
                 throwIfInterrupted();
                 if (found) {
@@ -558,7 +561,10 @@ public class State {
             return GameResult.INVALID;
         }
 
-        int xWins = 0, oWins = 0, xWinMove = -1, oWinMove = -1;
+        int xWins = 0;
+        int oWins = 0;
+        int xWinMove = -1;
+        int oWinMove = -1;
         for (int[] line : cLines) {
             Player lineWinner = lineWinner(line);
             if (lineWinner != null) {

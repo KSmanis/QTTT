@@ -60,13 +60,15 @@ public class GameView extends View {
     private boolean mGameOver;
     private List<Integer> mWinningCells;
     // View State
-    private Paint mLinePaint, mMarkPaint;
+    private Paint mLinePaint;
+    private Paint mMarkPaint;
     private final Rect mTextRect = new Rect();
     private final Rect mSubscriptRect = new Rect();
     private final ExploreByTouchHelper mAccessibilityHelper;
     private RectF[] mGridCells;
     private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
-    private boolean mHistoryShown, mPaused;
+    private boolean mHistoryShown;
+    private boolean mPaused;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);

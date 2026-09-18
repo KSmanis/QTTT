@@ -32,7 +32,8 @@ public class Move {
     }
 
     private final Type mType;
-    private int mCellIndex1, mCellIndex2;
+    private int mCellIndex1;
+    private int mCellIndex2;
     private CellState mCellState;
     private Utility mUtility;
     private Move mPrevMove;
