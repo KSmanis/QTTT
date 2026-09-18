@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MultiActivity extends AppCompatActivity {
-    private GameView gameView;
     private GameViewModel game;
     private Snackbar mSnackbar;
 
@@ -20,7 +19,7 @@ public class MultiActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         game = new ViewModelProvider(this).get(GameViewModel.class);
-        gameView = findViewById(R.id.gameView);
+        GameView gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(
                 res -> {
                     String message;

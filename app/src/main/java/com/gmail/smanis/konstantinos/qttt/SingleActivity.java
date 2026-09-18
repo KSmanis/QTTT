@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 
 public class SingleActivity extends AppCompatActivity {
-    private ProgressBar progressBar;
     private GameView gameView;
     private GameViewModel game;
     private Snackbar mSnackbar;
@@ -35,7 +34,7 @@ public class SingleActivity extends AppCompatActivity {
                 Difficulty.fromId(intent.getIntExtra(OptionsActivity.EXTRA_DIFFICULTY, -1));
 
         game = new ViewModelProvider(this).get(GameViewModel.class);
-        progressBar = findViewById(R.id.progressBar);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
         gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(
                 res -> {
