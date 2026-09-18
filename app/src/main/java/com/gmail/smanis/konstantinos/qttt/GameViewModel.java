@@ -13,11 +13,11 @@ import java.util.Random;
 import java.util.concurrent.CancellationException;
 
 enum Difficulty {
-    Random(0),
-    Easy(1),
-    Medium(2),
-    Hard(3),
-    Optimal(4);
+    RANDOM(0),
+    EASY(1),
+    MEDIUM(2),
+    HARD(3),
+    OPTIMAL(4);
 
     private final int id;
 
@@ -119,7 +119,7 @@ public class GameViewModel extends AndroidViewModel {
             return;
         }
 
-        if (difficulty == Difficulty.Random) {
+        if (difficulty == Difficulty.RANDOM) {
             applyBotMove(null, difficulty);
             publish();
             playBot(humanPlayer, difficulty);
@@ -186,25 +186,25 @@ public class GameViewModel extends AndroidViewModel {
         List<Move> allMoves = state.availableMoves(false);
         List<Move> pool = optimalMoves;
         switch (difficulty) {
-            case Random:
+            case RANDOM:
                 pool = allMoves;
                 break;
-            case Easy:
+            case EASY:
                 if (rng.nextFloat() >= 0.5) {
                     pool = allMoves;
                 }
                 break;
-            case Medium:
+            case MEDIUM:
                 if (rng.nextFloat() >= 0.75) {
                     pool = allMoves;
                 }
                 break;
-            case Hard:
+            case HARD:
                 if (rng.nextFloat() >= 0.9 && !state.entangled()) {
                     pool = allMoves;
                 }
                 break;
-            case Optimal:
+            case OPTIMAL:
                 break;
         }
         state.applyMove(pool.get(rng.nextInt(pool.size())));

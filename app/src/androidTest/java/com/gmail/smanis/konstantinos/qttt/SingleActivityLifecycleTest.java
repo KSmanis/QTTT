@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 public class SingleActivityLifecycleTest {
     @Test
     public void aiTurnSurvivesRecreation() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.O, Difficulty.Optimal)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.O, Difficulty.OPTIMAL)) {
             scenario.recreate();
             waitForTurn(scenario, 1);
         }
@@ -27,11 +27,11 @@ public class SingleActivityLifecycleTest {
 
     @Test
     public void resetWhileMinimaxIsRunningLeavesFreshBoard() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.Optimal)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
             scenario.onActivity(
                     activity -> {
                         seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.Optimal);
+                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
                         assertEquals(
                                 View.VISIBLE,
                                 activity.findViewById(R.id.progressBar).getVisibility());
@@ -47,11 +47,11 @@ public class SingleActivityLifecycleTest {
 
     @Test
     public void undoWhileMinimaxIsRunningRemovesHumanMove() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.Optimal)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
             scenario.onActivity(
                     activity -> {
                         seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.Optimal);
+                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
                         assertEquals(
                                 View.VISIBLE,
                                 activity.findViewById(R.id.progressBar).getVisibility());
@@ -67,11 +67,11 @@ public class SingleActivityLifecycleTest {
 
     @Test
     public void destructionBeforeAiResultDoesNotCrash() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.Optimal)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
             scenario.onActivity(
                     activity -> {
                         seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.Optimal);
+                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
                         assertEquals(
                                 View.VISIBLE,
                                 activity.findViewById(R.id.progressBar).getVisibility());
@@ -82,7 +82,7 @@ public class SingleActivityLifecycleTest {
 
     @Test
     public void recreationPreservesStateAndTurnOwnership() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.Random)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.RANDOM)) {
             scenario.onActivity(
                     activity -> {
                         GameViewModel game = game(activity);
@@ -98,7 +98,7 @@ public class SingleActivityLifecycleTest {
 
     @Test
     public void recreationPreservesIncompleteInput() {
-        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.Random)) {
+        try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.RANDOM)) {
             scenario.onActivity(activity -> game(activity).applyInput(0));
 
             scenario.recreate();

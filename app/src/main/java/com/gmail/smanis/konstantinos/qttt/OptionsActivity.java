@@ -43,15 +43,15 @@ public class OptionsActivity extends AppCompatActivity {
 
     static Difficulty difficultyForRadioButton(int id) {
         if (id == R.id.radioButton_random) {
-            return Difficulty.Random;
+            return Difficulty.RANDOM;
         } else if (id == R.id.radioButton_easy) {
-            return Difficulty.Easy;
+            return Difficulty.EASY;
         } else if (id == R.id.radioButton_medium) {
-            return Difficulty.Medium;
+            return Difficulty.MEDIUM;
         } else if (id == R.id.radioButton_hard) {
-            return Difficulty.Hard;
+            return Difficulty.HARD;
         } else if (id == R.id.radioButton_optimal) {
-            return Difficulty.Optimal;
+            return Difficulty.OPTIMAL;
         }
         throw new IllegalArgumentException("Unknown difficulty radio button id: " + id);
     }
