@@ -596,6 +596,10 @@ public class State {
             }
         }
 
+        return classifyResult(xWins, oWins, xWinMove, oWinMove);
+    }
+
+    private GameResult classifyResult(int xWins, int oWins, int xWinMove, int oWinMove) {
         if (xWins == 2) {
             return GameResult.DOUBLE_COMPLETE_WIN;
         }
