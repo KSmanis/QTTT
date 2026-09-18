@@ -118,12 +118,7 @@ public class State {
     }
 
     public boolean applyInput(int cellIndex) {
-        if (gameOver()) {
-            return false;
-        }
-
-        CellState cCell = mClassicBoard.get(cellIndex);
-        if (cCell != null) {
+        if (gameOver() || mClassicBoard.get(cellIndex) != null) {
             return false;
         }
 
@@ -133,29 +128,31 @@ public class State {
                 return false;
             }
             applyMove(new Move(cellIndex, previousMark()));
-        } else {
-            if (mInput == null) {
-                if (openCells().size() == 1) {
-                    applyMove(new Move(cellIndex, cellIndex, CellState.X9));
-                } else {
-                    mInput = new Move(cellIndex, -1, currentMark());
-                    mQuantumBoard.get(cellIndex).add(currentMark());
-                }
-            } else {
-                if (cellIndex == mInput.firstCellIndex()) {
-                    mQuantumBoard.get(cellIndex).remove(currentMark());
-                } else {
-                    mInput.setSecondCellIndex(cellIndex);
-                    if (mInput.firstCellIndex() > mInput.secondCellIndex()) {
-                        int temp = mInput.firstCellIndex();
-                        mInput.setFirstCellIndex(mInput.secondCellIndex());
-                        mInput.setSecondCellIndex(temp);
-                    }
-                    applyMove(mInput);
-                }
-                mInput = null;
-            }
+            return true;
         }
+
+        if (mInput == null) {
+            if (openCells().size() == 1) {
+                applyMove(new Move(cellIndex, cellIndex, CellState.X9));
+            } else {
+                mInput = new Move(cellIndex, -1, currentMark());
+                mQuantumBoard.get(cellIndex).add(currentMark());
+            }
+            return true;
+        }
+
+        if (cellIndex == mInput.firstCellIndex()) {
+            mQuantumBoard.get(cellIndex).remove(currentMark());
+        } else {
+            mInput.setSecondCellIndex(cellIndex);
+            if (mInput.firstCellIndex() > mInput.secondCellIndex()) {
+                int temp = mInput.firstCellIndex();
+                mInput.setFirstCellIndex(mInput.secondCellIndex());
+                mInput.setSecondCellIndex(temp);
+            }
+            applyMove(mInput);
+        }
+        mInput = null;
         return true;
     }
 
