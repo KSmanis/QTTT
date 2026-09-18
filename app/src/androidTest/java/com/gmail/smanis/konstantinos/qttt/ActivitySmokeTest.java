@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import android.content.pm.ActivityInfo;
 import android.view.InputDevice;
 import android.view.MotionEvent;
-import android.view.View;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.ViewAssertion;
@@ -150,16 +149,13 @@ public class ActivitySmokeTest {
 
     private static GeneralClickAction clickCell(int row, int column) {
         CoordinatesProvider coordinates =
-                new CoordinatesProvider() {
-                    @Override
-                    public float[] calculateCoordinates(View view) {
-                        int[] location = new int[2];
-                        view.getLocationOnScreen(location);
-                        return new float[] {
-                            location[0] + view.getWidth() * (column + 0.5f) / 3,
-                            location[1] + view.getHeight() * (row + 0.5f) / 3
-                        };
-                    }
+                view -> {
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    return new float[] {
+                        location[0] + view.getWidth() * (column + 0.5f) / 3,
+                        location[1] + view.getHeight() * (row + 0.5f) / 3
+                    };
                 };
         return new GeneralClickAction(
                 Tap.SINGLE,
