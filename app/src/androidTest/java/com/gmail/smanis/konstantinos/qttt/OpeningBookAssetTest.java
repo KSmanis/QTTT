@@ -92,7 +92,7 @@ public class OpeningBookAssetTest {
     public void installedOpeningBookReopensAfterProcessRestart() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         OpeningBook.database(context).close();
-        OpeningBook.database = null;
+        OpeningBook.databaseTask = null;
 
         assertTrue(OpeningBook.database(context).isOpen());
     }

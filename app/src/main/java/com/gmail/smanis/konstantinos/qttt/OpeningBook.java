@@ -20,18 +20,18 @@ import java.util.concurrent.FutureTask;
 final class OpeningBook {
     private static final String TAG = "OpeningBook";
     private static final String DATABASE_NAME = "opening-book-v1.db";
-    static FutureTask<SQLiteDatabase> database;
+    static FutureTask<SQLiteDatabase> databaseTask;
 
     private OpeningBook() {}
 
     static synchronized void initialize(Context context) {
-        if (database != null) {
+        if (databaseTask != null) {
             return;
         }
 
         Context applicationContext = context.getApplicationContext();
-        database = new FutureTask<>(() -> open(applicationContext));
-        new Thread(database, "opening-book-init").start();
+        databaseTask = new FutureTask<>(() -> open(applicationContext));
+        new Thread(databaseTask, "opening-book-init").start();
     }
 
     static List<Move> lookup(Context context, State state) {
@@ -60,7 +60,7 @@ final class OpeningBook {
     static SQLiteDatabase database(Context context)
             throws ExecutionException, InterruptedException {
         initialize(context);
-        return database.get();
+        return databaseTask.get();
     }
 
     private static SQLiteDatabase open(Context context) throws IOException {
