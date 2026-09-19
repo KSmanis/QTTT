@@ -37,52 +37,41 @@ public final class OpeningBookGenerator extends State {
                         .redirectError(ProcessBuilder.Redirect.INHERIT)
                         .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                         .start();
-        boolean wroteSql = false;
-        boolean complete = false;
-        try (PrintStream output =
-                new PrintStream(
-                        new BufferedOutputStream(sqlite.getOutputStream()),
-                        false,
-                        StandardCharsets.UTF_8)) {
-            output.println(".bail on");
-            output.println("PRAGMA journal_mode=OFF;");
-            output.println("PRAGMA synchronous=OFF;");
-            output.println("PRAGMA temp_store=MEMORY;");
-            output.println(
-                    "CREATE TABLE IF NOT EXISTS opening_book ("
-                            + "history INTEGER PRIMARY KEY,"
-                            + "utility_value INTEGER NOT NULL,"
-                            + "utility_depth INTEGER NOT NULL,"
-                            + "moves TEXT NOT NULL CHECK (length(moves) % 2 = 0));");
-            output.println("BEGIN;");
+        try {
+            try (PrintStream output =
+                    new PrintStream(
+                            new BufferedOutputStream(sqlite.getOutputStream()),
+                            false,
+                            StandardCharsets.UTF_8)) {
+                output.println(".bail on");
+                output.println("PRAGMA journal_mode=OFF;");
+                output.println("PRAGMA synchronous=OFF;");
+                output.println("PRAGMA temp_store=MEMORY;");
+                output.println(
+                        "CREATE TABLE IF NOT EXISTS opening_book ("
+                                + "history INTEGER PRIMARY KEY,"
+                                + "utility_value INTEGER NOT NULL,"
+                                + "utility_depth INTEGER NOT NULL,"
+                                + "moves TEXT NOT NULL CHECK (length(moves) % 2 = 0));");
+                output.println("BEGIN;");
 
-            OpeningBookGenerator generator = new OpeningBookGenerator(output);
-            generator.generate(turn);
+                OpeningBookGenerator generator = new OpeningBookGenerator(output);
+                generator.generate(turn);
 
-            output.println("COMMIT;");
-            output.println("PRAGMA user_version=1;");
-            output.println("VACUUM;");
-            if (output.checkError()) {
-                throw new IOException("Failed to write SQLite input");
+                output.println("COMMIT;");
+                output.println("PRAGMA user_version=1;");
+                output.println("VACUUM;");
+                if (output.checkError()) {
+                    throw new IOException("Failed to write SQLite input");
+                }
             }
-            wroteSql = true;
+            if (sqlite.waitFor() != 0) {
+                throw new IOException("sqlite3 failed to create " + destination);
+            }
+            Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
         } finally {
-            try {
-                int exitCode = sqlite.waitFor();
-                if (wroteSql && exitCode == 0) {
-                    Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
-                    complete = true;
-                }
-            } finally {
-                if (!complete) {
-                    sqlite.destroyForcibly();
-                    Files.deleteIfExists(temporary);
-                }
-            }
-        }
-
-        if (!complete) {
-            throw new IOException("sqlite3 failed to create " + destination);
+            sqlite.destroyForcibly();
+            Files.deleteIfExists(temporary);
         }
     }
 
