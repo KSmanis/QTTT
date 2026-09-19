@@ -24,7 +24,8 @@ mise exec -- ./gradlew :app:generateOpeningBook -Pturn=0
 
 `turn` must be between `0` and `4`. Each run atomically updates the packaged
 `app/src/main/assets/opening-book-v1.db`, preserving the other turns. Generation
-is compute-intensive.
+is compute-intensive. Regeneration only inserts or replaces rows; stale rows
+that are no longer generated for the selected turn remain in the database.
 
 The application copies the versioned database asset into private storage in the
 background and queries it read-only. Rename the asset and update
