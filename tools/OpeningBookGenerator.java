@@ -68,7 +68,11 @@ public final class OpeningBookGenerator extends State {
             if (sqlite.waitFor() != 0) {
                 throw new IOException("sqlite3 failed to create " + destination);
             }
-            Files.move(temporary, destination, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(
+                    temporary,
+                    destination,
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
         } finally {
             sqlite.destroyForcibly();
             Files.deleteIfExists(temporary);
