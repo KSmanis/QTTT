@@ -136,7 +136,7 @@ public class GameView extends View {
             node.setContentDescription(cellDescription(virtualViewId));
             boolean enabled =
                     mSnapshot.classicBoard().get(virtualViewId) != null
-                            || (!mPaused && !mSnapshot.gameOver());
+                            || (!mPaused && mSnapshot.canApplyInput(virtualViewId));
             node.setEnabled(enabled);
             node.setClickable(enabled);
             if (enabled) {
