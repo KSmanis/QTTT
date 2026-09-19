@@ -17,7 +17,7 @@ public class OpeningBookAssetTest {
     public void packagedOpeningBookProvidesInitialMoves() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
 
-        List<Move> moves = lookup(context, new State());
+        List<Move> moves = OpeningBook.lookup(context, new State());
 
         assertEquals(2, moves.size());
         assertEquals("0,8", moves.get(0).toShortString());
@@ -29,11 +29,11 @@ public class OpeningBookAssetTest {
         Context context = ApplicationProvider.getApplicationContext();
 
         State afterFirstMove = stateWith(new Move(0, 1, CellState.X1));
-        assertTrue(lookup(context, afterFirstMove).size() > 0);
+        assertTrue(OpeningBook.lookup(context, afterFirstMove).size() > 0);
 
         State afterSecondMove =
                 stateWith(new Move(0, 1, CellState.X1), new Move(0, 1, CellState.O2));
-        assertTrue(lookup(context, afterSecondMove).size() > 0);
+        assertTrue(OpeningBook.lookup(context, afterSecondMove).size() > 0);
 
         State afterThirdMove =
                 stateWith(
@@ -41,7 +41,7 @@ public class OpeningBookAssetTest {
                         new Move(0, 1, CellState.O2),
                         new Move(0, CellState.O2),
                         new Move(2, 3, CellState.X3));
-        assertTrue(lookup(context, afterThirdMove).size() > 0);
+        assertTrue(OpeningBook.lookup(context, afterThirdMove).size() > 0);
 
         State afterFourthMove =
                 stateWith(
@@ -50,7 +50,7 @@ public class OpeningBookAssetTest {
                         new Move(0, CellState.O2),
                         new Move(2, 3, CellState.X3),
                         new Move(2, 3, CellState.O4));
-        List<Move> lateOpeningMoves = lookup(context, afterFourthMove);
+        List<Move> lateOpeningMoves = OpeningBook.lookup(context, afterFourthMove);
         assertEquals(1, lateOpeningMoves.size());
         assertEquals("2", lateOpeningMoves.get(0).toShortString());
     }
@@ -69,7 +69,7 @@ public class OpeningBookAssetTest {
                         new Move(7, 8, CellState.X7),
                         new Move(7, CellState.X7));
 
-        assertTrue(lookup(context, state).isEmpty());
+        assertTrue(OpeningBook.lookup(context, state).isEmpty());
         assertTrue(!state.minimaxMoves().isEmpty());
     }
 
@@ -95,10 +95,6 @@ public class OpeningBookAssetTest {
         OpeningBook.databaseTask = null;
 
         assertTrue(OpeningBook.database(context).isOpen());
-    }
-
-    private static List<Move> lookup(Context context, State state) {
-        return OpeningBook.lookup(context, state);
     }
 
     private static State stateWith(Move... moves) {
