@@ -113,7 +113,7 @@ public class State {
     }
 
     public boolean applyInput(int cellIndex) {
-        if (gameOver() || mClassicBoard.get(cellIndex) != null) {
+        if (!canApplyInput(cellIndex)) {
             return false;
         }
 
@@ -149,6 +149,14 @@ public class State {
         }
         mInput = null;
         return true;
+    }
+
+    boolean canApplyInput(int cellIndex) {
+        return !gameOver()
+                && mClassicBoard.get(cellIndex) == null
+                && (!entangled()
+                        || cellIndex == mLastMove.firstCellIndex()
+                        || cellIndex == mLastMove.secondCellIndex());
     }
 
     public void applyMove(Move m) {

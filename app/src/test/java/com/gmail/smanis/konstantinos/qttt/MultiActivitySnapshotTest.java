@@ -148,6 +148,16 @@ public class MultiActivitySnapshotTest {
                         AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
                         null));
         assertEquals(1, state.currentTurn());
+
+        state.applyMove(new Move(1, 2, CellState.O2));
+        state.applyMove(new Move(0, 2, CellState.X3));
+        gameView.render(state);
+        AccessibilityNodeInfoCompat collapseCell = provider.createAccessibilityNodeInfo(0);
+        AccessibilityNodeInfoCompat unavailableCell = provider.createAccessibilityNodeInfo(1);
+        assertTrue(collapseCell.isEnabled());
+        assertTrue(collapseCell.isClickable());
+        assertFalse(unavailableCell.isEnabled());
+        assertFalse(unavailableCell.isClickable());
     }
 
     private static State bind(GameView gameView) {
