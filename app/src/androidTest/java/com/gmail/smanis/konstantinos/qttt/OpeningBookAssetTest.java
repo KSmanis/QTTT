@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class OpeningBookAssetTest {
     @Test
-    public void packagedOpeningBookProvidesInitialMoves() throws Exception {
+    public void packagedOpeningBookProvidesInitialMoves() {
         Context context = ApplicationProvider.getApplicationContext();
 
         List<Move> moves = OpeningBook.lookup(context, new State());
@@ -25,7 +25,7 @@ public class OpeningBookAssetTest {
     }
 
     @Test
-    public void packagedOpeningBookProvidesMovesForEveryTurn() throws Exception {
+    public void packagedOpeningBookProvidesMovesForEveryTurn() {
         Context context = ApplicationProvider.getApplicationContext();
 
         State afterFirstMove = stateWith(new Move(0, 1, CellState.X1));
@@ -56,7 +56,7 @@ public class OpeningBookAssetTest {
     }
 
     @Test
-    public void unmatchedOpeningBookPositionHasMinimaxFallback() throws Exception {
+    public void unmatchedOpeningBookPositionHasMinimaxFallback() {
         Context context = ApplicationProvider.getApplicationContext();
         State state =
                 stateWith(
