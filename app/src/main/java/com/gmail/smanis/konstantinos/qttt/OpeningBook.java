@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -81,16 +79,14 @@ final class OpeningBook {
         }
 
         File temporary = new File(parent, target.getName() + ".tmp");
-        try (InputStream input = new BufferedInputStream(context.getAssets().open(DATABASE_NAME));
-                FileOutputStream fileOutput = new FileOutputStream(temporary);
-                BufferedOutputStream output = new BufferedOutputStream(fileOutput)) {
+        try (InputStream input = context.getAssets().open(DATABASE_NAME);
+                FileOutputStream output = new FileOutputStream(temporary)) {
             byte[] buffer = new byte[8192];
             int count;
             while ((count = input.read(buffer)) != -1) {
                 output.write(buffer, 0, count);
             }
-            output.flush();
-            fileOutput.getFD().sync();
+            output.getFD().sync();
         }
         if (!temporary.renameTo(target)) {
             throw new IOException("Cannot install opening book");
