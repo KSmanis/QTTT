@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.toolbar));
+        OpeningBook.initialize(this);
         findViewById(R.id.button_single_play)
                 .setOnClickListener(view -> startActivity(new Intent(this, OptionsActivity.class)));
         findViewById(R.id.button_multi_play)

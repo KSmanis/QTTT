@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
@@ -150,20 +149,10 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     private List<Move> findMoves(State stateSnapshot) {
-        int turn = stateSnapshot.currentTurn();
-        if (turn < 5) {
-            String path =
-                    turn < 4
-                            ? String.valueOf(turn)
-                            : "4/" + stateSnapshot.moveHistory().substring(0, 5);
-            try {
-                List<Move> moves =
-                        stateSnapshot.lookupNextMove(getApplication().getAssets().open(path));
-                if (!moves.isEmpty()) {
-                    return moves;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (stateSnapshot.currentTurn() < 5) {
+            List<Move> moves = OpeningBook.lookup(getApplication(), stateSnapshot);
+            if (!moves.isEmpty()) {
+                return moves;
             }
         }
         return stateSnapshot.minimaxMoves();

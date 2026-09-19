@@ -1,10 +1,5 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -355,37 +350,12 @@ public class State {
         return null;
     }
 
-    public List<Move> lookupNextMove(InputStream is) {
+    List<Move> openingMoves(Utility utility, String encodedMoves) {
         List<Move> ret = new ArrayList<>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            Utility moveUtility = null;
-            String line;
-            String moveHistory = moveHistory();
-            while ((line = br.readLine()) != null) {
-                throwIfInterrupted();
-                if (line.startsWith("(")) {
-                    String[] fields = line.split(":");
-                    if (fields[0].equals(moveHistory)) {
-                        moveUtility = Utility.valueOf(fields[1]);
-                        break;
-                    }
-                }
+        if (!encodedMoves.isEmpty()) {
+            for (String move : encodedMoves.split("\n")) {
+                addOpeningMove(ret, move, utility);
             }
-            if (moveUtility == null) {
-                return ret;
-            }
-
-            while ((line = br.readLine()) != null) {
-                throwIfInterrupted();
-                if (line.isEmpty()) {
-                    break;
-                }
-
-                addOpeningMove(ret, line, moveUtility);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return ret;
     }
