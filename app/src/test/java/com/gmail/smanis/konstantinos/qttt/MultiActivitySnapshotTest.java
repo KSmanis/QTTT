@@ -43,8 +43,9 @@ public class MultiActivitySnapshotTest {
         GameView gameView = view.findViewById(R.id.gameView);
         State state = bind(gameView);
         state.applyMove(new Move(0, 1, CellState.X1));
-        state.applyMove(new Move(1, 2, CellState.O2));
-        state.applyMove(new Move(0, 2, CellState.X3));
+        state.applyMove(new Move(2, 3, CellState.O2));
+        state.applyMove(new Move(3, 4, CellState.X3));
+        state.applyMove(new Move(2, 4, CellState.O4));
         gameView.render(state);
 
         assertTrue(state.entangled());
