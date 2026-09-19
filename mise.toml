@@ -18,4 +18,4 @@ test = { depends = ["test:*"] }
 google-java-format = "1.36.1"
 java = "21.0.12+101.0.LTS"
 prek = { depends = ["google-java-format"], version = "0.5.3" }
-python = "3.14.7"
+sqlite = "3.53.4"
