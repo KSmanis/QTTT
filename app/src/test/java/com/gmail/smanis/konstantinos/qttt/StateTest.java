@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -214,13 +212,9 @@ public class StateTest {
     }
 
     @Test
-    public void parsesOpeningBookMovesForTheCurrentPosition() {
+    public void createsOpeningBookMovesForTheCurrentPosition() {
         State state = new State();
-        String openingBook = "():1,13\n0,8\n2,6\n\n";
-
-        List<Move> moves =
-                state.lookupNextMove(
-                        new ByteArrayInputStream(openingBook.getBytes(StandardCharsets.UTF_8)));
+        List<Move> moves = state.openingMoves(new Utility(1, 13), "1937");
 
         assertEquals(2, moves.size());
         assertEquals("0,8", moves.get(0).toShortString());
@@ -228,6 +222,23 @@ public class StateTest {
         assertEquals(1, moves.get(0).utility().value());
         assertEquals(13, moves.get(0).utility().depth());
         assertEquals("2,6", moves.get(1).toShortString());
+    }
+
+    @Test
+    public void encodesOpeningBookHistoryAsFixedWidthMoves() {
+        State state =
+                play(
+                        new Move(0, 1, CellState.X1),
+                        new Move(0, 1, CellState.O2),
+                        new Move(0, CellState.O2),
+                        new Move(2, 3, CellState.X3));
+
+        assertEquals(12_120_134L, state.openingBookKey());
+    }
+
+    @Test
+    public void emptyOpeningBookEntryHasNoMoves() {
+        assertTrue(new State().openingMoves(new Utility(1, 13), "").isEmpty());
     }
 
     @Test

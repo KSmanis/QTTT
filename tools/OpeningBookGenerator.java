@@ -1,43 +1,95 @@
 package com.gmail.smanis.konstantinos.qttt;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Locale;
 
 public final class OpeningBookGenerator extends State {
+    private static final Path DATABASE = Path.of("app/src/main/assets/opening-book-v1.db");
     private final PrintStream output;
 
     private OpeningBookGenerator(PrintStream output) {
         this.output = output;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 1) {
             throw new IllegalArgumentException("Usage: generate-opening-book TURN (0-4)");
         }
 
+        int turn = parseTurn(args[0]);
+        Path destination = DATABASE;
+        Path temporary = destination.resolveSibling(destination.getFileName() + ".tmp");
+        if (Files.exists(destination)) {
+            Files.copy(destination, temporary, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            Files.deleteIfExists(temporary);
+        }
+
+        Process sqlite =
+                new ProcessBuilder("sqlite3", temporary.toString())
+                        .redirectError(ProcessBuilder.Redirect.INHERIT)
+                        .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                        .start();
+        try {
+            try (PrintStream output =
+                    new PrintStream(
+                            new BufferedOutputStream(sqlite.getOutputStream()),
+                            false,
+                            StandardCharsets.UTF_8)) {
+                output.println(".bail on");
+                output.println("PRAGMA journal_mode=OFF;");
+                output.println("PRAGMA synchronous=OFF;");
+                output.println("PRAGMA temp_store=MEMORY;");
+                output.println(
+                        "CREATE TABLE IF NOT EXISTS opening_book ("
+                                + "history INTEGER PRIMARY KEY,"
+                                + "utility_value INTEGER NOT NULL,"
+                                + "utility_depth INTEGER NOT NULL,"
+                                + "moves TEXT NOT NULL CHECK (length(moves) % 2 = 0));");
+                output.println("BEGIN;");
+
+                OpeningBookGenerator generator = new OpeningBookGenerator(output);
+                generator.generate(turn);
+
+                output.println("COMMIT;");
+                output.println("PRAGMA user_version=1;");
+                output.println("VACUUM;");
+                if (output.checkError()) {
+                    throw new IOException("Failed to write SQLite input");
+                }
+            }
+            if (sqlite.waitFor() != 0) {
+                throw new IOException("sqlite3 failed to create " + destination);
+            }
+            Files.move(
+                    temporary,
+                    destination,
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
+        } finally {
+            sqlite.destroyForcibly();
+            Files.deleteIfExists(temporary);
+        }
+    }
+
+    private static int parseTurn(String value) {
         int turn;
         try {
-            turn = Integer.parseInt(args[0]);
+            turn = Integer.parseInt(value);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("TURN must be between 0 and 4", e);
         }
         if (turn < 0 || turn > 4) {
             throw new IllegalArgumentException("TURN must be between 0 and 4");
         }
-
-        Path outputPath = Path.of(turn + ".txt");
-        try (PrintStream output =
-                new PrintStream(Files.newOutputStream(outputPath), false, StandardCharsets.UTF_8)) {
-            new OpeningBookGenerator(output).generate(turn);
-            if (output.checkError()) {
-                throw new IOException("Failed to write " + outputPath);
-            }
-        }
+        return turn;
     }
 
     private void generate(int turn) {
@@ -170,11 +222,21 @@ public final class OpeningBookGenerator extends State {
 
     private void printMoves() {
         List<Move> moves = minimaxMoves();
-        output.printf(
-                Locale.ROOT, "%s:%s%n", moveHistory(), moves.get(0).utility().toShortString());
+        Utility utility = moves.get(0).utility();
+        StringBuilder encodedMoves = new StringBuilder(moves.size() * 2);
         for (Move move : moves) {
-            output.println(move.toShortString());
+            if (move.type() == Move.Type.COLLAPSE) {
+                encodedMoves.append('0').append(move.firstCellIndex() + 1);
+            } else {
+                encodedMoves.append(move.firstCellIndex() + 1).append(move.secondCellIndex() + 1);
+            }
         }
-        output.println();
+        output.printf(
+                Locale.ROOT,
+                "INSERT OR REPLACE INTO opening_book VALUES (%d,%d,%d,'%s');%n",
+                openingBookKey(),
+                utility.value(),
+                utility.depth(),
+                encodedMoves);
     }
 }

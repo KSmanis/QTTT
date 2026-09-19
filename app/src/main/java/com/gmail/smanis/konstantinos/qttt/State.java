@@ -1,10 +1,5 @@
 package com.gmail.smanis.konstantinos.qttt;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -355,49 +350,20 @@ public class State {
         return null;
     }
 
-    public List<Move> lookupNextMove(InputStream is) {
+    List<Move> openingMoves(Utility utility, String encodedMoves) {
         List<Move> ret = new ArrayList<>();
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            Utility moveUtility = null;
-            String line;
-            String moveHistory = moveHistory();
-            while ((line = br.readLine()) != null) {
-                throwIfInterrupted();
-                if (line.startsWith("(")) {
-                    String[] fields = line.split(":");
-                    if (fields[0].equals(moveHistory)) {
-                        moveUtility = Utility.valueOf(fields[1]);
-                        break;
-                    }
-                }
-            }
-            if (moveUtility == null) {
-                return ret;
-            }
-
-            while ((line = br.readLine()) != null) {
-                throwIfInterrupted();
-                if (line.isEmpty()) {
-                    break;
-                }
-
-                addOpeningMove(ret, line, moveUtility);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int index = 0; index < encodedMoves.length(); index += 2) {
+            int firstCell = encodedMoves.charAt(index) - '0';
+            int secondCell = encodedMoves.charAt(index + 1) - '1';
+            Move move =
+                    firstCell == 0
+                            ? new Move(secondCell, null)
+                            : new Move(firstCell - 1, secondCell, null);
+            move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
+            move.setUtility(utility);
+            ret.add(move);
         }
         return ret;
-    }
-
-    private void addOpeningMove(List<Move> moves, String line, Utility utility) {
-        Move move = Move.valueOf(line);
-        if (move == null) {
-            return;
-        }
-        move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
-        move.setUtility(utility);
-        moves.add(move);
     }
 
     private List<Move> minimaxEvaluation() {
@@ -504,6 +470,20 @@ public class State {
             sb.insert(0, String.format("(%s)", m.toShortString()));
         }
         return sb.toString();
+    }
+
+    long openingBookKey() {
+        long key = 0;
+        long place = 1;
+        for (Move move = mLastMove; move != null; move = move.previousMove()) {
+            int code =
+                    move.type() == Move.Type.COLLAPSE
+                            ? move.firstCellIndex() + 1
+                            : (move.firstCellIndex() + 1) * 10 + move.secondCellIndex() + 1;
+            key += code * place;
+            place *= 100;
+        }
+        return key;
     }
 
     private List<Integer> openCells() {
