@@ -286,6 +286,7 @@ public class GameView extends View {
 
     private void drawCell(
             Canvas canvas, int cellIndex, CellState classicCell, EnumSet<CellState> quantumCell) {
+        mMarkPaint.setAlpha(255);
         RectF cellBounds = mGridCells[cellIndex];
         if (classicCell != null && !mHistoryShown) {
             drawCollapsedCell(canvas, cellIndex, classicCell, cellBounds);
