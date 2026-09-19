@@ -352,24 +352,18 @@ public class State {
 
     List<Move> openingMoves(Utility utility, String encodedMoves) {
         List<Move> ret = new ArrayList<>();
-        if (!encodedMoves.isEmpty()) {
-            for (int index = 0; index < encodedMoves.length(); index += 2) {
-                int firstCell = encodedMoves.charAt(index) - '0';
-                int secondCell = encodedMoves.charAt(index + 1) - '1';
-                Move move =
-                        firstCell == 0
-                                ? new Move(secondCell, null)
-                                : new Move(firstCell - 1, secondCell, null);
-                addOpeningMove(ret, move, utility);
-            }
+        for (int index = 0; index < encodedMoves.length(); index += 2) {
+            int firstCell = encodedMoves.charAt(index) - '0';
+            int secondCell = encodedMoves.charAt(index + 1) - '1';
+            Move move =
+                    firstCell == 0
+                            ? new Move(secondCell, null)
+                            : new Move(firstCell - 1, secondCell, null);
+            move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
+            move.setUtility(utility);
+            ret.add(move);
         }
         return ret;
-    }
-
-    private void addOpeningMove(List<Move> moves, Move move, Utility utility) {
-        move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
-        move.setUtility(utility);
-        moves.add(move);
     }
 
     private List<Move> minimaxEvaluation() {
