@@ -225,6 +225,11 @@ public class StateTest {
     }
 
     @Test
+    public void emptyOpeningBookEntryHasNoMoves() {
+        assertTrue(new State().openingMoves(new Utility(1, 13), "").isEmpty());
+    }
+
+    @Test
     public void minimaxSelectsTheUniqueBestEndgameMove() {
         State state = play("3,7", "2,4", "1,7", "1,5", "7,8", "4,8", "7,8", "7");
         State before = new State(state);

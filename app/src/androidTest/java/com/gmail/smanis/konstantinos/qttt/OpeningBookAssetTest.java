@@ -88,6 +88,15 @@ public class OpeningBookAssetTest {
         }
     }
 
+    @Test
+    public void installedOpeningBookReopensAfterProcessRestart() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        OpeningBook.database(context).close();
+        OpeningBook.database = null;
+
+        assertTrue(OpeningBook.database(context).isOpen());
+    }
+
     private static List<Move> lookup(Context context, State state) {
         return OpeningBook.lookup(context, state);
     }

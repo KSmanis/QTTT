@@ -20,7 +20,7 @@ import java.util.concurrent.FutureTask;
 final class OpeningBook {
     private static final String TAG = "OpeningBook";
     private static final String DATABASE_NAME = "opening-book-v1.db";
-    private static FutureTask<SQLiteDatabase> database;
+    static FutureTask<SQLiteDatabase> database;
 
     private OpeningBook() {}
 
