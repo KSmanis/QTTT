@@ -353,18 +353,20 @@ public class State {
     List<Move> openingMoves(Utility utility, String encodedMoves) {
         List<Move> ret = new ArrayList<>();
         if (!encodedMoves.isEmpty()) {
-            for (String move : encodedMoves.split("\n")) {
+            for (int index = 0; index < encodedMoves.length(); index += 2) {
+                int firstCell = encodedMoves.charAt(index) - '0';
+                int secondCell = encodedMoves.charAt(index + 1) - '1';
+                Move move =
+                        firstCell == 0
+                                ? new Move(secondCell, null)
+                                : new Move(firstCell - 1, secondCell, null);
                 addOpeningMove(ret, move, utility);
             }
         }
         return ret;
     }
 
-    private void addOpeningMove(List<Move> moves, String line, Utility utility) {
-        Move move = Move.valueOf(line);
-        if (move == null) {
-            return;
-        }
+    private void addOpeningMove(List<Move> moves, Move move, Utility utility) {
         move.setCellState(move.type() == Move.Type.REGULAR ? currentMark() : previousMark());
         move.setUtility(utility);
         moves.add(move);
@@ -474,6 +476,20 @@ public class State {
             sb.insert(0, String.format("(%s)", m.toShortString()));
         }
         return sb.toString();
+    }
+
+    long openingBookKey() {
+        long key = 0;
+        long place = 1;
+        for (Move move = mLastMove; move != null; move = move.previousMove()) {
+            int code =
+                    move.type() == Move.Type.COLLAPSE
+                            ? move.firstCellIndex() + 1
+                            : (move.firstCellIndex() + 1) * 10 + move.secondCellIndex() + 1;
+            key += code * place;
+            place *= 100;
+        }
+        return key;
     }
 
     private List<Integer> openCells() {

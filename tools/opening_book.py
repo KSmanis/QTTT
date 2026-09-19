@@ -7,11 +7,11 @@ from pathlib import Path
 
 SCHEMA = """
 CREATE TABLE opening_book (
-    history TEXT PRIMARY KEY,
+    history INTEGER PRIMARY KEY,
     utility_value INTEGER NOT NULL,
     utility_depth INTEGER NOT NULL,
-    moves TEXT NOT NULL
-) WITHOUT ROWID;
+    moves TEXT NOT NULL CHECK (length(moves) % 2 = 0)
+);
 """
 
 
@@ -21,17 +21,49 @@ def validate_move(move):
         raise ValueError(f"Invalid move: {move}")
 
 
+def encode_move(move):
+    cells = [int(cell) + 1 for cell in move.split(",")]
+    return f"0{cells[0]}" if len(cells) == 1 else f"{cells[0]}{cells[1]}"
+
+
+def decode_move(move):
+    if len(move) != 2 or move[1] not in "123456789" or move[0] not in "0123456789":
+        raise ValueError(f"Invalid encoded move: {move}")
+    return str(int(move[1]) - 1) if move[0] == "0" else f"{int(move[0]) - 1},{int(move[1]) - 1}"
+
+
+def decode_moves(moves):
+    if len(moves) % 2:
+        raise ValueError(f"Invalid encoded moves: {moves}")
+    return "\n".join(decode_move(moves[index : index + 2]) for index in range(0, len(moves), 2))
+
+
+def decode_history(history):
+    if history == 0:
+        return "()"
+    encoded = str(history)
+    if len(encoded) % 2:
+        raise ValueError(f"Invalid encoded history: {history}")
+    return "".join(
+        f"({decode_move(encoded[index : index + 2])})" for index in range(0, len(encoded), 2)
+    )
+
+
 def record(history, utility, depth, moves):
+    encoded_history = ""
     if history != "()":
         if not history.startswith("(") or not history.endswith(")"):
             raise ValueError(f"Invalid history: {history}")
         for move in history[1:-1].split(")("):
             validate_move(move)
+            encoded_history += encode_move(move)
+        if encoded_history.startswith("0"):
+            raise ValueError(f"History starts with a collapse: {history}")
     if not moves:
         raise ValueError(f"Position has no moves: {history}")
     for move in moves:
         validate_move(move)
-    return history, utility, depth, "\n".join(moves)
+    return int(encoded_history or "0"), utility, depth, "".join(map(encode_move, moves))
 
 
 def legacy_records(directory):
@@ -111,6 +143,8 @@ def export(database_path, destination):
         for history, utility, depth, moves in database.execute(
             "SELECT history, utility_value, utility_depth, moves FROM opening_book"
         ):
+            history = decode_history(history)
+            moves = decode_moves(moves)
             turn = history.count(",")
             relative_path = (
                 Path(str(turn))

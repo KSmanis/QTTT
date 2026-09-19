@@ -214,7 +214,7 @@ public class StateTest {
     @Test
     public void createsOpeningBookMovesForTheCurrentPosition() {
         State state = new State();
-        List<Move> moves = state.openingMoves(new Utility(1, 13), "0,8\n2,6");
+        List<Move> moves = state.openingMoves(new Utility(1, 13), "1937");
 
         assertEquals(2, moves.size());
         assertEquals("0,8", moves.get(0).toShortString());
@@ -222,6 +222,18 @@ public class StateTest {
         assertEquals(1, moves.get(0).utility().value());
         assertEquals(13, moves.get(0).utility().depth());
         assertEquals("2,6", moves.get(1).toShortString());
+    }
+
+    @Test
+    public void encodesOpeningBookHistoryAsFixedWidthMoves() {
+        State state =
+                play(
+                        new Move(0, 1, CellState.X1),
+                        new Move(0, 1, CellState.O2),
+                        new Move(0, CellState.O2),
+                        new Move(2, 3, CellState.X3));
+
+        assertEquals(12_120_134L, state.openingBookKey());
     }
 
     @Test

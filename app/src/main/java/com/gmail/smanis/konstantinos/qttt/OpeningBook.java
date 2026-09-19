@@ -41,7 +41,7 @@ final class OpeningBook {
                     db.rawQuery(
                             "SELECT utility_value, utility_depth, moves "
                                     + "FROM opening_book WHERE history = ?",
-                            new String[] {state.moveHistory()})) {
+                            new String[] {Long.toString(state.openingBookKey())})) {
                 if (!cursor.moveToFirst()) {
                     return Collections.emptyList();
                 }

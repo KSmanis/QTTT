@@ -34,3 +34,9 @@ mise exec -- python tools/opening_book.py export opening-book-v1.db EMPTY_DIRECT
 The application copies the versioned database asset into private storage in the
 background and queries it read-only. Rename the asset and update
 `OpeningBook.DATABASE_NAME` when its contents change.
+
+The SQLite representation uses fixed-width, human-readable move codes. Board
+cells are numbered `1` through `9`; a regular move uses its two cell digits and
+a collapse uses `0` followed by its cell digit. Histories concatenate these
+codes into an integer primary key (`0` is the empty history), while candidate
+moves concatenate them as text so a leading collapse marker is preserved.
