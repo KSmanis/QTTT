@@ -1,5 +1,4 @@
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.testing.Test
 
 plugins {
     id 'com.android.application'
@@ -106,11 +105,4 @@ dependencies {
 
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-}
-
-tasks.withType(Test).configureEach {
-    if (sonarCoverageReport) {
-        // Paparazzi and JaCoCo cannot instrument the same test process.
-        exclude '**/*SnapshotTest.class'
-    }
 }
