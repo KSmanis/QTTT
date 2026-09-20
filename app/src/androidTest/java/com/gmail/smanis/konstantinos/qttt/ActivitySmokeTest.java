@@ -89,7 +89,7 @@ public class ActivitySmokeTest {
                 .check(hasCurrentTurn(1));
         onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
 
-        onView(withId(R.id.tutorial_next)).perform(click());
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
         onView(withText(R.string.tutorial_entanglement_title)).check(matches(isDisplayed()));
         onView(withId(R.id.tutorial_next)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
         onView(withId(R.id.gameView))
@@ -97,7 +97,7 @@ public class ActivitySmokeTest {
                 .check(hasCurrentTurn(2));
         onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
 
-        onView(withId(R.id.tutorial_next)).perform(click());
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
         onView(withText(R.string.tutorial_cycle_title)).check(matches(isDisplayed()));
         onView(withId(R.id.tutorial_next)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
         onView(withId(R.id.gameView))
@@ -105,9 +105,9 @@ public class ActivitySmokeTest {
                 .check(hasCurrentTurn(3));
         onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
 
-        onView(withId(R.id.tutorial_next)).perform(click());
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
         onView(withId(R.id.gameView)).perform(clickCell(0, 1));
-        onView(withId(R.id.tutorial_next)).perform(click());
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
         onView(withId(R.id.gameView))
                 .check(
                         (view, error) -> {
@@ -172,17 +172,17 @@ public class ActivitySmokeTest {
         try (ActivityScenario<TutorialActivity> scenario =
                 ActivityScenario.launch(TutorialActivity.class)) {
             onView(withId(R.id.gameView)).perform(clickCell(0, 0), clickCell(0, 1));
-            onView(withId(R.id.tutorial_next)).perform(click());
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
             onView(withId(R.id.gameView))
                     .perform(clickCell(0, 0), clickCell(0, 1), clickCell(1, 1));
-            onView(withId(R.id.tutorial_next)).perform(click());
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
             onView(withId(R.id.gameView)).perform(clickCell(0, 1), clickCell(1, 1));
-            onView(withId(R.id.tutorial_next)).perform(click());
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
             onView(withId(R.id.gameView)).perform(clickCell(0, 1));
-            onView(withId(R.id.tutorial_next)).perform(click());
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
 
             onView(withId(R.id.gameView)).perform(clickCell(2, 2));
-            onView(withId(R.id.tutorial_next)).perform(click());
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
             scenario.recreate();
             onView(withId(R.id.tutorial_back)).perform(click());
             onView(withId(R.id.gameView)).perform(clickCell(2, 1)).check(hasCurrentTurn(4));
