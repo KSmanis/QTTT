@@ -4,10 +4,13 @@
     <string name="activity_options_title">Game Options</string>
     <string name="activity_single_title">Single Player</string>
     <string name="activity_multi_title">Multiplayer</string>
+    <string name="activity_tutorial_title">Tutorial</string>
 
-    <string name="textView_single">Play against the computer in a single player game! Select the level of difficulty that suits your skills: from naive random moves to shrewd, optimal gameplay.</string>
+    <string name="textView_single">Play against the computer. Choose a difficulty level, from random moves to optimal play.</string>
     <string name="textView_multi">Play against your friends in a multiplayer game! Settle once and for all who\'s the best at Tic-Tac-Toe!</string>
-    <string name="button_play">Play!</string>
+    <string name="textView_tutorial">Learn to play the game.</string>
+    <string name="button_play">Play</string>
+    <string name="button_tutorial">Learn</string>
 
     <string name="textView_player">Human Player</string>
     <string name="radioButton_x">X</string>
@@ -27,4 +30,31 @@
     <string name="result_winner">Game Over! Winner: %1$s!</string>
     <string name="game_cell_description">Row %1$d, column %2$d: %3$s</string>
     <string name="game_cell_empty">empty</string>
+    <string name="game_classical_mark_description">classical %1$s mark, move %2$d</string>
+    <string name="game_unresolved_mark_description">spooky %1$s mark, move %2$d</string>
+
+    <string name="tutorial_progress">Step %1$d of %2$d</string>
+    <string name="tutorial_back">Back</string>
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_done">Done</string>
+    <string name="tutorial_superposition_title">One move, two possible states</string>
+    <string name="tutorial_superposition_body">Quantum Tic-Tac-Toe is a teaching metaphor for basic ideas from quantum mechanics, based on the familiar game of Tic-Tac-Toe. It uses the same board, with one key difference: on each turn, players place two copies of the same numbered mark in two different squares. Try it out by tapping two squares to place X₁. The two small X₁ symbols are called “spooky marks.” Together, they make one move with two possible states. Think of the board as representing several ordinary games at once. This parallel view is a simple picture of superposition: before measurement, a system has several possible states.</string>
+    <string name="tutorial_entanglement_title">Linked moves: entanglement</string>
+    <string name="tutorial_entanglement_body">Tap a square containing X₁, then tap a square that does not contain X₁. O₂ now shares a square with X₁, so these two moves are linked and entangled. If one move settles in their shared square, the other settles in its remaining square. Moves that are not linked remain independent. This is entanglement: resolving one move determines the other.</string>
+    <string name="tutorial_cycle_title">A loop: cyclic entanglement</string>
+    <string name="tutorial_cycle_body">Place X₃ in the square containing only X₁, then in the square containing only O₂. The three moves now form a loop called cyclic entanglement. Following the linked moves from either possible outcome brings you back to where you started, leaving two valid possibilities. The loop signals that a measurement must occur.</string>
+    <string name="tutorial_measurement_title">Choose an outcome</string>
+    <string name="tutorial_measurement_body">X created the cycle, so O chooses which underlined X₃ remains. Tap one to select one of the two valid outcomes. The linked moves collapse into one classical outcome. This choice is separate from O’s normal turn, so O moves again afterward. This mirrors quantum measurement, which produces one outcome from several possible states.</string>
+    <string name="tutorial_collapse_title">Collapse into classical marks</string>
+    <string name="tutorial_collapse_body">After measurement, one copy of each linked move becomes a large classical mark and the other disappears. All marks connected to the cycle collapse together; marks not linked to the cycle are unaffected. A classical mark is fixed and makes its square unavailable for future moves. Tap a large mark to trace how the collapse happened. Only classical marks can form three in a row. Play until someone wins or all nine moves have been played without a winner. The next steps show every possible score.</string>
+    <string name="tutorial_double_win_title">Result: double win for X</string>
+    <string name="tutorial_double_win_body">A double win is only possible in Quantum Tic-Tac-Toe because a collapse can make several marks classical at once. Here, the collapse gives X two winning lines. Only X can achieve it: two lines require five marks, while O has only four numbered marks. X scores two points, the highest possible score.</string>
+    <string name="tutorial_complete_win_title">Result: complete win for X</string>
+    <string name="tutorial_complete_win_body">X has three in a row and O does not, so X scores one point and O scores zero.</string>
+    <string name="tutorial_narrow_first_title">Result: narrow win for X</string>
+    <string name="tutorial_narrow_first_body">A narrow win is only possible in Quantum Tic-Tac-Toe because a collapse can give both players three in a row at once. Compare the largest move number in each winning line. The line with the lower number came first. Here, X scores one point and O scores half a point. If O’s line came first, it would be a narrow win for O instead.</string>
+    <string name="tutorial_draw_title">Result: draw</string>
+    <string name="tutorial_draw_body">After nine moves, neither player has three in a row. Both players score zero.</string>
+    <string name="tutorial_loss_title">Result: complete win for O</string>
+    <string name="tutorial_loss_body">O has three in a row and X does not, so O scores one point and X scores zero.</string>
 </resources>

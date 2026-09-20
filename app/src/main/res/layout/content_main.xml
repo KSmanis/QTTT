@@ -1,19 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main"
     tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_tutorial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/card_vertical_margin"
+        android:layout_marginLeft="@dimen/card_horizontal_margin"
+        android:layout_marginRight="@dimen/card_horizontal_margin"
+        card_view:cardCornerRadius="@dimen/card_corner_radius"
+        card_view:cardElevation="@dimen/card_elevation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/card_vertical_margin"
+            android:paddingLeft="@dimen/card_horizontal_margin"
+            android:paddingRight="@dimen/card_horizontal_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_tutorial_title"
+                android:textSize="@dimen/card_title_size"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textView_tutorial"
+                android:textSize="@dimen/card_body_size"/>
+
+            <Button
+                android:id="@+id/button_tutorial"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/button_tutorial"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view_single"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/card_view_tutorial"
         android:layout_marginTop="@dimen/card_vertical_margin"
         android:layout_marginLeft="@dimen/card_horizontal_margin"
         android:layout_marginRight="@dimen/card_horizontal_margin"
@@ -58,6 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_vertical_margin"
+        android:layout_marginBottom="@dimen/card_vertical_margin"
         android:layout_marginLeft="@dimen/card_horizontal_margin"
         android:layout_marginRight="@dimen/card_horizontal_margin"
         android:layout_below="@id/card_view_single"
@@ -96,4 +146,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</androidx.core.widget.NestedScrollView>

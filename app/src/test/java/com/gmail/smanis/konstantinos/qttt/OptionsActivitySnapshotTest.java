@@ -29,7 +29,7 @@ public class OptionsActivitySnapshotTest {
         View view = paparazzi.inflate(R.layout.activity_options);
         TextView playerLabel = view.findViewById(R.id.textView_player);
 
-        assertEquals("Ανθρώπινος Παίχτης", playerLabel.getText().toString());
+        assertEquals("Ανθρώπινος Παίκτης", playerLabel.getText().toString());
         paparazzi.snapshot(view);
     }
 

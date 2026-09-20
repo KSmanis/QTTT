@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -29,9 +30,14 @@ public class GameView extends View {
         boolean onInput(int cellIndex);
     }
 
+    public interface InputPredicate {
+        boolean test(int cellIndex);
+    }
+
     // Listeners
     private OnGameOverListener mOnGameOverListener;
     private OnInputListener mOnInputListener;
+    private InputPredicate mInputPredicate = cellIndex -> true;
     // Constants
     private final float cGridLineWidth;
     private final float cGridLinePadding;
@@ -52,7 +58,7 @@ public class GameView extends View {
     private static final float GLOW_STEP = 1.f;
     private static final int FPS = 30;
     private float mGlowRadius;
-    private boolean mGlowInc;
+    private long mGlowStartedAt;
     // Rendered State
     private State mSnapshot;
     private boolean mEntangled;
@@ -69,6 +75,7 @@ public class GameView extends View {
     private int mPendingCell = ExploreByTouchHelper.INVALID_ID;
     private boolean mHistoryShown;
     private boolean mPaused;
+    private boolean mAnimationEnabled = true;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -136,7 +143,7 @@ public class GameView extends View {
             node.setContentDescription(cellDescription(virtualViewId));
             boolean enabled =
                     mSnapshot.classicBoard().get(virtualViewId) != null
-                            || (!mPaused && mSnapshot.canApplyInput(virtualViewId));
+                            || inputAllowed(virtualViewId);
             node.setEnabled(enabled);
             node.setClickable(enabled);
             if (enabled) {
@@ -159,11 +166,18 @@ public class GameView extends View {
             CellState classicCell = mSnapshot.classicBoard().get(cellIndex);
             String state;
             if (classicCell != null) {
-                state = classicCell.name();
+                state = markDescription(classicCell, R.string.game_classical_mark_description);
             } else if (mSnapshot.quantumBoard().get(cellIndex).isEmpty()) {
                 state = getResources().getString(R.string.game_cell_empty);
             } else {
-                state = mSnapshot.quantumBoard().get(cellIndex).toString();
+                StringBuilder marks = new StringBuilder();
+                for (CellState mark : mSnapshot.quantumBoard().get(cellIndex)) {
+                    if (marks.length() > 0) {
+                        marks.append("; ");
+                    }
+                    marks.append(markDescription(mark, R.string.game_unresolved_mark_description));
+                }
+                state = marks.toString();
             }
             return getResources()
                     .getString(
@@ -171,6 +185,11 @@ public class GameView extends View {
                             cellIndex / 3 + 1,
                             cellIndex % 3 + 1,
                             state);
+        }
+
+        private String markDescription(CellState mark, int description) {
+            return getResources()
+                    .getString(description, mark.name().substring(0, 1), mark.ordinal() + 1);
         }
     }
 
@@ -192,15 +211,24 @@ public class GameView extends View {
             mAccessibilityHelper.invalidateRoot();
             return true;
         }
-        return !mPaused && mOnInputListener != null && mOnInputListener.onInput(cellIndex);
+        return inputAllowed(cellIndex)
+                && mOnInputListener != null
+                && mOnInputListener.onInput(cellIndex);
+    }
+
+    private boolean inputAllowed(int cellIndex) {
+        return !mPaused && mSnapshot.canApplyInput(cellIndex) && mInputPredicate.test(cellIndex);
     }
 
     private void checkEntanglement() {
+        boolean wasEntangled = mEntangled;
         mEntangled = mSnapshot.entangled();
         if (mEntangled) {
             mEntangledCells = mSnapshot.entangledCells();
-            mGlowRadius = 0.f;
-            mGlowInc = true;
+            if (!wasEntangled) {
+                mGlowRadius = MIN_GLOW_RADIUS;
+                mGlowStartedAt = SystemClock.uptimeMillis();
+            }
         } else {
             mEntangledCells = null;
         }
@@ -236,12 +264,25 @@ public class GameView extends View {
         invalidate();
     }
 
+    void setAnimationEnabled(boolean enabled) {
+        mAnimationEnabled = enabled;
+    }
+
+    void hideHistory() {
+        mHistoryShown = false;
+    }
+
     public void setOnGameOverListener(OnGameOverListener l) {
         mOnGameOverListener = l;
     }
 
     public void setOnInputListener(OnInputListener l) {
         mOnInputListener = l;
+    }
+
+    public void setInputPredicate(InputPredicate predicate) {
+        mInputPredicate = predicate;
+        mAccessibilityHelper.invalidateRoot();
     }
 
     int currentTurn() {
@@ -391,25 +432,25 @@ public class GameView extends View {
     }
 
     private void animateEntanglement() {
-        if (mEntangled) {
-            if (mGlowInc) {
-                mGlowRadius += GLOW_STEP;
-            } else {
-                mGlowRadius -= GLOW_STEP;
-            }
-            if (mGlowRadius <= MIN_GLOW_RADIUS) {
-                mGlowInc = true;
-            } else if (mGlowRadius >= MAX_GLOW_RADIUS) {
-                mGlowInc = false;
-            }
+        if (mEntangled && mAnimationEnabled) {
+            mGlowRadius = glowRadiusAt(SystemClock.uptimeMillis() - mGlowStartedAt);
             postInvalidateDelayed(1000 / FPS);
         }
+    }
+
+    static float glowRadiusAt(long elapsedMillis) {
+        float range = MAX_GLOW_RADIUS - MIN_GLOW_RADIUS;
+        float distance = (elapsedMillis * GLOW_STEP * FPS / 1000f) % (2 * range);
+        return MIN_GLOW_RADIUS + (distance <= range ? distance : 2 * range - distance);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
+        int height =
+                MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED
+                        ? width
+                        : MeasureSpec.getSize(heightMeasureSpec);
         int size = Math.min(width, height);
         setMeasuredDimension(size, size);
     }
