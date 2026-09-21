@@ -54,20 +54,20 @@ public class TutorialActivityTest {
         State state = new State();
         state.applyInput(firstCell);
         state.applyInput(secondCell);
-        state = TutorialActivity.advance(1, state);
+        state = TutorialActivity.advance(state);
         int thirdCell = firstCellOtherThan(firstCell, secondCell);
         state.applyInput(secondCell);
         state.applyInput(thirdCell);
         assertFalse(state.entangled());
-        state = TutorialActivity.advance(2, state);
+        state = TutorialActivity.advance(state);
         state.applyInput(firstCell);
         state.applyInput(thirdCell);
         assertTrue(state.entangled());
-        state = TutorialActivity.advance(3, state);
+        state = TutorialActivity.advance(state);
         Move cycle = state.lastMove();
         state.applyInput(chooseSecondCollapse ? cycle.secondCellIndex() : cycle.firstCellIndex());
         String collapsedHistory = state.moveHistory();
-        state = TutorialActivity.advance(4, state);
+        state = TutorialActivity.advance(state);
 
         assertFalse(state.gameOver());
         assertEquals(collapsedHistory, state.moveHistory());

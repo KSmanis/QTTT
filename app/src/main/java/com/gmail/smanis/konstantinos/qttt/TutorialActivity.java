@@ -174,12 +174,11 @@ public class TutorialActivity extends AppCompatActivity {
             if (newStep == 0) {
                 states[0] = new State();
             } else if (newStep == 1 || newStep == 2 || newStep == 3) {
-                states[newStep] = advance(newStep, states[newStep - 1]);
+                states[newStep] = advance(states[newStep - 1]);
             }
         }
         if (forward && states[newStep] == null) {
-            states[newStep] =
-                    newStep < 5 ? advance(newStep, state()) : resultState(RESULTS[newStep - 5]);
+            states[newStep] = newStep < 5 ? advance(state()) : resultState(RESULTS[newStep - 5]);
         }
         step = newStep;
         if (step >= TITLES.length - RESULTS.length) {
@@ -199,7 +198,7 @@ public class TutorialActivity extends AppCompatActivity {
         gameView.render(state());
     }
 
-    static State advance(int nextStep, State current) {
+    static State advance(State current) {
         return new State(current);
     }
 
