@@ -46,6 +46,7 @@ public class MultiActivitySnapshotTest {
         state.applyMove(new Move(2, 3, CellState.O2));
         state.applyMove(new Move(3, 4, CellState.X3));
         state.applyMove(new Move(2, 4, CellState.O4));
+        gameView.setAnimationEnabled(false);
         gameView.render(state);
 
         assertTrue(state.entangled());
@@ -137,6 +138,17 @@ public class MultiActivitySnapshotTest {
         assertEquals(0, state.currentTurn());
 
         gameView.setPaused(false);
+        gameView.setInputPredicate(cellIndex -> cellIndex != 0);
+        AccessibilityNodeInfoCompat filteredCell = provider.createAccessibilityNodeInfo(0);
+        assertNotNull(filteredCell);
+        assertFalse(filteredCell.isEnabled());
+        assertFalse(filteredCell.isClickable());
+        assertFalse(
+                provider.performAction(
+                        0,
+                        AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK.getId(),
+                        null));
+        gameView.setInputPredicate(cellIndex -> true);
         assertTrue(
                 provider.performAction(
                         0,
@@ -158,6 +170,56 @@ public class MultiActivitySnapshotTest {
         assertTrue(collapseCell.isClickable());
         assertFalse(unavailableCell.isEnabled());
         assertFalse(unavailableCell.isClickable());
+    }
+
+    @Test
+    public void boardCellsDistinguishUnresolvedAndClassicalMarks() {
+        GameView gameView = boardView().findViewById(R.id.gameView);
+        State state = bind(gameView);
+        state.applyMove(new Move(0, 1, CellState.X1));
+        state.applyMove(new Move(0, 1, CellState.O2));
+        gameView.render(state);
+        gameView.layout(0, 0, 900, 900);
+
+        AccessibilityNodeProviderCompat provider =
+                ViewCompat.getAccessibilityDelegate(gameView)
+                        .getAccessibilityNodeProvider(gameView);
+        assertNotNull(provider);
+        AccessibilityNodeInfoCompat quantumCell = provider.createAccessibilityNodeInfo(0);
+        assertNotNull(quantumCell);
+        assertEquals(
+                gameView.getResources()
+                        .getString(
+                                R.string.game_cell_description,
+                                1,
+                                1,
+                                gameView.getResources()
+                                                .getString(
+                                                        R.string.game_unresolved_mark_description,
+                                                        "X",
+                                                        1)
+                                        + "; "
+                                        + gameView.getResources()
+                                                .getString(
+                                                        R.string.game_unresolved_mark_description,
+                                                        "O",
+                                                        2)),
+                quantumCell.getContentDescription());
+
+        state.applyMove(new Move(0, CellState.O2));
+        gameView.render(state);
+        AccessibilityNodeInfoCompat classicalCell = provider.createAccessibilityNodeInfo(0);
+        assertNotNull(classicalCell);
+        assertEquals(
+                gameView.getResources()
+                        .getString(
+                                R.string.game_cell_description,
+                                1,
+                                1,
+                                gameView.getResources()
+                                        .getString(
+                                                R.string.game_classical_mark_description, "O", 2)),
+                classicalCell.getContentDescription());
     }
 
     private static State bind(GameView gameView) {

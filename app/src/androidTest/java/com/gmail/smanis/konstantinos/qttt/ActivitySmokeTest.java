@@ -4,14 +4,18 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import android.content.pm.ActivityInfo;
 import android.view.InputDevice;
@@ -75,6 +79,61 @@ public class ActivitySmokeTest {
     }
 
     @Test
+    public void tutorialUsesTheBoardForSuperposition() {
+        onView(withId(R.id.button_tutorial)).perform(click());
+        onView(withText(R.string.tutorial_superposition_title)).check(matches(isDisplayed()));
+        onView(withId(R.id.gameView)).check(hasCurrentTurn(0));
+        onView(withId(R.id.tutorial_next)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
+        onView(withId(R.id.gameView))
+                .perform(clickCell(0, 0), clickCell(0, 1))
+                .check(hasCurrentTurn(1));
+        onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
+
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+        onView(withText(R.string.tutorial_entanglement_title)).check(matches(isDisplayed()));
+        onView(withId(R.id.tutorial_next)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
+        onView(withId(R.id.gameView))
+                .perform(clickCell(0, 0), clickCell(0, 1), clickCell(1, 1))
+                .check(hasCurrentTurn(2));
+        onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
+
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+        onView(withText(R.string.tutorial_cycle_title)).check(matches(isDisplayed()));
+        onView(withId(R.id.tutorial_next)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
+        onView(withId(R.id.gameView))
+                .perform(clickCell(0, 1), clickCell(1, 1))
+                .check(hasCurrentTurn(3));
+        onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
+
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+        onView(withId(R.id.gameView)).perform(clickCell(0, 1));
+        onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+        onView(withId(R.id.gameView))
+                .check(
+                        (view, error) -> {
+                            if (error != null) {
+                                throw error;
+                            }
+                            assertFalse(((GameView) view).isPaused());
+                        });
+        onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
+
+        int[] resultTitles = {
+            R.string.tutorial_complete_win_title,
+            R.string.tutorial_loss_title,
+            R.string.tutorial_draw_title,
+            R.string.tutorial_narrow_first_title,
+            R.string.tutorial_double_win_title
+        };
+        for (int resultTitle : resultTitles) {
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+            onView(withText(resultTitle)).perform(scrollTo()).check(matches(isDisplayed()));
+        }
+
+        pressBack();
+    }
+
+    @Test
     public void multiplayerStateSurvivesRotation() {
         try (ActivityScenario<MultiActivity> scenario =
                 ActivityScenario.launch(MultiActivity.class)) {
@@ -93,6 +152,40 @@ public class ActivitySmokeTest {
                             activity.setRequestedOrientation(
                                     ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));
             onView(withId(R.id.gameView)).check(hasCurrentTurn(1));
+        }
+    }
+
+    @Test
+    public void tutorialBoardFitsInLandscape() {
+        try (ActivityScenario<TutorialActivity> scenario =
+                ActivityScenario.launch(TutorialActivity.class)) {
+            scenario.onActivity(
+                    activity ->
+                            activity.setRequestedOrientation(
+                                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));
+            onView(withId(R.id.gameView)).check(matches(isCompletelyDisplayed()));
+        }
+    }
+
+    @Test
+    public void tutorialPendingMoveSurvivesRecreationFromResultPage() {
+        try (ActivityScenario<TutorialActivity> scenario =
+                ActivityScenario.launch(TutorialActivity.class)) {
+            onView(withId(R.id.gameView)).perform(clickCell(0, 0), clickCell(0, 1));
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+            onView(withId(R.id.gameView))
+                    .perform(clickCell(0, 0), clickCell(0, 1), clickCell(1, 1));
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+            onView(withId(R.id.gameView)).perform(clickCell(0, 1), clickCell(1, 1));
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+            onView(withId(R.id.gameView)).perform(clickCell(0, 1));
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+
+            onView(withId(R.id.gameView)).perform(clickCell(2, 2));
+            onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
+            scenario.recreate();
+            onView(withId(R.id.tutorial_back)).perform(click());
+            onView(withId(R.id.gameView)).perform(clickCell(2, 1)).check(hasCurrentTurn(4));
         }
     }
 

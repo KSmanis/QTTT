@@ -15,5 +15,8 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(view -> startActivity(new Intent(this, OptionsActivity.class)));
         findViewById(R.id.button_multi_play)
                 .setOnClickListener(view -> startActivity(new Intent(this, MultiActivity.class)));
+        findViewById(R.id.button_tutorial)
+                .setOnClickListener(
+                        view -> startActivity(new Intent(this, TutorialActivity.class)));
     }
 }
