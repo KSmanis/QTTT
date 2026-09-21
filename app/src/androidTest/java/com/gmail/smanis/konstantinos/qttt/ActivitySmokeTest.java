@@ -16,7 +16,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -44,7 +43,7 @@ public class ActivitySmokeTest {
             new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
-    public void usesDarkStatusBarIconsOnEdgeToEdgeDevices() {
+    public void usesDarkSystemBarIconsOnEdgeToEdgeDevices() {
         if (Build.VERSION.SDK_INT < 35) {
             return;
         }
@@ -56,11 +55,11 @@ public class ActivitySmokeTest {
                                     activity.getWindow()
                                             .getInsetsController()
                                             .getSystemBarsAppearance();
-                            assertTrue(
-                                    (appearance
-                                                    & WindowInsetsController
-                                                            .APPEARANCE_LIGHT_STATUS_BARS)
-                                            != 0);
+                            int lightSystemBars =
+                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                                            | WindowInsetsController
+                                                    .APPEARANCE_LIGHT_NAVIGATION_BARS;
+                            assertEquals(lightSystemBars, appearance & lightSystemBars);
                         });
     }
 
