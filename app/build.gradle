@@ -106,3 +106,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }
+
+tasks.configureEach {
+    if (sonarCoverageReport && name == 'testDebugUnitTest') {
+        // JaCoCo and Paparazzi cannot instrument the same test process.
+        // https://github.com/cashapp/paparazzi/issues/1402
+        // https://github.com/cashapp/paparazzi/issues/2320
+        exclude '**/*SnapshotTest.class'
+    }
+}
