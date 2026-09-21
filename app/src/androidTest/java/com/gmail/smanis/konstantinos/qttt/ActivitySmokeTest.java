@@ -16,10 +16,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.view.InputDevice;
 import android.view.MotionEvent;
+import android.view.WindowInsetsController;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.ViewAssertion;
@@ -39,6 +42,27 @@ public class ActivitySmokeTest {
     @Rule
     public final ActivityScenarioRule<MainActivity> activityRule =
             new ActivityScenarioRule<>(MainActivity.class);
+
+    @Test
+    public void usesDarkStatusBarIconsOnEdgeToEdgeDevices() {
+        if (Build.VERSION.SDK_INT < 35) {
+            return;
+        }
+        activityRule
+                .getScenario()
+                .onActivity(
+                        activity -> {
+                            int appearance =
+                                    activity.getWindow()
+                                            .getInsetsController()
+                                            .getSystemBarsAppearance();
+                            assertTrue(
+                                    (appearance
+                                                    & WindowInsetsController
+                                                            .APPEARANCE_LIGHT_STATUS_BARS)
+                                            != 0);
+                        });
+    }
 
     @Test
     public void startsSinglePlayerGame() {
