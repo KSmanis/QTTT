@@ -14,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.customview.widget.ExploreByTouchHelper;
@@ -88,11 +87,11 @@ public class GameView extends View {
         cTextPadding = res.getDimension(R.dimen.text_padding);
         cSubscriptSize = res.getDimension(R.dimen.subscript_size);
         cSubscriptPadding = res.getDimension(R.dimen.subscript_padding);
-        cGridColor = ContextCompat.getColor(context, R.color.grid);
-        cXColor = ContextCompat.getColor(context, R.color.x);
-        cOColor = ContextCompat.getColor(context, R.color.o);
-        cCollapsedColor = ContextCompat.getColor(context, R.color.collapsed);
-        cInactiveColor = ContextCompat.getColor(context, R.color.inactive);
+        cGridColor = context.getColor(R.color.grid);
+        cXColor = context.getColor(R.color.x);
+        cOColor = context.getColor(R.color.o);
+        cCollapsedColor = context.getColor(R.color.collapsed);
+        cInactiveColor = context.getColor(R.color.inactive);
 
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mLinePaint.setColor(cGridColor);
