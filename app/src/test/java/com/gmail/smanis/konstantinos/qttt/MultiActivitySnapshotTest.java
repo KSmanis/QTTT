@@ -54,6 +54,21 @@ public class MultiActivitySnapshotTest {
     }
 
     @Test
+    public void entangledMoveAnimation() {
+        View view = boardView();
+        GameView gameView = view.findViewById(R.id.gameView);
+        State state = bind(gameView);
+        state.applyMove(new Move(0, 1, CellState.X1));
+        state.applyMove(new Move(2, 3, CellState.O2));
+        state.applyMove(new Move(3, 4, CellState.X3));
+        state.applyMove(new Move(2, 4, CellState.O4));
+        gameView.render(state);
+
+        assertTrue(state.entangled());
+        paparazzi.gif(view, "entangledMove", 0L, 1500L, 30);
+    }
+
+    @Test
     public void gameOver() {
         View view = boardView();
         GameView gameView = view.findViewById(R.id.gameView);
