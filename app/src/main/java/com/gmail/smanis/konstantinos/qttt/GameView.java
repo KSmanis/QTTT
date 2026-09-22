@@ -1,5 +1,6 @@
 package com.gmail.smanis.konstantinos.qttt;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -8,12 +9,12 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.LinearInterpolator;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.customview.widget.ExploreByTouchHelper;
@@ -52,12 +53,11 @@ public class GameView extends View {
     private final int cTextWidth;
     private final int cTextHeight;
     // Entanglement Animation
-    private static final float MIN_GLOW_RADIUS = 5.f;
-    private static final float MAX_GLOW_RADIUS = 20.f;
-    private static final float GLOW_STEP = 1.f;
-    private static final int FPS = 30;
+    private static final long GLOW_HALF_CYCLE_MILLIS = 750;
+    private final float cMinGlowRadius;
+    private final float cMaxGlowRadius;
+    private final ValueAnimator mGlowAnimator;
     private float mGlowRadius;
-    private long mGlowStartedAt;
     // Rendered State
     private State mSnapshot;
     private boolean mEntangled;
@@ -87,6 +87,8 @@ public class GameView extends View {
         cTextPadding = res.getDimension(R.dimen.text_padding);
         cSubscriptSize = res.getDimension(R.dimen.subscript_size);
         cSubscriptPadding = res.getDimension(R.dimen.subscript_padding);
+        cMinGlowRadius = res.getDimension(R.dimen.glow_radius_min);
+        cMaxGlowRadius = res.getDimension(R.dimen.glow_radius_max);
         cGridColor = context.getColor(R.color.grid);
         cXColor = context.getColor(R.color.x);
         cOColor = context.getColor(R.color.o);
@@ -106,6 +108,18 @@ public class GameView extends View {
         mMarkPaint.getTextBounds("O", 0, 1, oRect);
         cTextWidth = Math.max(xRect.width(), oRect.width());
         cTextHeight = Math.max(xRect.height(), oRect.height());
+
+        mGlowRadius = cMinGlowRadius;
+        mGlowAnimator = ValueAnimator.ofFloat(cMinGlowRadius, cMaxGlowRadius);
+        mGlowAnimator.setDuration(GLOW_HALF_CYCLE_MILLIS);
+        mGlowAnimator.setInterpolator(new LinearInterpolator());
+        mGlowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mGlowAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        mGlowAnimator.addUpdateListener(
+                animation -> {
+                    mGlowRadius = (float) animation.getAnimatedValue();
+                    invalidate();
+                });
 
         mAccessibilityHelper = new GameAccessibilityHelper();
         ViewCompat.setAccessibilityDelegate(this, mAccessibilityHelper);
@@ -220,17 +234,13 @@ public class GameView extends View {
     }
 
     private void checkEntanglement() {
-        boolean wasEntangled = mEntangled;
         mEntangled = mSnapshot.entangled();
         if (mEntangled) {
             mEntangledCells = mSnapshot.entangledCells();
-            if (!wasEntangled) {
-                mGlowRadius = MIN_GLOW_RADIUS;
-                mGlowStartedAt = SystemClock.uptimeMillis();
-            }
         } else {
             mEntangledCells = null;
         }
+        syncGlowAnimator();
     }
 
     private void checkGameOver() {
@@ -265,6 +275,7 @@ public class GameView extends View {
 
     void setAnimationEnabled(boolean enabled) {
         mAnimationEnabled = enabled;
+        syncGlowAnimator();
     }
 
     void hideHistory() {
@@ -297,7 +308,6 @@ public class GameView extends View {
 
         drawGrid(canvas);
         drawCells(canvas);
-        animateEntanglement();
     }
 
     private void drawGrid(Canvas canvas) {
@@ -357,7 +367,7 @@ public class GameView extends View {
 
         if (mGameOver && mWinningCells.contains(cellIndex)) {
             mMarkPaint.setColor((cell.ordinal() & 1) == 0 ? cXColor : cOColor);
-            mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
+            mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
         } else {
             mMarkPaint.setColor(cCollapsedColor);
         }
@@ -424,23 +434,44 @@ public class GameView extends View {
         }
         if (mGameOver && mWinningCells.contains(cellIndex)) {
             mMarkPaint.setColor((mark.ordinal() & 1) == 0 ? cXColor : cOColor);
-            mMarkPaint.setShadowLayer(MAX_GLOW_RADIUS, 0, 0, mMarkPaint.getColor());
+            mMarkPaint.setShadowLayer(cMaxGlowRadius, 0, 0, mMarkPaint.getColor());
         } else {
             mMarkPaint.setColor(cCollapsedColor);
         }
     }
 
-    private void animateEntanglement() {
-        if (mEntangled && mAnimationEnabled) {
-            mGlowRadius = glowRadiusAt(SystemClock.uptimeMillis() - mGlowStartedAt);
-            postInvalidateDelayed(1000 / FPS);
+    private void syncGlowAnimator() {
+        boolean shouldRun =
+                mEntangled
+                        && mAnimationEnabled
+                        && isAttachedToWindow()
+                        && getWindowVisibility() == VISIBLE;
+        if (shouldRun) {
+            if (!mGlowAnimator.isStarted()) {
+                mGlowAnimator.start();
+            }
+        } else {
+            mGlowAnimator.cancel();
+            mGlowRadius = cMinGlowRadius;
         }
     }
 
-    static float glowRadiusAt(long elapsedMillis) {
-        float range = MAX_GLOW_RADIUS - MIN_GLOW_RADIUS;
-        float distance = (elapsedMillis * GLOW_STEP * FPS / 1000f) % (2 * range);
-        return MIN_GLOW_RADIUS + (distance <= range ? distance : 2 * range - distance);
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        syncGlowAnimator();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        mGlowAnimator.cancel();
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        syncGlowAnimator();
     }
 
     @Override
