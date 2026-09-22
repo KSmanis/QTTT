@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.view.View;
 import android.widget.TextView;
+import app.cash.paparazzi.DeviceConfig;
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,5 +32,47 @@ public class TutorialActivitySnapshotTest {
 
         paparazzi.snapshot(view);
         assertTrue(gameView.getHeight() > 0);
+    }
+
+    @Test
+    public void largeFontLesson() {
+        paparazzi.unsafeUpdateConfig(
+                deviceWithFontScale(DeviceConfig.PIXEL_2, 2f),
+                "Theme.AppCompat.Light.NoActionBar",
+                null);
+        View view = paparazzi.inflate(R.layout.activity_tutorial);
+        ((TextView) view.findViewById(R.id.tutorial_progress))
+                .setText(view.getResources().getString(R.string.tutorial_progress, 1, 10));
+        ((TextView) view.findViewById(R.id.tutorial_title))
+                .setText(R.string.tutorial_superposition_title);
+        ((TextView) view.findViewById(R.id.tutorial_body))
+                .setText(R.string.tutorial_superposition_body);
+        view.findViewById(R.id.tutorial_back).setVisibility(View.INVISIBLE);
+
+        paparazzi.snapshot(view);
+    }
+
+    private static DeviceConfig deviceWithFontScale(DeviceConfig device, float fontScale) {
+        return new DeviceConfig(
+                device.getScreenHeight(),
+                device.getScreenWidth(),
+                device.getXdpi(),
+                device.getYdpi(),
+                device.getOrientation(),
+                device.getUiMode(),
+                device.getNightMode(),
+                device.getDensity(),
+                fontScale,
+                device.getLayoutDirection(),
+                device.getLocale(),
+                device.getRatio(),
+                device.getSize(),
+                device.getKeyboard(),
+                device.getTouchScreen(),
+                device.getKeyboardState(),
+                device.getSoftButtons(),
+                device.getNavigation(),
+                device.getScreenRound(),
+                device.getReleased());
     }
 }
