@@ -53,11 +53,13 @@ jobs:
           mise exec --
           sops exec-file --output-type binary --no-fifo .github/play-upload.keystore.enc.json
           'ANDROID_KEYSTORE_FILE={} sops exec-env enc.env "./gradlew --no-daemon :app:bundleRelease"'
-      - name: Upload release bundle
+      - name: Upload release bundle and mapping
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: release-bundle
-          path: app/build/outputs/bundle/release/app-release.aab
+          path: |
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: error
           compression-level: 0
   upload:
@@ -72,7 +74,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Download release bundle
+      - name: Download release bundle and mapping
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: release-bundle
@@ -87,6 +89,7 @@ jobs:
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           packageName: com.gmail.smanis.konstantinos.qttt
-          releaseFiles: app-release.aab
+          releaseFiles: bundle/release/app-release.aab
+          mappingFile: mapping/release/mapping.txt
           serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           status: draft
