@@ -118,6 +118,8 @@ dependencies {
 
 dependencyLocking {
     lockAllConfigurations()
+    // Coverage adds this build-time agent to the debug runtime only for Sonar.
+    ignoredDependencies.add("org.jacoco:org.jacoco.agent")
 }
 
 tasks.withType<Test>().configureEach {
