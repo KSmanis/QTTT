@@ -52,6 +52,12 @@ repos:
     hooks:
       - id: actionlint
         priority: *read-only
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.29.0
+    hooks:
+      - id: zizmor
+        args: ["--fix", "--no-progress"]
+        priority: &write-parallel 999
   # Java
   - repo: local
     hooks:
@@ -59,7 +65,7 @@ repos:
         name: google-java-format
         entry: mise exec -- google-java-format --aosp --skip-sorting-imports --replace
         language: system
-        priority: &write-parallel 999
+        priority: *write-parallel
         types: ["java"]
   # JSON
   - repo: builtin
