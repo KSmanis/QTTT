@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.view.View;
 import android.widget.TextView;
+import androidx.core.widget.NestedScrollView;
 import app.cash.paparazzi.DeviceConfig;
 import app.cash.paparazzi.Paparazzi;
 import org.junit.Rule;
@@ -50,6 +51,10 @@ public class TutorialActivitySnapshotTest {
         view.findViewById(R.id.tutorial_back).setVisibility(View.INVISIBLE);
 
         paparazzi.snapshot(view);
+        NestedScrollView scrollView = view.findViewById(R.id.tutorial_scroll);
+        scrollView.scrollTo(0, scrollView.getChildAt(0).getHeight() - scrollView.getHeight());
+        assertTrue(scrollView.getScrollY() > 0);
+        paparazzi.snapshot(view, "bottom");
     }
 
     private static DeviceConfig deviceWithFontScale(DeviceConfig device, float fontScale) {
