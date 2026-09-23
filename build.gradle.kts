@@ -33,5 +33,7 @@ tasks.named("sonar") {
 }
 
 tasks.register<Delete>("clean") {
+    group = "build"
+    description = "Deletes the root build directory."
     delete(layout.buildDirectory)
 }

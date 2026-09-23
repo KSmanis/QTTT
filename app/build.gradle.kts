@@ -83,6 +83,8 @@ val openingBookSources = files(
 )
 
 val compileOpeningBookGenerator = tasks.register<JavaCompile>("compileOpeningBookGenerator") {
+    group = "opening book"
+    description = "Compiles the opening book generator."
     source(openingBookSources)
     destinationDirectory.set(openingBookClasses)
     classpath = files()
@@ -91,6 +93,8 @@ val compileOpeningBookGenerator = tasks.register<JavaCompile>("compileOpeningBoo
 }
 
 tasks.register<JavaExec>("generateOpeningBook") {
+    group = "opening book"
+    description = "Generates the opening book for the requested turn."
     val openingBookTurn = providers.gradleProperty("turn").orElse("")
 
     dependsOn(compileOpeningBookGenerator)
@@ -103,13 +107,17 @@ tasks.register<JavaExec>("generateOpeningBook") {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.8.0")
-    implementation("com.google.android.material:material:1.14.0")
+    implementation(libs.appcompat)
+    implementation(libs.material)
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
 
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation(libs.androidxTestJunit)
+    androidTestImplementation(libs.espressoCore)
+}
+
+dependencyLocking {
+    lockAllConfigurations()
 }
 
 tasks.withType<Test>().configureEach {
