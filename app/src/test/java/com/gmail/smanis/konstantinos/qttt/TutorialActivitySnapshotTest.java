@@ -49,6 +49,9 @@ public class TutorialActivitySnapshotTest {
         ((TextView) view.findViewById(R.id.tutorial_body))
                 .setText(R.string.tutorial_superposition_body);
         view.findViewById(R.id.tutorial_back).setVisibility(View.INVISIBLE);
+        State state = new State();
+        state.applyMove(new Move(0, 1, CellState.X1));
+        ((GameView) view.findViewById(R.id.gameView)).render(state);
 
         paparazzi.snapshot(view);
         NestedScrollView scrollView = view.findViewById(R.id.tutorial_scroll);
