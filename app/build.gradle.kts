@@ -116,12 +116,6 @@ dependencies {
     androidTestImplementation(libs.espressoCore)
 }
 
-dependencyLocking {
-    lockAllConfigurations()
-    // Coverage adds this build-time agent to the debug runtime only for Sonar.
-    ignoredDependencies.add("org.jacoco:org.jacoco.agent")
-}
-
 tasks.withType<Test>().configureEach {
     if (sonarCoverageReport && name == "testDebugUnitTest") {
         // JaCoCo and Paparazzi cannot instrument the same test process.
