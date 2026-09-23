@@ -1,0 +1,92 @@
+name: release
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      sha: ${{ steps.release.outputs.sha }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          release-type: simple
+  build:
+    needs: release
+    if: needs.release.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    environment: play-production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          ref: ${{ needs.release.outputs.sha }}
+      - name: Set up mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          install_args: java sops
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          log-accepted-android-sdk-licenses: false
+          packages: platform-tools
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+      - name: Build release bundle
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: >-
+          mise exec --
+          sops exec-file --output-type binary --no-fifo .github/play-upload.keystore.enc.json
+          'ANDROID_KEYSTORE_FILE={} sops exec-env enc.env "./gradlew --no-daemon :app:bundleRelease"'
+      - name: Upload release bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-bundle
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          compression-level: 0
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: play-production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Download release bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-bundle
+      - name: Authenticate to Google Play
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          project_id: qttt-play-publishing-20260923
+          service_account: qttt-play-publisher@qttt-play-publishing-20260923.iam.gserviceaccount.com
+          workload_identity_provider: projects/76635150331/locations/global/workloadIdentityPools/github-release/providers/qttt-play-production
+      - name: Create Google Play production draft
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          packageName: com.gmail.smanis.konstantinos.qttt
+          releaseFiles: app-release.aab
+          serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
+          status: draft
