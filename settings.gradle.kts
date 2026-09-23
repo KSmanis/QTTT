@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = 'QTTT'
-include ':app'
+rootProject.name = "QTTT"
+include(":app")
