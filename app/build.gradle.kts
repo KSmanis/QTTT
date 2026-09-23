@@ -15,6 +15,22 @@ android {
     namespace = "com.gmail.smanis.konstantinos.qttt"
     compileSdk = 37
 
+    val uploadSigning = listOf(
+        "ANDROID_KEYSTORE_FILE",
+        "ANDROID_KEYSTORE_PASSWORD",
+        "ANDROID_KEY_ALIAS",
+        "ANDROID_KEY_PASSWORD",
+    ).map { providers.environmentVariable(it).orNull }
+    if (uploadSigning.any { it != null }) {
+        require(uploadSigning.all { !it.isNullOrBlank() }) { "Set all Android upload signing variables" }
+        signingConfigs.create("upload") {
+            storeFile = file(uploadSigning[0]!!)
+            storePassword = uploadSigning[1]
+            keyAlias = uploadSigning[2]
+            keyPassword = uploadSigning[3]
+        }
+    }
+
     defaultConfig {
         applicationId = "com.gmail.smanis.konstantinos.qttt"
         minSdk = 23
@@ -29,6 +45,7 @@ android {
             enableUnitTestCoverage = sonarCoverageReport
         }
         getByName("release") {
+            signingConfig = signingConfigs.findByName("upload")
             optimization {
                 enable = true
             }
