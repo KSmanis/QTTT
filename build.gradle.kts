@@ -8,6 +8,7 @@ sonar {
     properties {
         property("sonar.projectKey", "KSmanis_QTTT")
         property("sonar.organization", "ksmanis")
+        property("sonar.exclusions", "**/*.png")
     }
 }
 
@@ -29,7 +30,7 @@ tasks.named("sonar") {
     if (!providers.gradleProperty("sonarCoverageReport").isPresent) {
         throw GradleException("sonar requires -PsonarCoverageReport")
     }
-    dependsOn(":app:createDebugUnitTestCoverageReport", ":app:createManagedDeviceDebugAndroidTestCoverageReport")
+    dependsOn(":app:createDebugUnitTestCoverageReport", ":app:createManagedDeviceDebugAndroidTestCoverageReport", ":app:lintDebug")
 }
 
 tasks.register<Delete>("clean") {
