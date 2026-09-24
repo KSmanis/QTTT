@@ -16,7 +16,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.view.InputDevice;
@@ -275,6 +277,33 @@ public class ActivitySmokeTest {
                                             .getString(R.string.result_double_winner)))
                     .check(matches(isDisplayed()));
         }
+    }
+
+    @Test
+    public void formatsEveryGameResult() {
+        Context context = ApplicationProvider.getApplicationContext();
+
+        assertEquals(
+                context.getString(R.string.result_draw),
+                GameResultFormatter.format(context, GameResult.DRAW));
+        assertEquals(
+                context.getString(R.string.result_double_winner),
+                GameResultFormatter.format(context, GameResult.DOUBLE_COMPLETE_WIN));
+        assertEquals(
+                context.getString(R.string.result_narrow_winner, Player.X),
+                GameResultFormatter.format(context, GameResult.NARROW_WIN_FIRST));
+        assertEquals(
+                context.getString(R.string.result_narrow_winner, Player.O),
+                GameResultFormatter.format(context, GameResult.NARROW_WIN_SECOND));
+        assertEquals(
+                context.getString(R.string.result_winner, Player.X),
+                GameResultFormatter.format(context, GameResult.COMPLETE_WIN));
+        assertEquals(
+                context.getString(R.string.result_winner, Player.O),
+                GameResultFormatter.format(context, GameResult.LOSS));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> GameResultFormatter.format(context, GameResult.INVALID));
     }
 
     private static void clickPlayButton(int cardId) {

@@ -38,15 +38,7 @@ public class SingleActivity extends AppCompatActivity {
         gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(
                 res -> {
-                    String message =
-                            switch (res) {
-                                case DRAW -> getString(R.string.result_draw);
-                                case DOUBLE_COMPLETE_WIN ->
-                                        getString(R.string.result_double_winner);
-                                case NARROW_WIN_FIRST, NARROW_WIN_SECOND ->
-                                        getString(R.string.result_narrow_winner, res.winner());
-                                default -> getString(R.string.result_winner, res.winner());
-                            };
+                    String message = GameResultFormatter.format(this, res);
                     mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
                     mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
                     mSnackbar.show();
