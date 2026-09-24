@@ -49,10 +49,11 @@ jobs:
       - name: Build release bundle
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: >-
-          mise exec --
-          sops exec-file --output-type binary --no-fifo .github/play-upload.keystore.enc.json
-          'ANDROID_KEYSTORE_FILE={} sops exec-env enc.env "./gradlew --no-daemon :app:bundleRelease"'
+        run: |
+          mise exec -- sops exec-env enc.env \
+            "printf '::add-mask::%s\n' \"\$ANDROID_KEYSTORE_PASSWORD\" \"\$ANDROID_KEY_ALIAS\" \"\$ANDROID_KEY_PASSWORD\""
+          mise exec -- sops exec-file --output-type binary --no-fifo .github/play-upload.keystore.enc.json \
+            'ANDROID_KEYSTORE_FILE={} sops exec-env enc.env "./gradlew --no-daemon :app:bundleRelease"'
       - name: Upload release bundle and mapping
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
