@@ -15,6 +15,8 @@
     <string name="radioButton_optimal">Βέλτιστη</string>
     <string name="result_draw">Η παρτίδα έληξε! Είναι ισοπαλία!</string>
     <string name="result_winner">Η παρτίδα έληξε! Νικητής: %1$s!</string>
+    <string name="result_double_winner">Η παρτίδα έληξε! Διπλή νίκη του X!</string>
+    <string name="result_narrow_winner">Η παρτίδα έληξε! Οριακή νίκη του %1$s!</string>
     <string name="textView_difficulty">Δυσκολία Παρτίδας</string>
     <string name="textView_player">Ανθρώπινος Παίκτης</string>
     <string name="textView_multi">Παίξε εναντίον των φίλων σου σε μια παρτίδα δύο παικτών! Διευθέτησε μια για πάντα ποιος είναι ο καλύτερος στην Τρίλιζα!</string>

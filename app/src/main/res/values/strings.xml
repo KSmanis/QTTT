@@ -28,6 +28,8 @@
 
     <string name="result_draw">Game Over! It\'s a draw!</string>
     <string name="result_winner">Game Over! Winner: %1$s!</string>
+    <string name="result_double_winner">Game Over! Double win for X!</string>
+    <string name="result_narrow_winner">Game Over! Narrow win for %1$s!</string>
     <string name="game_cell_description">Row %1$d, column %2$d: %3$s</string>
     <string name="game_cell_empty">empty</string>
     <string name="game_classical_mark_description">classical %1$s mark, move %2$d</string>
