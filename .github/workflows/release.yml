@@ -28,7 +28,9 @@ jobs:
     needs: release
     if: needs.release.outputs.release_created == 'true'
     runs-on: ubuntu-latest
-    environment: play-production
+    environment:
+      name: play-production
+      deployment: false
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
