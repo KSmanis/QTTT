@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/KSmanis/QTTT/compare/v1.1.0...v1.1.1) (2026-09-24)
+
+
+### Bug Fixes
+
+* clarify narrow and double win results ([#19](https://github.com/KSmanis/QTTT/issues/19)) ([1f3728f](https://github.com/KSmanis/QTTT/commit/1f3728faaff0d51cc4dc2a0341c8e383021d1930))
+
 ## [1.1.0](https://github.com/KSmanis/QTTT/compare/v1.0.4...v1.1.0) (2026-09-21)
 
 
