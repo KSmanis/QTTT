@@ -16,7 +16,7 @@ test = { depends = ["test:*"] }
 
 [tools]
 google-java-format = "1.36.1"
-java = "21.0.12+101.0.LTS"
+java = "25.0.4+101.0.LTS"
 prek = { depends = ["google-java-format"], version = "0.5.3" }
 sops = "3.13.3"
 sqlite = "3.53.4"
