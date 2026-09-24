@@ -38,12 +38,7 @@ public class SingleActivity extends AppCompatActivity {
         gameView = findViewById(R.id.gameView);
         gameView.setOnGameOverListener(
                 res -> {
-                    String message;
-                    if (res.draw()) {
-                        message = getString(R.string.result_draw);
-                    } else {
-                        message = getString(R.string.result_winner, res.winner());
-                    }
+                    String message = GameResultFormatter.format(this, res);
                     mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
                     mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
                     mSnackbar.show();

@@ -16,7 +16,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.view.InputDevice;
@@ -221,17 +223,17 @@ public class ActivitySmokeTest {
                         GameViewModel game =
                                 new ViewModelProvider(activity).get(GameViewModel.class);
                         Move[] moves = {
-                            new Move(3, 7, CellState.X1),
-                            new Move(2, 4, CellState.O2),
-                            new Move(1, 7, CellState.X3),
-                            new Move(1, 5, CellState.O4),
+                            new Move(0, 2, CellState.X1),
+                            new Move(4, 7, CellState.O2),
+                            new Move(2, 4, CellState.X3),
+                            new Move(5, 7, CellState.O4),
                             new Move(7, 8, CellState.X5),
-                            new Move(4, 8, CellState.O6),
-                            new Move(7, 8, CellState.X7),
-                            new Move(7, CellState.X7),
-                            new Move(0, 6, CellState.O8),
-                            new Move(0, 6, CellState.X9),
-                            new Move(0, CellState.X9)
+                            new Move(1, 3, CellState.O6),
+                            new Move(4, 8, CellState.X7),
+                            new Move(8, CellState.X7),
+                            new Move(1, 6, CellState.O8),
+                            new Move(1, 6, CellState.X9),
+                            new Move(1, CellState.X9)
                         };
                         for (Move move : moves) {
                             game.applyMove(move);
@@ -241,12 +243,67 @@ public class ActivitySmokeTest {
             onView(
                             withText(
                                     ApplicationProvider.getApplicationContext()
-                                            .getString(R.string.result_winner, Player.O)))
+                                            .getString(R.string.result_narrow_winner, Player.O)))
                     .check(matches(isDisplayed()));
             onView(withText(R.string.action_reset)).perform(click());
             onView(withId(R.id.gameView)).check(hasCurrentTurn(0));
             onView(withId(R.id.action_undo)).check(doesNotExist());
+
+            scenario.onActivity(
+                    activity -> {
+                        GameViewModel game =
+                                new ViewModelProvider(activity).get(GameViewModel.class);
+                        Move[] moves = {
+                            new Move(4, 5, CellState.X1),
+                            new Move(2, 4, CellState.O2),
+                            new Move(0, 4, CellState.X3),
+                            new Move(1, 4, CellState.O4),
+                            new Move(0, 4, CellState.X5),
+                            new Move(0, CellState.X5),
+                            new Move(3, 7, CellState.O6),
+                            new Move(6, 8, CellState.X7),
+                            new Move(3, 6, CellState.O8),
+                            new Move(3, 7, CellState.X9),
+                            new Move(3, CellState.X9)
+                        };
+                        for (Move move : moves) {
+                            game.applyMove(move);
+                        }
+                    });
+
+            onView(
+                            withText(
+                                    ApplicationProvider.getApplicationContext()
+                                            .getString(R.string.result_double_winner)))
+                    .check(matches(isDisplayed()));
         }
+    }
+
+    @Test
+    public void formatsEveryGameResult() {
+        Context context = ApplicationProvider.getApplicationContext();
+
+        assertEquals(
+                context.getString(R.string.result_draw),
+                GameResultFormatter.format(context, GameResult.DRAW));
+        assertEquals(
+                context.getString(R.string.result_double_winner),
+                GameResultFormatter.format(context, GameResult.DOUBLE_COMPLETE_WIN));
+        assertEquals(
+                context.getString(R.string.result_narrow_winner, Player.X),
+                GameResultFormatter.format(context, GameResult.NARROW_WIN_FIRST));
+        assertEquals(
+                context.getString(R.string.result_narrow_winner, Player.O),
+                GameResultFormatter.format(context, GameResult.NARROW_WIN_SECOND));
+        assertEquals(
+                context.getString(R.string.result_winner, Player.X),
+                GameResultFormatter.format(context, GameResult.COMPLETE_WIN));
+        assertEquals(
+                context.getString(R.string.result_winner, Player.O),
+                GameResultFormatter.format(context, GameResult.LOSS));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> GameResultFormatter.format(context, GameResult.INVALID));
     }
 
     private static void clickPlayButton(int cardId) {
