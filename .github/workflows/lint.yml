@@ -28,6 +28,6 @@ jobs:
           key: prek|${{ hashFiles('.pre-commit-config.yaml') }}
           restore-keys: prek|
       - name: Run gitlint
-        run: mise exec -- prek run --hook-stage manual gitlint-ci
+        run: prek run --hook-stage manual gitlint-ci
       - name: Run prek
-        run: mise exec -- prek run --all-files --show-diff-on-failure
+        run: prek run --all-files --show-diff-on-failure
