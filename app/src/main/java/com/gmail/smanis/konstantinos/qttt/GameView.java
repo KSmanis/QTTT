@@ -313,13 +313,17 @@ public class GameView extends View {
     private void drawGrid(Canvas canvas) {
         for (int i = 1; i < 3; ++i) {
             float x = i * getWidth() / 3f;
-            canvas.drawLine(x - cGridLinePadding, 0, x - cGridLinePadding, getHeight(), mLinePaint);
-            canvas.drawLine(x + cGridLinePadding, 0, x + cGridLinePadding, getHeight(), mLinePaint);
+            canvas.drawLine(
+                    x - cGridLinePadding, 0, x - cGridLinePadding, (float) getHeight(), mLinePaint);
+            canvas.drawLine(
+                    x + cGridLinePadding, 0, x + cGridLinePadding, (float) getHeight(), mLinePaint);
         }
         for (int i = 1; i < 3; ++i) {
             float y = i * getHeight() / 3f;
-            canvas.drawLine(0, y - cGridLinePadding, getWidth(), y - cGridLinePadding, mLinePaint);
-            canvas.drawLine(0, y + cGridLinePadding, getWidth(), y + cGridLinePadding, mLinePaint);
+            canvas.drawLine(
+                    0, y - cGridLinePadding, (float) getWidth(), y - cGridLinePadding, mLinePaint);
+            canvas.drawLine(
+                    0, y + cGridLinePadding, (float) getWidth(), y + cGridLinePadding, mLinePaint);
         }
     }
 
