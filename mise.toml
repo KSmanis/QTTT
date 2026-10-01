@@ -15,7 +15,7 @@ test = { depends = ["test:*"] }
 "test:verifyPaparazziDebug" = "./gradlew :app:${MISE_TASK_NAME#test:}"
 
 [tools]
-google-java-format = "1.36.1"
+google-java-format = "1.37.0"
 java = "21.0.12+101.0.LTS"
 prek = { depends = ["google-java-format"], version = "0.5.4" }
 sops = "3.13.3"
