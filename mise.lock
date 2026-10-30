@@ -167,39 +167,45 @@ url = "https://conda.anaconda.org/conda-forge/win-64/vcomp14-14.51.36247-habf1de
 checksum = "sha256:731e043390c9457299484d39e427221fc868a9249540a498a5a4f6456c7744d1"
 
 [[tools.google-java-format]]
-version = "1.37.0"
+version = "2.0.0"
 backend = "aqua:google/google-java-format"
-specifiers = ["1.37.0"]
+specifiers = ["2.0.0"]
 
 [tools.google-java-format."platforms.linux-arm64"]
-checksum = "sha256:e8c1c4ae92f5a86367500d78ff0d09ad12bf8ad213fa35b372468fcabf281bd3"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_linux-arm64"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603147101"
+checksum = "sha256:3193ae2e3a32634a45effc9f575005e7adf202699ab4d9d6488ff1a715588d10"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_linux-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692101364"
 
 [tools.google-java-format."platforms.linux-arm64-musl"]
-checksum = "sha256:e8c1c4ae92f5a86367500d78ff0d09ad12bf8ad213fa35b372468fcabf281bd3"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_linux-arm64"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603147101"
+checksum = "sha256:3193ae2e3a32634a45effc9f575005e7adf202699ab4d9d6488ff1a715588d10"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_linux-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692101364"
 
 [tools.google-java-format."platforms.linux-x64"]
-checksum = "sha256:881821ffd1a52b175886c4ebeeacce2ba5b5d7326b52d32a18d384d8a783bd77"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_linux-x86-64"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603147019"
+checksum = "sha256:c351f587e6dd1f11836be7296894ea2ab3bd91847dbd14101f4f04d390380fe9"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_linux-x86-64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692101694"
 
 [tools.google-java-format."platforms.linux-x64-musl"]
-checksum = "sha256:881821ffd1a52b175886c4ebeeacce2ba5b5d7326b52d32a18d384d8a783bd77"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_linux-x86-64"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603147019"
+checksum = "sha256:c351f587e6dd1f11836be7296894ea2ab3bd91847dbd14101f4f04d390380fe9"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_linux-x86-64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692101694"
 
 [tools.google-java-format."platforms.macos-arm64"]
-checksum = "sha256:657cf1011c8dfb7e0dac08516db02b701436e59600b961077f83b89b69cc3495"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_darwin-arm64"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603148240"
+checksum = "sha256:04b13ad486bcc29ef64f7168c2d3eb330e73ae458610ba5bcf44f6018b655dc4"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_darwin-arm64"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692102152"
 
 [tools.google-java-format."platforms.windows-x64"]
-checksum = "sha256:48260bed87f6830bae44a7a27f66ce98f7d9fb245f500021bd7ae16c9e2daa06"
-url = "https://github.com/google/google-java-format/releases/download/v1.37.0/google-java-format_windows-x86-64.exe"
-url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/603148681"
+checksum = "sha256:6e757021d3b5a8133ca3b5b1915c4cf38dc46ad0886bc9059fcc2ccb7b6036e5"
+checksum_source = "mise-versions"
+url = "https://github.com/google/google-java-format/releases/download/v2.0.0/google-java-format_windows-x86-64.exe"
+url_api = "https://api.github.com/repos/google/google-java-format/releases/assets/692103218"
 
 [[tools.java]]
 version = "21.0.13+9.0.LTS"
