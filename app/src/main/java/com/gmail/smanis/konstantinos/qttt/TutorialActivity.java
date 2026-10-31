@@ -97,14 +97,13 @@ public class TutorialActivity extends AppCompatActivity {
         gameView.setOnInputListener(this::applyInput);
         gameView.setInputPredicate(this::isInputAllowed);
         back.setOnClickListener(view -> showStep(step - 1));
-        next.setOnClickListener(
-                view -> {
-                    if (step == TITLES.length - 1) {
-                        finish();
-                    } else {
-                        showStep(step + 1, true);
-                    }
-                });
+        next.setOnClickListener(view -> {
+            if (step == TITLES.length - 1) {
+                finish();
+            } else {
+                showStep(step + 1, true);
+            }
+        });
         render();
     }
 
