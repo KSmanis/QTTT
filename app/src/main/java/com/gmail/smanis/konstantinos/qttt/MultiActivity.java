@@ -20,13 +20,12 @@ public class MultiActivity extends AppCompatActivity {
 
         game = new ViewModelProvider(this).get(GameViewModel.class);
         GameView gameView = findViewById(R.id.gameView);
-        gameView.setOnGameOverListener(
-                res -> {
-                    String message = GameResultFormatter.format(this, res);
-                    mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
-                    mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
-                    mSnackbar.show();
-                });
+        gameView.setOnGameOverListener(res -> {
+            String message = GameResultFormatter.format(this, res);
+            mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
+            mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
+            mSnackbar.show();
+        });
         gameView.setOnInputListener(game::applyInput);
         game.snapshots()
                 .observe(

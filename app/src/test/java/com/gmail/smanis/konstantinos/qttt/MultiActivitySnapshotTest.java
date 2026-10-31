@@ -239,14 +239,13 @@ public class MultiActivitySnapshotTest {
 
     private static State bind(GameView gameView) {
         State state = new State();
-        gameView.setOnInputListener(
-                cellIndex -> {
-                    if (!state.applyInput(cellIndex)) {
-                        return false;
-                    }
-                    gameView.render(state);
-                    return true;
-                });
+        gameView.setOnInputListener(cellIndex -> {
+            if (!state.applyInput(cellIndex)) {
+                return false;
+            }
+            gameView.render(state);
+            return true;
+        });
         gameView.render(state);
         return state;
     }

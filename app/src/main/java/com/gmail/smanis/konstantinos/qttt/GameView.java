@@ -115,11 +115,10 @@ public class GameView extends View {
         mGlowAnimator.setInterpolator(new LinearInterpolator());
         mGlowAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mGlowAnimator.setRepeatMode(ValueAnimator.REVERSE);
-        mGlowAnimator.addUpdateListener(
-                animation -> {
-                    mGlowRadius = (float) animation.getAnimatedValue();
-                    invalidate();
-                });
+        mGlowAnimator.addUpdateListener(animation -> {
+            mGlowRadius = (float) animation.getAnimatedValue();
+            invalidate();
+        });
 
         mAccessibilityHelper = new GameAccessibilityHelper();
         ViewCompat.setAccessibilityDelegate(this, mAccessibilityHelper);

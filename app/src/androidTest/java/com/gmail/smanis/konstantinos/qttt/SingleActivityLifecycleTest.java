@@ -28,18 +28,14 @@ public class SingleActivityLifecycleTest {
     @Test
     public void resetWhileMinimaxIsRunningLeavesFreshBoard() {
         try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
-            scenario.onActivity(
-                    activity -> {
-                        seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
-                        assertEquals(
-                                View.VISIBLE,
-                                activity.findViewById(R.id.progressBar).getVisibility());
-                        activity.resetBoard();
-                        assertEquals(
-                                View.INVISIBLE,
-                                activity.findViewById(R.id.progressBar).getVisibility());
-                    });
+            scenario.onActivity(activity -> {
+                seedBotTurn(activity);
+                game(activity).playBot(Player.X, Difficulty.OPTIMAL);
+                assertEquals(View.VISIBLE, activity.findViewById(R.id.progressBar).getVisibility());
+                activity.resetBoard();
+                assertEquals(
+                        View.INVISIBLE, activity.findViewById(R.id.progressBar).getVisibility());
+            });
 
             assertState(scenario, 0, Player.X);
         }
@@ -48,18 +44,14 @@ public class SingleActivityLifecycleTest {
     @Test
     public void undoWhileMinimaxIsRunningRemovesHumanMove() {
         try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
-            scenario.onActivity(
-                    activity -> {
-                        seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
-                        assertEquals(
-                                View.VISIBLE,
-                                activity.findViewById(R.id.progressBar).getVisibility());
-                        activity.undoMove();
-                        assertEquals(
-                                View.INVISIBLE,
-                                activity.findViewById(R.id.progressBar).getVisibility());
-                    });
+            scenario.onActivity(activity -> {
+                seedBotTurn(activity);
+                game(activity).playBot(Player.X, Difficulty.OPTIMAL);
+                assertEquals(View.VISIBLE, activity.findViewById(R.id.progressBar).getVisibility());
+                activity.undoMove();
+                assertEquals(
+                        View.INVISIBLE, activity.findViewById(R.id.progressBar).getVisibility());
+            });
 
             assertState(scenario, 4, Player.X);
         }
@@ -68,27 +60,23 @@ public class SingleActivityLifecycleTest {
     @Test
     public void destructionBeforeAiResultDoesNotCrash() {
         try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.OPTIMAL)) {
-            scenario.onActivity(
-                    activity -> {
-                        seedBotTurn(activity);
-                        game(activity).playBot(Player.X, Difficulty.OPTIMAL);
-                        assertEquals(
-                                View.VISIBLE,
-                                activity.findViewById(R.id.progressBar).getVisibility());
-                        activity.finish();
-                    });
+            scenario.onActivity(activity -> {
+                seedBotTurn(activity);
+                game(activity).playBot(Player.X, Difficulty.OPTIMAL);
+                assertEquals(View.VISIBLE, activity.findViewById(R.id.progressBar).getVisibility());
+                activity.finish();
+            });
         }
     }
 
     @Test
     public void recreationPreservesStateAndTurnOwnership() {
         try (ActivityScenario<SingleActivity> scenario = launch(Player.X, Difficulty.RANDOM)) {
-            scenario.onActivity(
-                    activity -> {
-                        GameViewModel game = game(activity);
-                        game.applyMove(new Move(0, 1, CellState.X1));
-                        game.applyMove(new Move(2, 3, CellState.O2));
-                    });
+            scenario.onActivity(activity -> {
+                GameViewModel game = game(activity);
+                game.applyMove(new Move(0, 1, CellState.X1));
+                game.applyMove(new Move(2, 3, CellState.O2));
+            });
 
             scenario.recreate();
 
@@ -103,66 +91,61 @@ public class SingleActivityLifecycleTest {
 
             scenario.recreate();
 
-            scenario.onActivity(
-                    activity -> {
-                        GameViewModel game = game(activity);
-                        assertEquals(0, game.snapshot().currentTurn());
-                        game.applyInput(1);
-                        assertEquals(1, game.snapshot().currentTurn());
-                    });
+            scenario.onActivity(activity -> {
+                GameViewModel game = game(activity);
+                assertEquals(0, game.snapshot().currentTurn());
+                game.applyInput(1);
+                assertEquals(1, game.snapshot().currentTurn());
+            });
         }
     }
 
     @Test
     public void savedStateRestoresCompletedAndIncompleteMoves() {
         InstrumentationRegistry.getInstrumentation()
-                .runOnMainSync(
-                        () -> {
-                            SavedStateHandle savedState = new SavedStateHandle();
-                            GameViewModel original =
-                                    new GameViewModel(
-                                            ApplicationProvider.getApplicationContext(),
-                                            savedState);
-                            original.applyInput(0);
-                            original.applyInput(1);
-                            original.applyInput(2);
+                .runOnMainSync(() -> {
+                    SavedStateHandle savedState = new SavedStateHandle();
+                    GameViewModel original =
+                            new GameViewModel(
+                                    ApplicationProvider.getApplicationContext(), savedState);
+                    original.applyInput(0);
+                    original.applyInput(1);
+                    original.applyInput(2);
 
-                            GameViewModel restored =
-                                    new GameViewModel(
-                                            ApplicationProvider.getApplicationContext(),
-                                            savedState);
-                            assertEquals(1, restored.snapshot().currentTurn());
-                            restored.applyInput(3);
-                            assertEquals(2, restored.snapshot().currentTurn());
+                    GameViewModel restored =
+                            new GameViewModel(
+                                    ApplicationProvider.getApplicationContext(), savedState);
+                    assertEquals(1, restored.snapshot().currentTurn());
+                    restored.applyInput(3);
+                    assertEquals(2, restored.snapshot().currentTurn());
 
-                            original.onCleared();
-                            restored.onCleared();
-                        });
+                    original.onCleared();
+                    restored.onCleared();
+                });
     }
 
     @Test
     public void singlePlayerUndoRestoresEachHumanTurn() {
         InstrumentationRegistry.getInstrumentation()
-                .runOnMainSync(
-                        () -> {
-                            GameViewModel xGame = gameWithMoves(2);
-                            xGame.undoSinglePlayer(Player.X);
-                            assertEquals(0, xGame.snapshot().currentTurn());
-                            assertEquals(Player.X, xGame.snapshot().currentPlayer());
+                .runOnMainSync(() -> {
+                    GameViewModel xGame = gameWithMoves(2);
+                    xGame.undoSinglePlayer(Player.X);
+                    assertEquals(0, xGame.snapshot().currentTurn());
+                    assertEquals(Player.X, xGame.snapshot().currentPlayer());
 
-                            GameViewModel oGame = gameWithMoves(3);
-                            oGame.undoSinglePlayer(Player.O);
-                            assertEquals(1, oGame.snapshot().currentTurn());
-                            assertEquals(Player.O, oGame.snapshot().currentPlayer());
+                    GameViewModel oGame = gameWithMoves(3);
+                    oGame.undoSinglePlayer(Player.O);
+                    assertEquals(1, oGame.snapshot().currentTurn());
+                    assertEquals(Player.O, oGame.snapshot().currentPlayer());
 
-                            assertTrue(oGame.applyInput(4));
-                            oGame.undoSinglePlayer(Player.O);
-                            assertEquals(1, oGame.snapshot().currentTurn());
-                            assertFalse(oGame.snapshot().hasIncompleteInput());
+                    assertTrue(oGame.applyInput(4));
+                    oGame.undoSinglePlayer(Player.O);
+                    assertEquals(1, oGame.snapshot().currentTurn());
+                    assertFalse(oGame.snapshot().hasIncompleteInput());
 
-                            xGame.onCleared();
-                            oGame.onCleared();
-                        });
+                    xGame.onCleared();
+                    oGame.onCleared();
+                });
     }
 
     private static ActivityScenario<SingleActivity> launch(
@@ -209,13 +192,12 @@ public class SingleActivityLifecycleTest {
 
     private static void assertState(
             ActivityScenario<SingleActivity> scenario, int expectedTurn, Player expectedPlayer) {
-        scenario.onActivity(
-                activity -> {
-                    GameViewModel game = game(activity);
-                    State state = game.snapshot();
-                    assertEquals(expectedTurn, state.currentTurn());
-                    assertEquals(expectedPlayer, state.currentPlayer());
-                });
+        scenario.onActivity(activity -> {
+            GameViewModel game = game(activity);
+            State state = game.snapshot();
+            assertEquals(expectedTurn, state.currentTurn());
+            assertEquals(expectedPlayer, state.currentPlayer());
+        });
     }
 
     private static GameViewModel game(SingleActivity activity) {

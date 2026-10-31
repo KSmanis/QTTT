@@ -129,22 +129,16 @@ public class GameViewModel extends AndroidViewModel {
         long generation = ++aiGeneration;
         State stateSnapshot = new State(state);
         aiThread =
-                new Thread(
-                        () -> {
-                            try {
-                                List<Move> moves = findMoves(stateSnapshot);
-                                ContextCompat.getMainExecutor(getApplication())
-                                        .execute(
-                                                () ->
-                                                        finishBotMove(
-                                                                generation,
-                                                                humanPlayer,
-                                                                difficulty,
-                                                                moves));
-                            } catch (CancellationException ignored) {
-                                // Cancellation is expected after reset, undo, or final destruction.
-                            }
-                        });
+                new Thread(() -> {
+                    try {
+                        List<Move> moves = findMoves(stateSnapshot);
+                        ContextCompat.getMainExecutor(getApplication())
+                                .execute(() ->
+                                        finishBotMove(generation, humanPlayer, difficulty, moves));
+                    } catch (CancellationException ignored) {
+                        // Cancellation is expected after reset, undo, or final destruction.
+                    }
+                });
         aiThread.start();
     }
 

@@ -51,18 +51,14 @@ public class ActivitySmokeTest {
         }
         activityRule
                 .getScenario()
-                .onActivity(
-                        activity -> {
-                            int appearance =
-                                    activity.getWindow()
-                                            .getInsetsController()
-                                            .getSystemBarsAppearance();
-                            int lightSystemBars =
-                                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                                            | WindowInsetsController
-                                                    .APPEARANCE_LIGHT_NAVIGATION_BARS;
-                            assertEquals(lightSystemBars, appearance & lightSystemBars);
-                        });
+                .onActivity(activity -> {
+                    int appearance =
+                            activity.getWindow().getInsetsController().getSystemBarsAppearance();
+                    int lightSystemBars =
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                                    | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+                    assertEquals(lightSystemBars, appearance & lightSystemBars);
+                });
     }
 
     @Test
@@ -134,13 +130,12 @@ public class ActivitySmokeTest {
         onView(withId(R.id.gameView)).perform(clickCell(0, 1));
         onView(withId(R.id.tutorial_next)).perform(scrollTo(), click());
         onView(withId(R.id.gameView))
-                .check(
-                        (view, error) -> {
-                            if (error != null) {
-                                throw error;
-                            }
-                            assertFalse(((GameView) view).isPaused());
-                        });
+                .check((view, error) -> {
+                    if (error != null) {
+                        throw error;
+                    }
+                    assertFalse(((GameView) view).isPaused());
+                });
         onView(withId(R.id.tutorial_next)).check(matches(isEnabled()));
 
         int[] resultTitles = {
@@ -166,16 +161,12 @@ public class ActivitySmokeTest {
                     .perform(clickCell(0, 0), clickCell(0, 1))
                     .check(hasCurrentTurn(1));
 
-            scenario.onActivity(
-                    activity ->
-                            activity.setRequestedOrientation(
-                                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));
+            scenario.onActivity(activity ->
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));
             onView(withId(R.id.gameView)).check(hasCurrentTurn(1));
 
-            scenario.onActivity(
-                    activity ->
-                            activity.setRequestedOrientation(
-                                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));
+            scenario.onActivity(activity ->
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));
             onView(withId(R.id.gameView)).check(hasCurrentTurn(1));
         }
     }
@@ -184,10 +175,8 @@ public class ActivitySmokeTest {
     public void tutorialBoardFitsInLandscape() {
         try (ActivityScenario<TutorialActivity> scenario =
                 ActivityScenario.launch(TutorialActivity.class)) {
-            scenario.onActivity(
-                    activity ->
-                            activity.setRequestedOrientation(
-                                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));
+            scenario.onActivity(activity ->
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));
             onView(withId(R.id.gameView)).check(matches(isCompletelyDisplayed()));
         }
     }
@@ -218,27 +207,25 @@ public class ActivitySmokeTest {
     public void multiplayerGameOverCanBeReset() {
         try (ActivityScenario<MultiActivity> scenario =
                 ActivityScenario.launch(MultiActivity.class)) {
-            scenario.onActivity(
-                    activity -> {
-                        GameViewModel game =
-                                new ViewModelProvider(activity).get(GameViewModel.class);
-                        Move[] moves = {
-                            new Move(0, 2, CellState.X1),
-                            new Move(4, 7, CellState.O2),
-                            new Move(2, 4, CellState.X3),
-                            new Move(5, 7, CellState.O4),
-                            new Move(7, 8, CellState.X5),
-                            new Move(1, 3, CellState.O6),
-                            new Move(4, 8, CellState.X7),
-                            new Move(8, CellState.X7),
-                            new Move(1, 6, CellState.O8),
-                            new Move(1, 6, CellState.X9),
-                            new Move(1, CellState.X9)
-                        };
-                        for (Move move : moves) {
-                            game.applyMove(move);
-                        }
-                    });
+            scenario.onActivity(activity -> {
+                GameViewModel game = new ViewModelProvider(activity).get(GameViewModel.class);
+                Move[] moves = {
+                    new Move(0, 2, CellState.X1),
+                    new Move(4, 7, CellState.O2),
+                    new Move(2, 4, CellState.X3),
+                    new Move(5, 7, CellState.O4),
+                    new Move(7, 8, CellState.X5),
+                    new Move(1, 3, CellState.O6),
+                    new Move(4, 8, CellState.X7),
+                    new Move(8, CellState.X7),
+                    new Move(1, 6, CellState.O8),
+                    new Move(1, 6, CellState.X9),
+                    new Move(1, CellState.X9)
+                };
+                for (Move move : moves) {
+                    game.applyMove(move);
+                }
+            });
 
             onView(
                             withText(
@@ -249,27 +236,25 @@ public class ActivitySmokeTest {
             onView(withId(R.id.gameView)).check(hasCurrentTurn(0));
             onView(withId(R.id.action_undo)).check(doesNotExist());
 
-            scenario.onActivity(
-                    activity -> {
-                        GameViewModel game =
-                                new ViewModelProvider(activity).get(GameViewModel.class);
-                        Move[] moves = {
-                            new Move(4, 5, CellState.X1),
-                            new Move(2, 4, CellState.O2),
-                            new Move(0, 4, CellState.X3),
-                            new Move(1, 4, CellState.O4),
-                            new Move(0, 4, CellState.X5),
-                            new Move(0, CellState.X5),
-                            new Move(3, 7, CellState.O6),
-                            new Move(6, 8, CellState.X7),
-                            new Move(3, 6, CellState.O8),
-                            new Move(3, 7, CellState.X9),
-                            new Move(3, CellState.X9)
-                        };
-                        for (Move move : moves) {
-                            game.applyMove(move);
-                        }
-                    });
+            scenario.onActivity(activity -> {
+                GameViewModel game = new ViewModelProvider(activity).get(GameViewModel.class);
+                Move[] moves = {
+                    new Move(4, 5, CellState.X1),
+                    new Move(2, 4, CellState.O2),
+                    new Move(0, 4, CellState.X3),
+                    new Move(1, 4, CellState.O4),
+                    new Move(0, 4, CellState.X5),
+                    new Move(0, CellState.X5),
+                    new Move(3, 7, CellState.O6),
+                    new Move(6, 8, CellState.X7),
+                    new Move(3, 6, CellState.O8),
+                    new Move(3, 7, CellState.X9),
+                    new Move(3, CellState.X9)
+                };
+                for (Move move : moves) {
+                    game.applyMove(move);
+                }
+            });
 
             onView(
                             withText(

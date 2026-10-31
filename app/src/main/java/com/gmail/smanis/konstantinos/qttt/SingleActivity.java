@@ -36,21 +36,19 @@ public class SingleActivity extends AppCompatActivity {
         game = new ViewModelProvider(this).get(GameViewModel.class);
         ProgressBar progressBar = findViewById(R.id.progressBar);
         gameView = findViewById(R.id.gameView);
-        gameView.setOnGameOverListener(
-                res -> {
-                    String message = GameResultFormatter.format(this, res);
-                    mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
-                    mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
-                    mSnackbar.show();
-                });
-        gameView.setOnInputListener(
-                cellIndex -> {
-                    if (!game.applyInput(cellIndex)) {
-                        return false;
-                    }
-                    game.playBot(mHumanPlayer, mGameDifficulty);
-                    return true;
-                });
+        gameView.setOnGameOverListener(res -> {
+            String message = GameResultFormatter.format(this, res);
+            mSnackbar = Snackbar.make(gameView, message, Snackbar.LENGTH_INDEFINITE);
+            mSnackbar.setAction(R.string.action_reset, view -> resetBoard());
+            mSnackbar.show();
+        });
+        gameView.setOnInputListener(cellIndex -> {
+            if (!game.applyInput(cellIndex)) {
+                return false;
+            }
+            game.playBot(mHumanPlayer, mGameDifficulty);
+            return true;
+        });
         game.snapshots()
                 .observe(
                         this,
