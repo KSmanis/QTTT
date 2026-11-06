@@ -3,5 +3,13 @@
   "extends": [
     "KSmanis/renovate-config"
   ],
+  "packageRules": [
+    {
+      "matchDepNames": [
+        "com.android.application"
+      ],
+      "semanticCommitType": "fix"
+    }
+  ],
   "semanticCommits": "enabled"
 }
