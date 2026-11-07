@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/KSmanis/QTTT/compare/v1.1.1...v1.1.2) (2026-11-07)
+
+
+### Bug Fixes
+
+* **deps:** update plugin com.android.application to v9.5.1 ([#34](https://github.com/KSmanis/QTTT/issues/34)) ([5ee57bd](https://github.com/KSmanis/QTTT/commit/5ee57bd1b16817ee697f31424768e37ae32cdf4c))
+
 ## [1.1.1](https://github.com/KSmanis/QTTT/compare/v1.1.0...v1.1.1) (2026-09-24)
 
 
