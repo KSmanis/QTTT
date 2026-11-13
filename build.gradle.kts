@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application") version "9.5.1" apply false
     id("app.cash.paparazzi") version "2.0.0-alpha05.1" apply false
-    id("org.sonarqube") version "7.5.0.8588"
+    id("org.sonarqube") version "7.6.0.18749"
 }
 
 sonar {
