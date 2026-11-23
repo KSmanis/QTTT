@@ -170,6 +170,7 @@ checksum = "sha256:731e043390c9457299484d39e427221fc868a9249540a498a5a4f6456c774
 version = "2.0.0"
 backend = "aqua:google/google-java-format"
 specifiers = ["2.0.0"]
+unsupported_platforms = ["macos-x64"]
 
 [tools.google-java-format."platforms.linux-arm64"]
 checksum = "sha256:3193ae2e3a32634a45effc9f575005e7adf202699ab4d9d6488ff1a715588d10"
@@ -211,6 +212,12 @@ url_api = "https://api.github.com/repos/google/google-java-format/releases/asset
 version = "21.0.13+100000002.0.LTS"
 backend = "core:java"
 specifiers = ["21.0.13+100000002.0.LTS"]
+unsupported_platforms = [
+    "linux-arm64",
+    "linux-arm64-musl",
+    "macos-x64",
+    "windows-x64",
+]
 
 [tools.java.options]
 shorthand_vendor = "temurin"
